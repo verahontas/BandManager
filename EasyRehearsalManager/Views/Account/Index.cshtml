@@ -1,0 +1,29 @@
+﻿@model MusicianRegistrationViewModel
+
+<table class="table table-striped">
+    <tr>
+        <th>Név:</th>
+        <td>@Model.UserOwnName</td>
+    </tr>
+    <tr>
+        <th>Felhasználónév:</th>
+        <td>@Model.UserName</td>
+    </tr>
+    <tr>
+        <th>Email cím:</th>
+        <td>@Model.UserEmail</td>
+    </tr>
+    <tr>
+        <th>Telefonszám:</th>
+        <td>@Model.UserPhoneNumber</td>
+    </tr>
+    <tr>
+        @if (ViewBag.CurrentUserRole == "musician")
+        {
+            <th>Alapértelmezett zenekarnév:</th>
+            <td>@Model.BandName</td>
+        }
+    </tr>
+</table>
+
+<a asp-controller="Account" asp-action="UpdateProfile" class="btn btn-primary">Adatok módosítása</a>

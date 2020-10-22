@@ -1,0 +1,13 @@
+https://help.syncfusion.com/aspnet-core/timepicker/getting-started
+
+https://help.syncfusion.com/aspnet-core/overview
+
+https://help.syncfusion.com/aspnet-core/timepicker/getting-started
+
+https://docs.microsoft.com/en-us/dotnet/api/system.datetime.dayofweek?view=netcore-3.1
+
+https://stackoverflow.com/questions/4256991/how-to-set-only-time-part-of-a-datetime-variable-in-c-sharp/4257031
+
+https://docs.microsoft.com/en-us/dotnet/api/system.datetime.compareto?view=netcore-3.1
+
+https://docs.microsoft.com/en-us/aspnet/core/mvc/views/partial?view=aspnetcore-3.1

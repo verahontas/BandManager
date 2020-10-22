@@ -1,0 +1,246 @@
+﻿@model RehearsalStudio
+
+@{
+    ViewData["Title"] = "Próbahely részletei";
+}
+
+<h1>@Model.Name</h1>
+
+<h2>Elérhetőségek</h2>
+<table class="table table-striped">
+    <tr>
+        <th>Cím:</th>
+        <td>@Model.Address</td>
+    </tr>
+    <tr>
+        <th>Kerület:</th>
+        <td>@Model.District</td>
+    </tr>
+    <tr>
+        <th>Telefon:</th>
+        <td>@Model.Phone</td>
+    </tr>
+    <tr>
+        <th>Email cím:</th>
+        <td>@Model.Email</td>
+    </tr>
+    <tr>
+        <th>Weboldal:</th>
+        <td><a href="@Model.Web">@Model.Web</a></td>
+    </tr>
+    <tr>
+        <th>X koordináta:</th>
+        <td>@Model.LocationX</td>
+    </tr>
+    <tr>
+        <th>Y koordináta:</th>
+        <td>@Model.LocationY</td>
+    </tr>
+</table>
+
+<h2>Adatok:</h2>
+<table class="table table-striped">
+    <tr>
+        <th>Termek száma:</th>
+        <td>@Model.NumberOfRooms</td>
+    </tr>
+    <tr>
+        <th colspan="2">Nyitvatartás:</th>
+    </tr>
+    <tr>
+        <th>Hétfő</th>
+        <td>@Model.OpeningHourMonday - @Model.ClosingHourMonday</td>
+    </tr>
+    <tr>
+        <th>Kedd</th>
+        <td>@Model.OpeningHourTuesday - @Model.ClosingHourTuesday</td>
+    </tr>
+    <tr>
+        <th>Szerda</th>
+        <td>@Model.OpeningHourWednesday - @Model.ClosingHourWednesday</td>
+    </tr>
+    <tr>
+        <th>Csütörtök</th>
+        <td>@Model.OpeningHourThursday - @Model.ClosingHourThursday</td>
+    </tr>
+    <tr>
+        <th>Péntek</th>
+        <td>@Model.OpeningHourSaturday - @Model.ClosingHourSaturday</td>
+    </tr>
+    <tr>
+        <th>Szombat</th>
+        <td>@Model.OpeningHourMonday - @Model.ClosingHourMonday</td>
+    </tr>
+    <tr>
+        <th>Vasárnap</th>
+        <td>@Model.OpeningHourSunday - @Model.ClosingHourSunday</td>
+    </tr>
+</table>
+
+@if (ViewBag.CurrentUserRole == "owner" || ViewBag.CurrentUserRole == "admin")
+{
+    <div>
+        <a asp-action="Edit" asp-route-studioId="@Model.Id" class="btn btn-primary">Szerkesztés</a> |
+        <a asp-action="Delete" asp-route-studioId="@Model.Id" class="btn btn-danger">Törlés</a> |
+    </div>
+}
+<a asp-action="Index" class="btn btn-secondary">Vissza a próbahelyek listájához</a>
+
+<div class="display-4 text-center">Elérhető termek listája:</div>
+
+@{
+    var availableRooms = @Model.Rooms.ToList();
+    foreach (var room in Model.Rooms)
+    {
+        if (!room.Available)
+        {
+            availableRooms.Remove(room);
+        }
+    }
+}
+
+<div>
+    <table class="table table-bordered">
+        @for (int i = 0; i < (availableRooms.Count + 2) / 3; ++i)
+        {
+            <tr>
+                @for (int j = 0; j < 3; ++j)
+                {
+                    <td>
+                        <table class="table table-borderless">
+                            <tr>
+                                <td>
+                                    <a asp-controller="RehearsalRooms" asp-action="Details" asp-route-roomId="@Model.Rooms.ToList()[i * 3 + j].Id">
+                                        @availableRooms[i * 3 + j].Number . Terem
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @availableRooms[i * 3 + j].Size m2
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @availableRooms[i * 3 + j].Price Ft/óra
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a class="btn btn-primary" role="button" asp-controller="Reservations" asp-action="Create" asp-route-roomId="@Model.Rooms.ToList()[i * 3 + j].Id">Foglalás</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+</div>
+
+<div class="display-4 text-center">Foglalások</div>
+
+@{
+    int[] OpeningHours = new int[7];
+    int[] ClosingHours = new int[7];
+
+    OpeningHours[0] = Model.OpeningHourMonday;
+    ClosingHours[0] = Model.ClosingHourMonday;
+
+    OpeningHours[1] = Model.OpeningHourTuesday;
+    ClosingHours[1] = Model.ClosingHourTuesday;
+
+    OpeningHours[2] = Model.OpeningHourWednesday;
+    ClosingHours[2] = Model.ClosingHourWednesday;
+
+    OpeningHours[3] = Model.OpeningHourThursday;
+    ClosingHours[3] = Model.ClosingHourThursday;
+
+    OpeningHours[4] = Model.OpeningHourFriday;
+    ClosingHours[4] = Model.ClosingHourFriday;
+
+    OpeningHours[5] = Model.OpeningHourSaturday;
+    ClosingHours[5] = Model.ClosingHourSaturday;
+
+    OpeningHours[6] = Model.OpeningHourSunday;
+    ClosingHours[6] = Model.ClosingHourSunday;
+
+    int index = 0;
+    int openingHour = 0;
+    int closingHour = 0;
+    int numberOfAvailabeRooms = availableRooms.Count;
+
+    switch (DateTime.Today.DayOfWeek)
+    {
+        case DayOfWeek.Monday:
+            openingHour = OpeningHours[index + 0];
+            closingHour = ClosingHours[index + 0];
+            break;
+        case DayOfWeek.Tuesday:
+            openingHour = OpeningHours[index + 1];
+            closingHour = ClosingHours[index + 1];
+            break;
+        case DayOfWeek.Wednesday:
+            openingHour = OpeningHours[index + 2];
+            closingHour = ClosingHours[index + 2];
+            break;
+        case DayOfWeek.Thursday:
+            openingHour = OpeningHours[index + 3];
+            closingHour = ClosingHours[index + 3];
+            break;
+        case DayOfWeek.Friday:
+            openingHour = OpeningHours[index + 4];
+            closingHour = ClosingHours[index + 4];
+            break;
+        case DayOfWeek.Saturday:
+            openingHour = OpeningHours[index + 5];
+            closingHour = ClosingHours[index + 5];
+            break;
+        case DayOfWeek.Sunday:
+            openingHour = OpeningHours[index + 6];
+            closingHour = ClosingHours[index + 6];
+            break;
+        default:
+            break;
+    }
+
+    List<Reservation> reservations = new List<Reservation>();
+
+    foreach (var room in Model.Rooms)
+    {
+        foreach (var res in room.Reservations)
+        {
+            reservations.Add(res);
+        }
+    }
+
+    ReservationTableViewModel viewModel = new ReservationTableViewModel()
+    {
+        OpeningHour = openingHour,
+        ClosingHour = closingHour,
+        NumberOfAvailableRooms = numberOfAvailabeRooms,
+        Index = 0,
+        Rooms = Model.Rooms.ToList(),
+        Reservations = reservations,
+        Studio = Model
+    };
+}
+
+<div id="ReservationsTableContent"></div>
+
+<button id="NextDayButton" data-url="@Url.Action("ReservationsTable", "RehearsalStudios", new { studioId = Model.Id, isNext = true })">Következő nap</button>
+
+@await Html.PartialAsync("_ReservationsTable", viewModel);
+
+<script type="text/javascript">
+   $(function() {
+        $('#NextDayButton').click(function(e) {
+        e.preventdefault();
+        var url = $(this).data('url');
+        $('#ReservationsTableContent').load(url);
+    });
+}); 
+
+
+    
+</script>

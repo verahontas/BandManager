@@ -1,0 +1,119 @@
+﻿@model ReservationViewModel
+
+@{
+    ViewData["Title"] = "Foglalás módosítása";
+}
+
+<h1>Foglalás módosítása</h1>
+<!--
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Start" class="control-label">Foglalás kezdete</label>
+                <input asp-for="Start" class="form-control" />
+                <span asp-validation-for="Start" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="End" class="control-label">Foglalás vége</label>
+                <input asp-for="End" class="form-control" />
+                <span asp-validation-for="End" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label">Felhasználó</label>
+                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RehearsalRoomId" class="control-label">Terem id-ja</label>
+                <select asp-for="RehearsalRoomId" class="form-control" asp-items="ViewBag.RehearsalRoomId"></select>
+                <span asp-validation-for="RehearsalRoomId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+-->
+
+<div class="row">
+    <div class="col-md-4">
+        <table class="table table-striped">
+            <tr>
+                <td>
+                    <strong>Foglaló neve:</strong> @Model.UserOwnName
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Próbahely neve:</strong> @Model.Room.Studio.Name
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Terem száma:</strong> @Model.Room.Number
+                </td>
+            </tr>
+        </table>
+
+        <form asp-controller="Reservations" asp-action="Edit" asp-route-reservationId="@Model.Id">
+            <input type="hidden" asp-for="UserOwnName" />
+            <input type="hidden" asp-for="UserEmail" />
+            <input type="hidden" asp-for="UserPhoneNumber" />
+            <table class="table table-striped">
+                <tr>
+                    <td>
+                        Zenekar neve:
+                    </td>
+                    <td class="failureNotification">
+                        <input asp-for="BandName" size="40" />
+                        <span asp-validation-for="BandName"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Foglalás napja:
+                    </td>
+                    <td class="failureNotification">
+                        <input asp-for="Day" asp-format="{0:yyyy-MM-dd}" type="date" />
+                        <span asp-validation-for="Day"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="failureNotification">
+                        <div class="form-group">
+                            <label asp-for="StartHour" class="control-label">Foglalás kezdete</label>
+                            <select asp-for="StartHour" class="form-control" asp-items="ViewBag.Hours"></select>
+                            <span asp-validation-for="StartHour" class="text-danger"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="failureNotification">
+                        <div class="form-group">
+                            <label asp-for="EndHour" class="control-label">Foglalás vége</label>
+                            <select asp-for="EndHour" class="form-control" asp-items="ViewBag.Hours"></select>
+                            <span asp-validation-for="EndHour" class="text-danger"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <input type="submit" value="Mentés" class="btn btn-primary" />
+                    </td>
+                    <td>
+                        <a asp-action="Index" class="btn btn-secondary">Mégse</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" class="btn btn-secondary">Vissza a foglalásaimhoz</a>
+</div>
+

@@ -1,0 +1,34 @@
+﻿@model RehearsalRoom
+
+@{
+    ViewData["Title"] = "Próbaterem részletei";
+}
+
+<h1>A @Model.Studio.Name hely @Model.Number számú próbaterme</h1>
+
+<table class="table table-striped">
+    <tr>
+        <th>Ár:</th>
+        <td>@Model.Price Ft/óra</td>
+    </tr>
+    <tr>
+        <th>Méret:</th>
+        <td>@Model.Size m<sup>2</sup> </td>
+    </tr>
+    <tr>
+        <th>Leírás:</th>
+        <td>@Model.Description</td>
+    </tr>
+    <tr>
+        <th>@Model.Studio.Name címe:</th>
+        <td>@Model.Studio.Address</td>
+    </tr>
+</table>
+
+<div>
+    @if (ViewBag.CurrentUserRole == "owner" || ViewBag.CurrentUserRole == "adminstrator")
+    {
+        <a asp-action="Edit" asp-route-roomId="@Model.Id" class="btn btn-primary">Szerkesztés</a><strong>|</strong>
+    }
+    <a asp-action="Index" class="btn btn-secondary">Vissza a próbatermek listájához</a>
+</div>

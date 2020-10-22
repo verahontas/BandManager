@@ -1,0 +1,44 @@
+﻿@model Reservation
+
+@{
+    ViewData["Title"] = "Foglalás törlése";
+}
+
+<h1>Foglalás törlése</h1>
+
+<h3>Biztosan törölni szeretné az alábbi foglalást?</h3>
+<div>
+    <table class="table table-striped">
+        <tr>
+            <th>Foglalás kezdete:</th>
+            <td>@Model.Start</td>
+        </tr>
+        <tr>
+            <th>Foglalás vége:</th>
+            <td>@Model.End</td>
+        </tr>
+        <tr>
+            <th>Foglaló neve:</th>
+            <td>@Model.User.UserOwnName</td>
+        </tr>
+        <tr>
+            <th>Zenekarnév:</th>
+            <td>@Model.BandName</td>
+        </tr>
+        <tr>
+            <th>Próbahely neve:</th>
+            <td>@Model.RehearsalRoom.Studio.Name</td>
+        </tr>
+        <tr>
+            <th>Terem száma:</th>
+            <td>@Model.RehearsalRoom.Number</td>
+        </tr>
+    </table>
+
+
+    <form asp-action="Delete" asp-route-reservationId="@Model.Id">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Törlés" class="btn btn-danger" /> |
+        <a asp-action="Index">Vissza a foglalások listájához</a>
+    </form>
+</div>

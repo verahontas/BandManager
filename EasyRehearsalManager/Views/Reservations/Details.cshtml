@@ -1,0 +1,39 @@
+﻿@model Reservation
+
+@{
+    ViewData["Title"] = "Foglalás részletei";
+}
+
+<h1>Foglalás részletei</h1>
+
+<table class="table table-striped">
+    <tr>
+        <th>Foglalás kezdete:</th>
+        <td>@Model.Start</td>
+    </tr>
+    <tr>
+        <th>Foglalás vége:</th>
+        <td>@Model.End</td>
+    </tr>
+    <tr>
+        <th>Zenekar neve:</th>
+        <td>@Model.User.DefaultBandName</td>
+    </tr>
+    <tr>
+        <th>Foglaló neve:</th>
+        <td>@Model.User.UserOwnName</td>
+    </tr>
+    <tr>
+        <th>Próbahely neve:</th>
+        <td>@Model.RehearsalRoom.Studio.Name</td>
+    </tr>
+    <tr>
+        <th>Terem száma:</th>
+        <td>@Model.RehearsalRoom.Number</td>
+    </tr>
+</table>
+
+<div>
+    <a asp-action="Edit" asp-route-reservationId="@Model.Id">Szerkesztés</a> |
+    <a asp-action="Index">Vissza a foglalásokhoz</a>
+</div>
