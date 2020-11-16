@@ -10,3 +10,15 @@ C:\szakdolgozat\bootstrap-proba\EasyRehearsalManager.Model\obj\Debug\netcoreapp3
 C:\szakdolgozat\bootstrap-proba\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.pdb
 C:\szakdolgozat\bootstrap-proba\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.genruntimeconfig.cache
 C:\szakdolgozat\bootstrap-proba\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.csprojAssemblyReference.cache
+C:\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\bin\Debug\netcoreapp3.1\EasyRehearsalManager.Model.deps.json
+C:\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\bin\Debug\netcoreapp3.1\EasyRehearsalManager.Model.runtimeconfig.json
+C:\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\bin\Debug\netcoreapp3.1\EasyRehearsalManager.Model.runtimeconfig.dev.json
+C:\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\bin\Debug\netcoreapp3.1\EasyRehearsalManager.Model.dll
+C:\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\bin\Debug\netcoreapp3.1\EasyRehearsalManager.Model.pdb
+C:\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.csprojAssemblyReference.cache
+C:\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.AssemblyInfoInputs.cache
+C:\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.AssemblyInfo.cs
+C:\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.csproj.CoreCompileInputs.cache
+C:\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.dll
+C:\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.pdb
+C:\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.genruntimeconfig.cache

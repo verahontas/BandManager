@@ -27,6 +27,7 @@ namespace EasyRehearsalManager.Web.Models
 
         public IEnumerable<RehearsalStudio> Studios => _context.Studios
                                                             .Include(l => l.Rooms)
+                                                            .Include(l => l.Equipments)
                                                             .OrderBy(l => l.Name);
 
         public IEnumerable<RehearsalRoom> Rooms => _context.Rooms
@@ -85,6 +86,14 @@ namespace EasyRehearsalManager.Web.Models
             return Reservations.FirstOrDefault(l => l.Id == reservationId);
         }
 
+        public Equipment GetEquipment(int? equipmentId)
+        {
+            if (equipmentId == null)
+                return null;
+
+            return Equipments.FirstOrDefault(l => l.Id == equipmentId);
+        }
+
         public IEnumerable<Equipment> GetEquipmentsForStudio(int? studioId)
         {
             return Equipments.Where(l => l.StudioId == studioId);
@@ -123,6 +132,22 @@ namespace EasyRehearsalManager.Web.Models
         public bool AddReservation(Reservation reservation)
         {
             _context.Reservations.Add(reservation);
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool AddEquipment(Equipment equipment)
+        {
+            _context.Equipments.Add(equipment);
+
             try
             {
                 _context.SaveChanges();
@@ -243,6 +268,31 @@ namespace EasyRehearsalManager.Web.Models
             return true;
         }
 
+        public bool RemoveEquipment(int? equipmentId)
+        {
+            if (equipmentId == null)
+                return false;
+
+            var equipment = _context.Equipments.FirstOrDefault(l => l.Id == equipmentId);
+
+            if (equipment == null)
+                return false;
+
+            _context.Equipments.Remove(equipment);
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch
+            {
+
+                return false;
+            }
+
+            return true;
+        }
+
         public bool UpdateStudio(RehearsalStudio studio)
         {
             _context.Studios.Update(studio);
@@ -278,6 +328,22 @@ namespace EasyRehearsalManager.Web.Models
         public bool UpdateReservation(Reservation reservation)
         {
             _context.Reservations.Update(reservation);
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool UpdateEquipment(Equipment equipment)
+        {
+            _context.Equipments.Update(equipment);
 
             try
             {

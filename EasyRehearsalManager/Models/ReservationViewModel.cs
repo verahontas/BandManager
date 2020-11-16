@@ -1,5 +1,4 @@
 ﻿using EasyRehearsalManager.Model;
-using EasyRehearsalManager.Web.Migrations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

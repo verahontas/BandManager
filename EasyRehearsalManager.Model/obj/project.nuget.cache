@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "rKHfmrJWRTaOPYX09iwhGhrmHX0fcXyGYRdeMI9Ae5caTg0ITurjJCrt06/IfqTRuvS1s0LTjfGlBTPTis5FIg==",
+  "dgSpecHash": "lNaL/XEIzlmugKf62gcaXGZwUkDPxqUu/+xkPXeaB9mr0d0hZRDwVPpQxqF66WH0xqBcQ0Uyu2CdCooYCyyjnA==",
   "success": true,
-  "projectFilePath": "C:\\szakdolgozat\\bootstrap-proba\\EasyRehearsalManager.Model\\EasyRehearsalManager.Model.csproj",
+  "projectFilePath": "C:\\szakdolgozat\\bootstrap-proba\\BandManager\\EasyRehearsalManager.Model\\EasyRehearsalManager.Model.csproj",
   "expectedPackageFiles": [
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\microsoft.aspnetcore.authentication\\2.2.0\\microsoft.aspnetcore.authentication.2.2.0.nupkg.sha512",
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",

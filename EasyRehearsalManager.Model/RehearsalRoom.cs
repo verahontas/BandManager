@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace EasyRehearsalManager.Model
@@ -14,7 +16,6 @@ namespace EasyRehearsalManager.Model
         public RehearsalRoom()
         {
             Reservations = new HashSet<Reservation>();
-            Equipments = new HashSet<Equipment>();
         }
 
         [Key]
@@ -46,8 +47,21 @@ namespace EasyRehearsalManager.Model
 
         public ICollection<Reservation> Reservations { get; set; }
 
+        //description about stuff in the room
+        [DataType(DataType.MultilineText)]
+        public string Equipments { get; set; }
 
-        //default equipments in the room that you dont need to reserve
-        public ICollection<Equipment> Equipments { get; set; }
+        public string GetReservationForDate(DateTime start, DateTime end)
+        {
+            foreach (Reservation reservation in Reservations)
+            {
+                if (reservation.Start == start && reservation.End >= end
+                    || reservation.Start <= start && reservation.End == end
+                    || reservation.Start >= start && reservation.End <= end)
+                    return reservation.BandName;
+            }
+
+            return "Foglalás";
+        }
     }
 }

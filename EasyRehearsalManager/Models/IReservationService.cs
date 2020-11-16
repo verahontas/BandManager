@@ -25,6 +25,8 @@ namespace EasyRehearsalManager.Web.Models
 
         Reservation GetReservation(int? reservationId);
 
+        Equipment GetEquipment(int? equipmentId);
+
         IEnumerable<Equipment> GetEquipmentsForStudio(int? studioId);
 
         bool AddStudio(RehearsalStudio studio);
@@ -33,17 +35,23 @@ namespace EasyRehearsalManager.Web.Models
 
         bool AddReservation(Reservation reservation);
 
+        bool AddEquipment(Equipment equipment);
+
         bool RemoveStudio(int? studioId);
 
         bool RemoveRoom(int? roomId);
 
         bool RemoveReservation(int? reservationId);
 
+        bool RemoveEquipment(int? equipmentId);
+
         bool UpdateStudio(RehearsalStudio studio);
 
         bool UpdateRoom(RehearsalRoom room);
 
         bool UpdateReservation(Reservation reservation);
+
+        bool UpdateEquipment(Equipment equipment);
 
         IEnumerable<RehearsalStudio> GetStudiosByOwner(int? ownerId);
 

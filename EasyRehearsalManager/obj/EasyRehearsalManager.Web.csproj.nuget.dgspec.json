@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\szakdolgozat\\bootstrap-proba\\EasyRehearsalManager\\EasyRehearsalManager.Web.csproj": {}
+    "C:\\szakdolgozat\\bootstrap-proba\\BandManager\\EasyRehearsalManager\\EasyRehearsalManager.Web.csproj": {}
   },
   "projects": {
-    "C:\\szakdolgozat\\bootstrap-proba\\EasyRehearsalManager.Model\\EasyRehearsalManager.Model.csproj": {
+    "C:\\szakdolgozat\\bootstrap-proba\\BandManager\\EasyRehearsalManager.Model\\EasyRehearsalManager.Model.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\szakdolgozat\\bootstrap-proba\\EasyRehearsalManager.Model\\EasyRehearsalManager.Model.csproj",
+        "projectUniqueName": "C:\\szakdolgozat\\bootstrap-proba\\BandManager\\EasyRehearsalManager.Model\\EasyRehearsalManager.Model.csproj",
         "projectName": "EasyRehearsalManager.Model",
-        "projectPath": "C:\\szakdolgozat\\bootstrap-proba\\EasyRehearsalManager.Model\\EasyRehearsalManager.Model.csproj",
+        "projectPath": "C:\\szakdolgozat\\bootstrap-proba\\BandManager\\EasyRehearsalManager.Model\\EasyRehearsalManager.Model.csproj",
         "packagesPath": "C:\\Users\\Veronika\\.nuget\\packages\\",
-        "outputPath": "C:\\szakdolgozat\\bootstrap-proba\\EasyRehearsalManager.Model\\obj\\",
+        "outputPath": "C:\\szakdolgozat\\bootstrap-proba\\BandManager\\EasyRehearsalManager.Model\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -83,14 +83,14 @@
         }
       }
     },
-    "C:\\szakdolgozat\\bootstrap-proba\\EasyRehearsalManager\\EasyRehearsalManager.Web.csproj": {
+    "C:\\szakdolgozat\\bootstrap-proba\\BandManager\\EasyRehearsalManager\\EasyRehearsalManager.Web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\szakdolgozat\\bootstrap-proba\\EasyRehearsalManager\\EasyRehearsalManager.Web.csproj",
+        "projectUniqueName": "C:\\szakdolgozat\\bootstrap-proba\\BandManager\\EasyRehearsalManager\\EasyRehearsalManager.Web.csproj",
         "projectName": "EasyRehearsalManager.Web",
-        "projectPath": "C:\\szakdolgozat\\bootstrap-proba\\EasyRehearsalManager\\EasyRehearsalManager.Web.csproj",
+        "projectPath": "C:\\szakdolgozat\\bootstrap-proba\\BandManager\\EasyRehearsalManager\\EasyRehearsalManager.Web.csproj",
         "packagesPath": "C:\\Users\\Veronika\\.nuget\\packages\\",
-        "outputPath": "C:\\szakdolgozat\\bootstrap-proba\\EasyRehearsalManager\\obj\\",
+        "outputPath": "C:\\szakdolgozat\\bootstrap-proba\\BandManager\\EasyRehearsalManager\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -109,8 +109,8 @@
         "frameworks": {
           "netcoreapp3.1": {
             "projectReferences": {
-              "C:\\szakdolgozat\\bootstrap-proba\\EasyRehearsalManager.Model\\EasyRehearsalManager.Model.csproj": {
-                "projectPath": "C:\\szakdolgozat\\bootstrap-proba\\EasyRehearsalManager.Model\\EasyRehearsalManager.Model.csproj"
+              "C:\\szakdolgozat\\bootstrap-proba\\BandManager\\EasyRehearsalManager.Model\\EasyRehearsalManager.Model.csproj": {
+                "projectPath": "C:\\szakdolgozat\\bootstrap-proba\\BandManager\\EasyRehearsalManager.Model\\EasyRehearsalManager.Model.csproj"
               }
             }
           }
@@ -143,6 +143,10 @@
             "Microsoft.AspNetCore.Identity.UI": {
               "target": "Package",
               "version": "[3.1.6, )"
+            },
+            "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation": {
+              "target": "Package",
+              "version": "[3.1.9, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",

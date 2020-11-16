@@ -11,8 +11,9 @@ namespace EasyRehearsalManager.Model
     {
         public int Id { get; set; }
 
-        [ForeignKey("RehearsalStudio")]
         public int StudioId { get; set; }
+
+        public RehearsalStudio Studio { get; set; }
 
         [Required]
         public string Name { get; set; }

@@ -23,11 +23,11 @@
     <script type="text/javascript" src="/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
     <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" />
+    <link href="~/AdditionalStyle.css" rel="stylesheet" />
 
     <title>Próbák egyszerűen</title>
 </head>
-<body>
-
+<body class="background-image">
     @if (ViewBag.CurrentUserName == null)
     {
         <nav class="navbar navbar-light bg-light">
@@ -36,16 +36,16 @@
             <a asp-controller="Account" asp-action="RegisterAsMusician" class="navbar-brand">Regisztráció zenészként</a>
             <a asp-controller="Account" asp-action="RegisterAsOwner" class="navbar-brand">Regisztráció tulajdonosként</a>
             <!--<div class="dropdown">
-                <button class="btn navbar-brand dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Regisztráció
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" asp-controller="Account" asp-action="RegisterAsMusician">Zenészként</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" asp-controller="Account" asp-action="RegisterAsOwner">Tulajdonosként</a>
-                </div>
+            <button class="btn navbar-brand dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Regisztráció
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" asp-controller="Account" asp-action="RegisterAsMusician">Zenészként</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" asp-controller="Account" asp-action="RegisterAsOwner">Tulajdonosként</a>
             </div>
-            -->
+        </div>
+        -->
         </nav>
     }
     else
@@ -77,15 +77,15 @@
             }
             <a class="navbar-brand" asp-controller="Account" asp-action="Logout">Kijelentkezés</a>
             <!-- <div class="dropdown">
-        <button class="btn navbar-brand dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <img src="@Url.Action("GetUserImage", new { useId = ViewBag.CurrentUserId })" class="img-thumbnail" height="30" alt="Profilkép" /> Profil
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" asp-controller="Account" asp-action="GetProfileDetails">Profilom</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" asp-controller="Reservations" asp-action="Index" asp-route-userId="@ViewBag.CurrentUserId">Foglalásaim</a>
-        </div>
-    </div> -->
+            <button class="btn navbar-brand dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <img src="@Url.Action("GetUserImage", new { useId = ViewBag.CurrentUserId })" class="img-thumbnail" height="30" alt="Profilkép" /> Profil
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" asp-controller="Account" asp-action="GetProfileDetails">Profilom</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" asp-controller="Reservations" asp-action="Index" asp-route-userId="@ViewBag.CurrentUserId">Foglalásaim</a>
+            </div>
+        </div> -->
         </nav>
     }
 
@@ -108,9 +108,14 @@
     {
         @RenderSection("Scripts", required: true)
     }
-
 </body>
 </html>
+
+<footer class="mt-auto">
+    <div class="container">
+        <p>Készítette: <br /><strong>Herczegfalvy Veronika </strong><br />hallgató, Eötvös Loránd Tudományegyetem <br /> 2020. </p>
+    </div>
+</footer>
 
 <ej-script-manager></ej-script-manager>
 

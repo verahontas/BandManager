@@ -1,47 +1,52 @@
 ﻿@model LoginViewModel
 
-<div class="row">
-    <div class="col-md-5">
-        <form asp-controller="Account" asp-action="Login">
+<!--
+<div class="custom-form">
+    <form asp-controller="Account" asp-action="Login">
+        <div class="form-group">
             <table>
                 <tr>
-                    <td colspan="2">
+                    <td>
                         <div class="failureNotification">@ViewBag.Information</div>
                         <div asp-validation-summary="ModelOnly" class="failureNotification"></div>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td>
                         <div class="contentHead">
-                            Bejelentkezési adatok:
+                            <strong>BEJELENTKEZÉSI ADATOK</strong>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td width="120">
+                    <td>
                         Felhasználónév:
                     </td>
                     <td class="failureNotification">
                         <div class="form-group">
-                            <input asp-for="UserName" />
+                            <input class="form-control" asp-for="UserName" />
                             <span asp-validation-for="UserName"></span>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td width="120">
+                    <td>
                         Jelszó:
                     </td>
                     <td class="failureNotification">
-                        <input asp-for="UserPassword" />
-                        <span asp-validation-for="UserPassword"></span>
+                        <div class="form-group">
+                            <input class="form-control" asp-for="UserPassword" />
+                            <span asp-validation-for="UserPassword"></span>
+                        </div>
                     </td>
                 </tr>
                 <tr>
-                    <td width="120"></td>
+                    <td></td>
                     <td>
-                        <input asp-for="RememberLogin" />
-                        Bejelentkezés megjegyzése
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberLogin" asp-for="RememberLogin" />
+                            <label class="form-check-label" for="rememberLogin">Bejelentkezés megjegyzése</label>
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -50,12 +55,43 @@
                     </td>
                 </tr>
             </table>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
+-->
+
+    <form asp-controller="Account" asp-action="Login">
+        <div class="form-group">
+            <div class="failureNotification">@ViewBag.Information</div>
+            <div asp-validation-summary="ModelOnly" class="failureNotification"></div>
+            <div class="display-4">
+                BEJELENTKEZÉSI ADATOK
+            </div>
+            <label for="userName">Felhasználónév</label>
+            <div class="failureNotification">
+                <div class="form-group">
+                    <input class="form-control" id="userName" asp-for="UserName" />
+                    <span asp-validation-for="UserName"></span>
+                </div>
+            </div>
+            <label for="pwd">Jelszó</label>
+            <div class="failureNotification">
+                <div class="form-group">
+                    <input type="password" class="form-control" id="pwd" asp-for="UserPassword" />
+                    <span asp-validation-for="UserPassword"></span>
+                </div>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="rememberLogin" asp-for="RememberLogin" />
+                <label class="form-check-label" for="rememberLogin">Bejelentkezés megjegyzése</label>
+            </div>
+            <input type="submit" value="Bejelentkezés" class="btn btn-primary" />
+        </div>
+    </form>
 
 
 @section Scripts
 {
     <partial name="_ValidationScriptsPartial" />
 }
+

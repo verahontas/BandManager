@@ -1,0 +1,31 @@
+﻿@model EasyRehearsalManager.Model.Equipment
+
+<h3>Biztos benne, hogy törli az eszközt?</h3>
+<div>
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Studio)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Studio.Address)
+        </dd class>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.QuantityAvailable)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.QuantityAvailable)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Törlés" class="btn btn-danger" /> |
+        <a asp-action="Index" asp-route-studioId="@Model.StudioId">Mégse</a>
+    </form>
+</div>

@@ -144,7 +144,7 @@ namespace EasyRehearsalManager.Web.Controllers
         }
 
         // GET: RehearsalStudios/Details/5
-        public IActionResult Details(int? studioId, int index = 0)
+        public IActionResult Details(int? studioId, int? index)
         {
             if (studioId == null)
             {
