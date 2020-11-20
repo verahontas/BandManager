@@ -16,8 +16,6 @@ namespace EasyRehearsalManager.Web.Controllers
         public int[] OpeningHours = new int[7];
         public int[] ClosingHours = new int[7];
 
-        public int DayIndex;
-
         private UserManager<User> _userManager;
 
         public int GetOpeningHour(RehearsalStudio studio, int index)
@@ -33,19 +31,19 @@ namespace EasyRehearsalManager.Web.Controllers
             switch (DateTime.Today.DayOfWeek)
             {
                 case DayOfWeek.Monday:
-                    return OpeningHours[index + 0];
+                    return OpeningHours[(index + 0) % 7];
                 case DayOfWeek.Tuesday:
-                    return OpeningHours[index + 1];
+                    return OpeningHours[(index + 1) % 7];
                 case DayOfWeek.Wednesday:
-                    return OpeningHours[index + 2];
+                    return OpeningHours[(index + 2) % 7];
                 case DayOfWeek.Thursday:
-                    return OpeningHours[index + 3];
+                    return OpeningHours[(index + 3) % 7];
                 case DayOfWeek.Friday:
-                    return OpeningHours[index + 4];
+                    return OpeningHours[(index + 4) % 7];
                 case DayOfWeek.Saturday:
-                    return OpeningHours[index + 5];
+                    return OpeningHours[(index + 5) % 7];
                 case DayOfWeek.Sunday:
-                    return OpeningHours[index + 6];
+                    return OpeningHours[(index + 6) % 7];
                 default:
                     return -1;
             }
@@ -64,19 +62,19 @@ namespace EasyRehearsalManager.Web.Controllers
             switch (DateTime.Today.DayOfWeek)
             {
                 case DayOfWeek.Monday:
-                    return ClosingHours[index + 0];
+                    return ClosingHours[(index + 0) % 7];
                 case DayOfWeek.Tuesday:
-                    return ClosingHours[index + 1];
+                    return ClosingHours[(index + 1) % 7];
                 case DayOfWeek.Wednesday:
-                    return ClosingHours[index + 2];
+                    return ClosingHours[(index + 2) % 7];
                 case DayOfWeek.Thursday:
-                    return ClosingHours[index + 3];
+                    return ClosingHours[(index + 3) % 7];
                 case DayOfWeek.Friday:
-                    return ClosingHours[index + 4];
+                    return ClosingHours[(index + 4) % 7];
                 case DayOfWeek.Saturday:
-                    return ClosingHours[index + 5];
+                    return ClosingHours[(index + 5) % 7];
                 case DayOfWeek.Sunday:
-                    return ClosingHours[index + 6];
+                    return ClosingHours[(index + 6) % 7];
                 default:
                     return -1;
             }
@@ -86,7 +84,6 @@ namespace EasyRehearsalManager.Web.Controllers
             UserManager<User> userManager)
             : base(reservationService, applicationState)
         {
-            DayIndex = 0;
             _userManager = userManager;
         }
 
@@ -172,6 +169,7 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(rehearsalStudio);
         }
 
+        /*
         public ActionResult ReservationsTable(int studioId, bool isNext)
         {
             if (DayIndex < 0)
@@ -195,7 +193,7 @@ namespace EasyRehearsalManager.Web.Controllers
 
             return PartialView("ReservationsTable", viewModel);
         }
-
+        */
         // GET: RehearsalStudios/Create
         public IActionResult Create()
         {
@@ -336,6 +334,46 @@ namespace EasyRehearsalManager.Web.Controllers
             };
 
             _reservationService.AddStudio(rehearsalStudio);
+        }
+
+        public PartialViewResult GetTableOfReservations(int studioId, int dayIndex)
+        {
+            if (studioId == 0)
+                return null;
+
+            if (dayIndex < 0)
+                dayIndex = 0;
+
+            if (dayIndex > 9)
+                dayIndex = 9;
+
+            RehearsalStudio studio = _reservationService.Studios.FirstOrDefault(l => l.Id == studioId);
+
+            if (studio == null)
+                return null;
+
+            DateTime currentStartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0);
+            currentStartDate = currentStartDate.AddDays(dayIndex);
+
+            DateTime currentEndDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
+            currentEndDate = currentEndDate.AddDays(dayIndex);
+
+
+            List<Reservation> reservations = _reservationService.Reservations
+                                                .Where(l => l.RehearsalRoom.StudioId == studioId && 
+                                                       l.IsConflicting(currentStartDate, currentEndDate))
+                                                .ToList();
+
+            ReservationTableViewModel reservationTableViewModel = new ReservationTableViewModel {
+                OpeningHour = GetOpeningHour(studio, dayIndex),
+                ClosingHour = GetClosingHour(studio, dayIndex),
+                NumberOfAvailableRooms = studio.NumberOfRooms,
+                Rooms = studio.Rooms.ToList(),
+                Reservations = reservations,
+                Studio = studio,
+                Index = dayIndex
+            };
+            return PartialView("_ReservationsTable", reservationTableViewModel);
         }
     }
 }

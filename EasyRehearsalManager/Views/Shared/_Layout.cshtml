@@ -1,29 +1,20 @@
 ﻿<!DOCTYPE html>
-
+<!--
 <environment include="Development">
-    <!-- Essential Studio for JavaScript  theme reference -->
-    <link rel="stylesheet" href="//cdn.syncfusion.com/17.1.0.38/js/web/flat-azure/ej.web.all.min.css" />
-    <!-- Essential Studio for JavaScript  script references -->
-    <script src="//cdn.syncfusion.com/js/assets/external/jsrender.min.js"></script>
-    <script src="//cdn.syncfusion.com/17.1.0.38/js/web/ej.web.all.min.js"></script>
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
 </environment>
+-->
 
 <html>
 <head>
-    <meta name="viewport" content="with=device-with" />
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-    <link href="~/lib/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <script type="text/javascript" src="/bower_components/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
-    <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
-    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" />
     <link href="~/AdditionalStyle.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
 
     <title>Próbák egyszerűen</title>
 </head>
@@ -36,16 +27,16 @@
             <a asp-controller="Account" asp-action="RegisterAsMusician" class="navbar-brand">Regisztráció zenészként</a>
             <a asp-controller="Account" asp-action="RegisterAsOwner" class="navbar-brand">Regisztráció tulajdonosként</a>
             <!--<div class="dropdown">
-            <button class="btn navbar-brand dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Regisztráció
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" asp-controller="Account" asp-action="RegisterAsMusician">Zenészként</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" asp-controller="Account" asp-action="RegisterAsOwner">Tulajdonosként</a>
+                <button class="btn navbar-brand dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Regisztráció
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" asp-controller="Account" asp-action="RegisterAsMusician">Zenészként</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" asp-controller="Account" asp-action="RegisterAsOwner">Tulajdonosként</a>
+                </div>
             </div>
-        </div>
-        -->
+            -->
         </nav>
     }
     else
@@ -77,15 +68,15 @@
             }
             <a class="navbar-brand" asp-controller="Account" asp-action="Logout">Kijelentkezés</a>
             <!-- <div class="dropdown">
-            <button class="btn navbar-brand dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img src="@Url.Action("GetUserImage", new { useId = ViewBag.CurrentUserId })" class="img-thumbnail" height="30" alt="Profilkép" /> Profil
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" asp-controller="Account" asp-action="GetProfileDetails">Profilom</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" asp-controller="Reservations" asp-action="Index" asp-route-userId="@ViewBag.CurrentUserId">Foglalásaim</a>
-            </div>
-        </div> -->
+                <button class="btn navbar-brand dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="@Url.Action("GetUserImage", new { useId = ViewBag.CurrentUserId })" class="img-thumbnail" height="30" alt="Profilkép" /> Profil
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" asp-controller="Account" asp-action="GetProfileDetails">Profilom</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" asp-controller="Reservations" asp-action="Index" asp-route-userId="@ViewBag.CurrentUserId">Foglalásaim</a>
+                </div>
+            </div> -->
         </nav>
     }
 
@@ -116,15 +107,9 @@
         <p>Készítette: <br /><strong>Herczegfalvy Veronika </strong><br />hallgató, Eötvös Loránd Tudományegyetem <br /> 2020. </p>
     </div>
 </footer>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@RenderSection("Scripts", required: false)
 
 <ej-script-manager></ej-script-manager>
-
-<script type="text/javascript">
-
-    function Confirm() {
-
-        alert("You have Successfully booked");
-
-    }
-
-</script>

@@ -1,8 +1,40 @@
 ﻿@model RehearsalStudio
 
-@{
-    ViewData["Title"] = "Próbahely részletei";
-}
+<script>
+    $(document).ready(function () {
+
+        var index = 0; //0 means TODAY, 1 means TOMORROW etc. index is between 0 and 9, only the next 10 days' reservations are visible
+        var studioId = @Model.Id;
+        alert("functioning!"); //just to be sure it's working
+
+        var link = '@Html.Raw(@Url.Action("GetTableOfReservations", "RehearsalStudios", new { studioId = 100, dayIndex = 0 } )) ';
+        link = link.replace("100", studioId);
+        $("#ReservationsTableContent").load(link);
+
+        $("#previousDayButton").click(function () {
+            index = index - 1;
+            var link = '@Html.Raw(@Url.Action("GetTableOfReservations", "RehearsalStudios", new { studioId = 100, dayIndex = 12 } )) ';
+
+            //with this replacement, there will be: dayIndex = [0..9] as dayIndex has to be in this range
+                //note: dayIndex = 1 wouldn't be good bc "1" appears also in "100"
+            link = link.replace("12", index);
+
+            //after 12 is replaced to [0..9] we can replace 100 beacuse there won't be other "100" in the string, bc dayIndex is in [0..9]
+            link = link.replace("100", studioId);
+
+            $("#ReservationsTableContent").load(link);
+        });
+
+        $("#nextDayButton").click(function () {
+            index = index + 1;
+            var link = '@Html.Raw(@Url.Action("GetTableOfReservations", "RehearsalStudios", new { studioId = 100, dayIndex = 12 } )) ';
+            link = link.replace("12", index);
+            link = link.replace("100", studioId);
+            //note: never change the order of these lines! if studioId would be 12, then the 12 -> index replacement would result wrong 'link' string
+            $("#ReservationsTableContent").load(link);
+        });
+    });
+</script>
 
 <h1>@Model.Name</h1>
 
@@ -247,21 +279,8 @@
 
 <div class="display-4 text-center">Foglalások</div>
 
+<button class="btn btn-outline-dark" id="previousDayButton">Előző nap</button>
+<button class="btn btn-outline-dark" id="nextDayButton">Következő nap</button>
+
 <div id="ReservationsTableContent"></div>
 
-<button id="NextDayButton" data-url="@Url.Action("ReservationsTable", "RehearsalStudios", new { studioId = Model.Id, isNext = true })">Következő nap</button>
-
-@await Html.PartialAsync("_ReservationsTable", viewModel);
-
-<script type="text/javascript">
-    $(function () {
-        $('#NextDayButton').click(function (e) {
-            e.preventdefault();
-            var url = $(this).data('url');
-            $('#ReservationsTableContent').load(url);
-        });
-    });
-
-
-
-</script>

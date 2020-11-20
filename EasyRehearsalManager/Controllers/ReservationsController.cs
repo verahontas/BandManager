@@ -226,8 +226,7 @@ namespace EasyRehearsalManager.Web.Controllers
             if (roomId == null || hour == null)
                 return NotFound();
 
-            //how the hell can i know if the user clicks on today's reservation
-            //i should add day as a parameter too, not just the hour
+            //dayIndex: shows the day of the wanted reservation. 0 means today, 1 means tomorrow, etc.
             DateTime day = DateTime.Now.AddDays(dayIndex);
             DateTime dateForReservation = new DateTime(day.Year, day.Month, day.Day, (int)hour, 0, 0);
             User user = await _userManager.FindByNameAsync(User.Identity.Name);
