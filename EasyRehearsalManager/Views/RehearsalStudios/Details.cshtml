@@ -5,11 +5,12 @@
 
         var index = 0; //0 means TODAY, 1 means TOMORROW etc. index is between 0 and 9, only the next 10 days' reservations are visible
         var studioId = @Model.Id;
-        alert("functioning!"); //just to be sure it's working
 
         var link = '@Html.Raw(@Url.Action("GetTableOfReservations", "RehearsalStudios", new { studioId = 100, dayIndex = 0 } )) ';
         link = link.replace("100", studioId);
         $("#ReservationsTableContent").load(link);
+
+        $("#previousDayButton").hide();
 
         $("#previousDayButton").click(function () {
             index = index - 1;
@@ -22,6 +23,20 @@
             //after 12 is replaced to [0..9] we can replace 100 beacuse there won't be other "100" in the string, bc dayIndex is in [0..9]
             link = link.replace("100", studioId);
 
+            if (index > 0) {
+                $("#previousDayButton").show();
+            }
+            else {
+                $("#previousDayButton").hide();
+            }
+
+            if (index < 8) {
+                $("#nextDayButton").show();
+            }
+            else {
+                $("#nextDayButton").hide();
+            }
+
             $("#ReservationsTableContent").load(link);
         });
 
@@ -30,6 +45,21 @@
             var link = '@Html.Raw(@Url.Action("GetTableOfReservations", "RehearsalStudios", new { studioId = 100, dayIndex = 12 } )) ';
             link = link.replace("12", index);
             link = link.replace("100", studioId);
+
+            if (index > 0) {
+                $("#previousDayButton").show();
+            }
+            else {
+                $("#previousDayButton").hide();
+            }
+
+            if (index < 8) {
+                $("#nextDayButton").show();
+            }
+            else {
+                $("#nextDayButton").hide();
+            }
+
             //note: never change the order of these lines! if studioId would be 12, then the 12 -> index replacement would result wrong 'link' string
             $("#ReservationsTableContent").load(link);
         });
@@ -74,7 +104,7 @@
 <table class="table table-striped">
     <tr>
         <th>Termek száma:</th>
-        <td>@Model.NumberOfRooms</td>
+        <td>@Model.Rooms.Count</td>
     </tr>
     <tr>
         <th colspan="2">Nyitvatartás:</th>
@@ -136,7 +166,7 @@
         @for (int i = 0; i < (availableRooms.Count + 2) / 3; ++i)
         {
             <tr>
-                @for (int j = 0; j < 3; ++j)
+                @for (int j = 0; j < 3 && availableRooms.Count >= 3 || j < availableRooms.Count && availableRooms.Count < 3; ++j)
                 {
                     <td>
                         <table class="table table-borderless">
@@ -170,100 +200,15 @@
     </table>
 </div>
 
-
-
-@{
-    int[] OpeningHours = new int[7];
-    int[] ClosingHours = new int[7];
-
-    OpeningHours[0] = Model.OpeningHourMonday;
-    ClosingHours[0] = Model.ClosingHourMonday;
-
-    OpeningHours[1] = Model.OpeningHourTuesday;
-    ClosingHours[1] = Model.ClosingHourTuesday;
-
-    OpeningHours[2] = Model.OpeningHourWednesday;
-    ClosingHours[2] = Model.ClosingHourWednesday;
-
-    OpeningHours[3] = Model.OpeningHourThursday;
-    ClosingHours[3] = Model.ClosingHourThursday;
-
-    OpeningHours[4] = Model.OpeningHourFriday;
-    ClosingHours[4] = Model.ClosingHourFriday;
-
-    OpeningHours[5] = Model.OpeningHourSaturday;
-    ClosingHours[5] = Model.ClosingHourSaturday;
-
-    OpeningHours[6] = Model.OpeningHourSunday;
-    ClosingHours[6] = Model.ClosingHourSunday;
-
-    int index = 0;
-    int openingHour = 0;
-    int closingHour = 0;
-    int numberOfAvailabeRooms = availableRooms.Count;
-
-    switch (DateTime.Today.DayOfWeek)
-    {
-        case DayOfWeek.Monday:
-            openingHour = OpeningHours[index + 0];
-            closingHour = ClosingHours[index + 0];
-            break;
-        case DayOfWeek.Tuesday:
-            openingHour = OpeningHours[index + 1];
-            closingHour = ClosingHours[index + 1];
-            break;
-        case DayOfWeek.Wednesday:
-            openingHour = OpeningHours[index + 2];
-            closingHour = ClosingHours[index + 2];
-            break;
-        case DayOfWeek.Thursday:
-            openingHour = OpeningHours[index + 3];
-            closingHour = ClosingHours[index + 3];
-            break;
-        case DayOfWeek.Friday:
-            openingHour = OpeningHours[index + 4];
-            closingHour = ClosingHours[index + 4];
-            break;
-        case DayOfWeek.Saturday:
-            openingHour = OpeningHours[index + 5];
-            closingHour = ClosingHours[index + 5];
-            break;
-        case DayOfWeek.Sunday:
-            openingHour = OpeningHours[index + 6];
-            closingHour = ClosingHours[index + 6];
-            break;
-        default:
-            break;
-    }
-
-    List<Reservation> reservations = new List<Reservation>();
-
-    foreach (var room in Model.Rooms)
-    {
-        foreach (var res in room.Reservations)
-        {
-            reservations.Add(res);
-        }
-    }
-
-    ReservationTableViewModel viewModel = new ReservationTableViewModel()
-    {
-        OpeningHour = openingHour,
-        ClosingHour = closingHour,
-        NumberOfAvailableRooms = numberOfAvailabeRooms,
-        Index = 0,
-        Rooms = Model.Rooms.ToList(),
-        Reservations = reservations,
-        Studio = Model
-    };
-}
-
 <h4 class="display-4 text-center">Bérelhető eszközök:</h4>
 
 @if (ViewBag.CurrentUserRole == "owner" || ViewBag.CurrentUserRole == "admin")
 {
     <a asp-controller="Equipments" asp-action="Create" asp-route-studioId="@Model.Id" class="btn btn-outline-primary">Új bérelhető eszköz hozzáadása</a>
-    <a asp-controller="Equipments" asp-action="Index" asp-route-studioId="@Model.Id" class="btn btn-outline-primary">Módosítás</a>
+    if (Model.Equipments.Any())
+    {
+        <a asp-controller="Equipments" asp-action="Index" asp-route-studioId="@Model.Id" class="btn btn-outline-primary">Módosítás</a>
+    }
 }
 
 

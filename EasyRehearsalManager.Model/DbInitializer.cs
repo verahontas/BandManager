@@ -103,8 +103,7 @@ namespace EasyRehearsalManager.Model
                 ClosingHourSaturday = 22,
                 OpeningHourSunday = 10,
                 ClosingHourSunday = 22,
-                Description = "Próbahely­ünkön 6 próbaterem áll készen a zenészek fogadására, 23 m2-től 38 m2-ig. A próbahely­en légcserélő működik, a két legnagyobb próbaterem­ben pedig légkondi is van.",
-                NumberOfRooms = 6
+                Description = "Próbahely­ünkön 6 próbaterem áll készen a zenészek fogadására, 23 m2-től 38 m2-ig. A próbahely­en légcserélő működik, a két legnagyobb próbaterem­ben pedig légkondi is van."
             });
 
             foreach (RehearsalStudio studio in defaultStudios)

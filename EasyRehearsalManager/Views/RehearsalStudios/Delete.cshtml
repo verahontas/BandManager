@@ -7,159 +7,27 @@
 <h1>Törlés</h1>
 
 <h3>Biztosan törölni akarja?</h3>
+<p class="bg-danger">A próbahely törlésével a hozzá tartozó termek is törlődnek!</p>
+
+<h2>Adatok:</h2>
+<table class="table table-striped">
+    <tr>
+        <th>Próbahely neve:</th>
+        <td>@Model.Name</td>
+    </tr>
+    <tr>
+        <th>Termek száma:</th>
+        <td>@Model.Rooms.Count</td>
+    </tr>
+    <tr>
+        <th>Cím:</th>
+        <td>@Model.Address</td>
+    </tr>
+</table>
 <div>
-    <h4>RehearsalStudio</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Address)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Address)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LocationX)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LocationX)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LocationY)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LocationY)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.District)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.District)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Phone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Phone)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Web)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Web)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumberOfRooms)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumberOfRooms)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OpeningHourMonday)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OpeningHourMonday)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ClosingHourMonday)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ClosingHourMonday)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OpeningHourTuesday)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OpeningHourTuesday)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ClosingHourTuesday)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ClosingHourTuesday)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OpeningHourWednesday)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OpeningHourWednesday)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ClosingHourWednesday)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ClosingHourWednesday)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OpeningHourThursday)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OpeningHourThursday)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ClosingHourThursday)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ClosingHourThursday)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OpeningHourFriday)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OpeningHourFriday)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ClosingHourFriday)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ClosingHourFriday)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OpeningHourSaturday)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OpeningHourSaturday)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ClosingHourSaturday)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ClosingHourSaturday)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OpeningHourSunday)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OpeningHourSunday)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ClosingHourSunday)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ClosingHourSunday)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
+    <form asp-action="Delete" asp-route-studioId="@Model.Id">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Törlés" class="btn btn-danger" /> |
-        <a asp-action="Index">Vissza a próbahelyek listájához</a>
+        <input type="submit" value="Törlés" class="btn btn-danger" />
+        <a asp-action="Index" class="btn btn-outline-dark">Mégsem</a>
     </form>
 </div>

@@ -32,8 +32,6 @@ else
 
     <input type="submit" value="Keresés" class="btn btn-outline-success my-2 my-sm-0" />
 
-
-
 </form>
 
 <div class="nameSortOrder">
@@ -46,6 +44,11 @@ else
         </svg>
     </a>
 </div>
+
+@if (!Model.Any() && ViewBag.CurrentUserRole == "owner")
+{
+    <p>Önnek nincs még regisztrált próbahelye.</p>
+}
 
 @foreach (var studio in Model)
 {

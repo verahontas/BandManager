@@ -17,7 +17,7 @@
     </tr>
     <tr>
         <th>Zenekar neve:</th>
-        <td>@Model.User.DefaultBandName</td>
+        <td>@Model.BandName</td>
     </tr>
     <tr>
         <th>Foglaló neve:</th>
@@ -30,6 +30,25 @@
     <tr>
         <th>Terem száma:</th>
         <td>@Model.RehearsalRoom.Number</td>
+    </tr>
+    <tr>
+        <th>Bérelt eszközök:</th>
+        @{ 
+            if (!Model.Equipments.Any())
+            {
+                <td>Ön nem bérelt semmit a foglaláshoz.</td>
+            }
+            else
+            {
+                <td>
+                @foreach(var e in Model.Equipments)
+                {
+                    <div>@e.Name</div>
+                }
+                </td>
+            }
+        }
+
     </tr>
 </table>
 

@@ -306,6 +306,24 @@ namespace EasyRehearsalManager.Web.Controllers
                 Id = reservation.Id
             };
 
+            Dictionary<string, int> equipments = new Dictionary<string, int>();
+            
+            foreach (var e in reservation.Equipments)
+            {
+                viewModel.Equipments[e.Name] = true;
+            }
+
+            RehearsalRoom room = _reservationService.GetRoom(reservation.RehearsalRoomId);
+            RehearsalStudio studio = _reservationService.Studios.FirstOrDefault(l => l.Rooms.Contains(room));
+
+            foreach (var e in studio.Equipments)
+            {
+                if (!viewModel.Equipments.ContainsKey(e.Name)) //ha foglalva van az aktuális foglaláshoz
+                {
+                    viewModel.Equipments[e.Name] = false;
+                }
+            }
+
             return View(viewModel);
         }
 
@@ -314,7 +332,7 @@ namespace EasyRehearsalManager.Web.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int reservationId, [Bind("StartHour,EndHour,Day,BandName,UserOwnName,UserPhoneNumber,UserEmail")] ReservationViewModel reservationViewModel)
+        public async Task<IActionResult> Edit(int reservationId, ReservationViewModel reservationViewModel)
         {
             Reservation reservation = _reservationService.Reservations.FirstOrDefault(l => l.Id == reservationId);
 
@@ -342,7 +360,6 @@ namespace EasyRehearsalManager.Web.Controllers
             DateTime startDate = new DateTime(day.Year, day.Month, day.Day, reservation.Start.Hour, 0, 0);
             DateTime endDate = new DateTime(day.Year, day.Month, day.Day, reservation.End.Hour, 0, 0);
 
-            //a reservationDateErrorban kéne azt is ellenőrizni hogy az adott időpontban foglalt-e a terem
             switch (_reservationService.ValidateReservation(startDate, endDate, "action", reservation.Id, reservation.RehearsalRoomId))
             {
                 case ReservationDateError.StartInvalid:
@@ -357,6 +374,23 @@ namespace EasyRehearsalManager.Web.Controllers
                 case ReservationDateError.LengthInvalid:
                     ModelState.AddModelError("EndHour", "Üres az időintervallum!");
                     break;
+            }
+
+            RehearsalRoom room = _reservationService.GetRoom(reservation.RehearsalRoomId);
+            RehearsalStudio studio = _reservationService.Studios.FirstOrDefault(l => l.Rooms.Contains(room));
+
+            foreach (var e in reservationViewModel.Equipments) //ebben az összes stúdióban bérelhető eszköz benne van
+            {
+                Equipment eq = studio.Equipments.FirstOrDefault(l => l.Name == e.Key);
+                //ha már benne van a foglalásban de lemondtuk:
+                if (!e.Value && reservation.Equipments.Contains(eq))
+                {
+                    reservation.Equipments.Remove(eq);
+                }
+                else if (e.Value && !reservation.Equipments.Contains(eq))
+                {
+                    reservation.Equipments.Add(eq);
+                }
             }
 
             IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);

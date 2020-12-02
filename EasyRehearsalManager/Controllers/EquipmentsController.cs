@@ -57,7 +57,10 @@ namespace EasyRehearsalManager.Web.Controllers
         public IActionResult Create(Equipment equipment)
         {
             if (_reservationService.AddEquipment(equipment))
-                return View();
+            {
+                TempData["SuccessAlert"] = "Eszköz mentése sikeres!";
+                return RedirectToAction("Details", "RehearsalStudios", equipment.StudioId);
+            }
 
             TempData["DangerAlert"] = "Eszköz mentése sikertelen!";
             return RedirectToAction("Details", "RehearsalStudios", equipment.StudioId);

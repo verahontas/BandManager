@@ -47,9 +47,6 @@ namespace EasyRehearsalManager.Model
         [Url]
         public string Web { get; set; }
 
-        //necessary?
-        public int NumberOfRooms { get; set; }
-
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
 

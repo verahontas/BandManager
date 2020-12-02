@@ -60,7 +60,7 @@
     <table class="table table-bordered table-dark">
         <thead>
             <tr>
-                <th scope="col">#</th>
+                <th scope="col"><sub>dátum</sub>\<sup>óra</sup></th>
                 @for (int i = Model.Studio.EarliestOpeningHour(); i < Model.Studio.LatestClosingHour(); ++i)
                 {
                     var end = i + 1;

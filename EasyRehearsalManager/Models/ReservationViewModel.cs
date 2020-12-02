@@ -31,14 +31,5 @@ namespace EasyRehearsalManager.Web.Models
         public int Id { get; set; }
 
         public Dictionary<string, bool> Equipments { get; set; }
-
-        //public List<EquipmentToBook> Equipments { get; set; }
     }
-
-    public struct EquipmentToBook
-    {
-        public bool IsChecked { get; set; }
-
-        public Equipment Equipment { get; set; }
-    };
 }

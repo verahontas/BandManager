@@ -13,6 +13,23 @@
     </p>
 }
 
+<!--Keresni csak unauthorized vagy musician szerepkörű felhasználó tud, a többieknek fölösleges-->
+@if (ViewBag.CurrentUserRole == "musician" || ViewBag.CurrentUserRole == null)
+{
+    <p>Kereshet időpont alapján, így biztosan megtalálja az Önnek megfelelő időpontban szabad termet.</p>
+
+    <form asp-action="Index" method="get" class="form-inline">
+        <label>Dátum:</label>
+        <input name="date" asp-format="{0:yyyy-MM-dd}" type="date" />
+        <label>Próba kezdete:</label>
+        <select class="form-control" asp-items="ViewBag.Hours" name="startTime"></select>
+        <label>Próba vége:</label>
+        <select class="form-control" asp-items="ViewBag.Hours" name="endTime"></select>
+        <input type="submit" value="Keresés" class="btn btn-outline-success my-2 my-sm-0" />
+
+    </form>
+}
+
 <div class="table-responsive">
     <table class="table table-striped">
         <thead>

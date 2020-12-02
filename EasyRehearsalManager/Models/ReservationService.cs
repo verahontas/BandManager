@@ -33,6 +33,7 @@ namespace EasyRehearsalManager.Web.Models
         public IEnumerable<RehearsalRoom> Rooms => _context.Rooms
                                                         .Include(l => l.Reservations)
                                                         .Include(l => l.Studio)
+                                                        .Include(l => l.Studio.Equipments)
                                                         .OrderBy(l => l.Number);
 
         public IEnumerable<Reservation> Reservations => _context.Reservations
@@ -555,7 +556,6 @@ namespace EasyRehearsalManager.Web.Models
         public bool NewRoomAdded(int? studioId)
         {
             var studio = _context.Studios.FirstOrDefault(l => l.Id == studioId);
-            studio.NumberOfRooms += 1;
             try
             {
                 _context.SaveChanges();
