@@ -61,6 +61,8 @@ namespace EasyRehearsalManager.Web.Models
 
         IEnumerable<Reservation> GetReservationsByStudioId(int? studioId);
 
+        int? GetStudioIdByEquipment(int? equipmentId);
+
         ReservationViewModel NewReservation(int? roomId);
 
         bool ReservationExist(int? reservationId);

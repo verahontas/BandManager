@@ -59,11 +59,11 @@ namespace EasyRehearsalManager.Web.Controllers
             if (_reservationService.AddEquipment(equipment))
             {
                 TempData["SuccessAlert"] = "Eszköz mentése sikeres!";
-                return RedirectToAction("Details", "RehearsalStudios", equipment.StudioId);
+                return RedirectToAction("Details", "RehearsalStudios", new { studioId = equipment.StudioId });
             }
 
             TempData["DangerAlert"] = "Eszköz mentése sikertelen!";
-            return RedirectToAction("Details", "RehearsalStudios", equipment.StudioId);
+            return RedirectToAction("Details", "RehearsalStudios", new { studioId = equipment.StudioId });
         }
 
         [HttpGet]
@@ -96,7 +96,7 @@ namespace EasyRehearsalManager.Web.Controllers
                 return NotFound();
             }
 
-            var equipment = _reservationService.GetRoom(equipmentId);
+            var equipment = _reservationService.GetEquipment(equipmentId);
 
             if (equipment != null)
                 return View(equipment);
@@ -104,14 +104,22 @@ namespace EasyRehearsalManager.Web.Controllers
             return NotFound();
         }
 
-        [HttpGet, ActionName("Delete")]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int equipmentId)
         {
             if (_reservationService.RemoveEquipment(equipmentId))
             {
                 TempData["SuccessAlert"] = "Az eszközt sikeresen töröltük!";
-                return RedirectToAction(nameof(Index));
+                int? studioId = _reservationService.GetStudioIdByEquipment(equipmentId);
+                if (studioId == null)
+                {
+                    return RedirectToAction("Index", "RehearsalStudios");
+                }
+                else
+                {
+                    return RedirectToAction("Details", "RehearsalStudios", new { studioId =  studioId });
+                }
             }
 
             TempData["DangerAlert"] = "Az eszköz törlése sikertelen!";

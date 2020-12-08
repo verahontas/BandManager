@@ -42,7 +42,8 @@ namespace EasyRehearsalManager.Web.Models
                                                             .Include(l => l.Equipments)
                                                             .OrderByDescending(l => l.Start);
 
-        public IEnumerable<Equipment> Equipments => _context.Equipments;
+        public IEnumerable<Equipment> Equipments => _context.Equipments
+                                                        .Include(l => l.Studio);
 
         public RehearsalStudio GetStudio(int? studioId)
         {
@@ -405,6 +406,14 @@ namespace EasyRehearsalManager.Web.Models
                 return null;
 
             return Reservations.Where(l => l.RehearsalRoom.StudioId == studioId);
+        }
+
+        public int? GetStudioIdByEquipment(int? equipmentId)
+        {
+            if (equipmentId == null)
+                return null;
+
+            return Equipments.FirstOrDefault(l => l.Id == equipmentId).StudioId;
         }
 
         /// <summary>

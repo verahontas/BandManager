@@ -269,12 +269,12 @@ namespace EasyRehearsalManager.Web.Controllers
             var rehearsalStudio = _reservationService.GetStudio(studioId);
             if (_reservationService.RemoveStudio(studioId))
             {
-                ViewData["SuccessAlert"] = "Próbahely törlése sikeresen megtörtént! A hozzá tartozó termek, és a termek foglalásai is törlődtek.";
+                TempData["SuccessAlert"] = "Próbahely törlése sikeresen megtörtént! A hozzá tartozó termek, és a termek foglalásai is törlődtek.";
                 return RedirectToAction("Index");
             }
             else
             {
-                ViewData["DangerAlert"] = "Próbahely törlése sikertelen!";
+                TempData["DangerAlert"] = "Próbahely törlése sikertelen!";
                 return RedirectToAction("Details", studioId);
             }
         }
@@ -320,7 +320,7 @@ namespace EasyRehearsalManager.Web.Controllers
 
             _reservationService.AddStudio(rehearsalStudio);
 
-            return View("Index");
+            return RedirectToAction("Index");
         }
 
         public PartialViewResult GetTableOfReservations(int studioId, int dayIndex)
