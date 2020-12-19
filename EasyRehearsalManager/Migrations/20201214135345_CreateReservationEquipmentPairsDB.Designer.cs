@@ -4,14 +4,16 @@ using EasyRehearsalManager.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EasyRehearsalManager.Web.Migrations
 {
     [DbContext(typeof(EasyRehearsalManagerContext))]
-    partial class EasyRehearsalManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20201214135345_CreateReservationEquipmentPairsDB")]
+    partial class CreateReservationEquipmentPairsDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -213,8 +215,8 @@ namespace EasyRehearsalManager.Web.Migrations
                     b.Property<int>("EquipmentId")
                         .HasColumnType("int");
 
-                    b.Property<string>("EquipmentName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("EquipmentName")
+                        .HasColumnType("int");
 
                     b.Property<int>("ReservationId")
                         .HasColumnType("int");

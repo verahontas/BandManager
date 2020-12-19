@@ -11,6 +11,7 @@ namespace EasyRehearsalManager.Web.Models
         StartInvalid,
         EndInvalid,
         LengthInvalid,
-        Conflicting
+        Conflicting,
+        EquipmentNotAvailable
     }
 }

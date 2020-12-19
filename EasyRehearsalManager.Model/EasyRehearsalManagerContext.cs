@@ -32,5 +32,7 @@ namespace EasyRehearsalManager.Model
         public DbSet<Reservation> Reservations { get; set; }
 
         public DbSet<UserImage> UserImages { get; set; }
+
+        public DbSet<ReservationEquipmentPair> ReservationEquipmentPairs { get; set; }
     }
 }

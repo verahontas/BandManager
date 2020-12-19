@@ -4,14 +4,16 @@ using EasyRehearsalManager.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EasyRehearsalManager.Web.Migrations
 {
     [DbContext(typeof(EasyRehearsalManagerContext))]
-    partial class EasyRehearsalManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20201214134316_CreateReservationEquipmentPairs")]
+    partial class CreateReservationEquipmentPairs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -201,30 +203,6 @@ namespace EasyRehearsalManager.Web.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Reservations");
-                });
-
-            modelBuilder.Entity("EasyRehearsalManager.Model.ReservationEquipmentPairs", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("EquipmentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EquipmentName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ReservationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StudioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ReservationEquipmentPairs");
                 });
 
             modelBuilder.Entity("EasyRehearsalManager.Model.User", b =>

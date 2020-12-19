@@ -41,6 +41,9 @@ namespace EasyRehearsalManager.Model
 
             if (!_context.UserImages.Any())
                 SeedUserImages(imageDirectory);
+
+            if (!_context.ReservationEquipmentPairs.Any())
+                SeedReservationEquipmentPairs();
         }
 
         private static void SeedEquipments()
@@ -253,7 +256,7 @@ namespace EasyRehearsalManager.Model
                 {
                     images.Add(new UserImage
                     {
-                        UserId = _context.Users.FirstOrDefault(l => l.UserName == "durerszervezo").Id,
+                        UserId = 3,
                         ImageLarge = File.ReadAllBytes(largePath),
                         ImageSmall = File.ReadAllBytes(smallPath)
                     });
@@ -266,6 +269,19 @@ namespace EasyRehearsalManager.Model
 
                 _context.SaveChanges();
             }
+        }
+
+        private static void SeedReservationEquipmentPairs()
+        {
+            IList<ReservationEquipmentPair> defaultReservations = new List<ReservationEquipmentPair>();
+
+            defaultReservations.Add(new ReservationEquipmentPair
+            {
+                StudioId = 1,
+                ReservationId = 1,
+                EquipmentId = 2,
+                EquipmentName = "crash"
+            });
         }
     }
 }

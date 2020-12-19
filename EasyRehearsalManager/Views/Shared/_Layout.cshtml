@@ -44,7 +44,7 @@
         <nav class="navbar navbar-light bg-light">
             <div class="navbar-brand"> Üdvözöljük, <strong>@ViewBag.CurrentUserName</strong>! </div>
             <a asp-controller="Home" asp-action="Index" class="navbar-brand">Főoldal</a>
-            <img src="@Url.Action("GetUserImage", new { userId = ViewBag.CurrentUserId })" class="img-thumbnail navbar-brand" height="30" width="30" alt="Profilkép" />
+            <img src="@Url.Action("GetUserImage", "Home", new { userId = ViewBag.CurrentUserId })" class="img-thumbnail navbar-brand" height="30" width="30" alt="Profilkép" />
             <a class="navbar-brand" asp-controller="Account" asp-action="GetProfileDetails">Profilom</a>
         </nav>
         <nav class="navbar navbar-light bg-light">

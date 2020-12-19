@@ -34,16 +34,16 @@
     <tr>
         <th>Bérelt eszközök:</th>
         @{ 
-            if (!Model.Equipments.Any())
+            if (ViewBag.Equipments == null)
             {
                 <td>Ön nem bérelt semmit a foglaláshoz.</td>
             }
             else
             {
                 <td>
-                @foreach(var e in Model.Equipments)
+                @foreach(var e in ViewBag.Equipments)
                 {
-                    <div>@e.Name</div>
+                    <div>@e</div>
                 }
                 </td>
             }

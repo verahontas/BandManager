@@ -17,6 +17,8 @@ namespace EasyRehearsalManager.Web.Models
 
         IEnumerable<Equipment> Equipments { get; }
 
+        IEnumerable<ReservationEquipmentPair> ReservationEquipmentPairs { get; }
+
         RehearsalStudio GetStudio(int? studioId);
 
         RehearsalStudio GetStudioByRoomId(int? roomId);
@@ -26,6 +28,8 @@ namespace EasyRehearsalManager.Web.Models
         Reservation GetReservation(int? reservationId);
 
         Equipment GetEquipment(int? equipmentId);
+
+        ReservationEquipmentPair GetReservationEquipmentPair(int? pairId);
 
         IEnumerable<Equipment> GetEquipmentsForStudio(int? studioId);
 
@@ -53,6 +57,8 @@ namespace EasyRehearsalManager.Web.Models
 
         bool UpdateEquipment(Equipment equipment);
 
+        bool UpdateReservationEquipmentTable(int reservationId, int studioId, Dictionary<string, bool> equipments);
+
         IEnumerable<RehearsalStudio> GetStudiosByOwner(int? ownerId);
 
         IEnumerable<RehearsalRoom> GetRoomsByOwnerId(int? ownerId);
@@ -60,6 +66,12 @@ namespace EasyRehearsalManager.Web.Models
         IEnumerable<Reservation> GetReservations(int userId, string role);
 
         IEnumerable<Reservation> GetReservationsByStudioId(int? studioId);
+
+        IEnumerable<ReservationEquipmentPair> GetReservationEquipmentPairsForStudio(int? studioId);
+
+        IEnumerable<ReservationEquipmentPair> GetReservationEquipmentPairsByEquipment(string equipmentName);
+
+        IEnumerable<ReservationEquipmentPair> GetReservationEquipmentPairsForReservarion(int? reservationId);
 
         int? GetStudioIdByEquipment(int? equipmentId);
 
@@ -71,9 +83,11 @@ namespace EasyRehearsalManager.Web.Models
 
         Task<bool> SaveReservationAsync(int? roomId, string userName, ReservationViewModel reservation);
 
-        ReservationDateError ValidateReservation(DateTime start, DateTime end, string action, int reservationId, int? roomId);
+        ReservationDateError ValidateReservation(DateTime start, DateTime end, string action, int reservationId, Dictionary<string, bool> equipments, int roomId);
 
         IEnumerable<DateTime> GetReservationDates(int roomId, int year, int month);
+
+        List<string> GetEquipmentNamesForReservation(int? reservationId);
 
         Byte[] GetUserImage(int? userId);
 
