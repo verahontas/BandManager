@@ -88,6 +88,7 @@ namespace EasyRehearsalManager.Web.Controllers
             _userManager = userManager;
         }
 
+        [AllowAnonymous]
         // GET: RehearsalStudios
         public IActionResult Index(string currentFilter, string searchString, int pageNumber = 1, string sortOrder = "")
         {
@@ -141,6 +142,7 @@ namespace EasyRehearsalManager.Web.Controllers
              */
         }
 
+        [AllowAnonymous]
         // GET: RehearsalStudios/Details/5
         public IActionResult Details(int? studioId, int? index)
         {
@@ -170,10 +172,14 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(rehearsalStudio);
         }
 
-        [Authorize(Roles = "administrator")]
+        [Authorize(Roles = "administrator, owner")]
         // GET: RehearsalStudios/Create
         public IActionResult Create()
         {
+            if (User.IsInRole("musician") || User.IsInRole("owner"))
+            {
+                return View("Index", "Home");
+            }
             return View();
         }
 
@@ -194,6 +200,7 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(rehearsalStudio);
         }
 
+        [Authorize(Roles = "owner, administrator")]
         // GET: RehearsalStudios/Edit/5
         public IActionResult Edit(int? studioId)
         {
@@ -244,6 +251,7 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(rehearsalStudio);
         }
 
+        [Authorize(Roles = "owner, administrator")]
         // GET: RehearsalStudios/Delete/5
         public IActionResult Delete(int? studioId)
         {
@@ -284,6 +292,7 @@ namespace EasyRehearsalManager.Web.Controllers
             return _reservationService.RehearsalStudioExist(studioId);
         }
 
+        [Authorize(Roles = "administrator")]
         //Generating a random studio.
         public IActionResult AddStudio()
         {

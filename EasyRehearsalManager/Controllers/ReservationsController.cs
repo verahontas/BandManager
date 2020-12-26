@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EasyRehearsalManager.Web.Controllers
 {
@@ -25,6 +26,7 @@ namespace EasyRehearsalManager.Web.Controllers
             _userManager = userManager;
         }
 
+        [AllowAnonymous]
         // GET: Reservations
         public async Task<IActionResult> Index()
         {
@@ -45,6 +47,7 @@ namespace EasyRehearsalManager.Web.Controllers
                 return View(_reservationService.GetReservations(Int32.Parse(userId), "musician"));
         }
 
+        [AllowAnonymous]
         // GET: Reservations/Details/5
         public async Task<IActionResult> Details(int? reservationId)
         {
@@ -71,8 +74,10 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(reservation);
         }
 
+        [Authorize]
+        //a dayIndex és a hour a táblázatból történő foglaláshoz kell
         // GET: Reservations/Create
-        public async Task<IActionResult> Create(int? roomId) //kéne még egy paraméter a foglalás napjának is
+        public async Task<IActionResult> Create(int? roomId, int? dayIndex, int? hour) //kéne még egy paraméter a foglalás napjának is
         {
             if (!User.Identity.IsAuthenticated)
             {
@@ -244,6 +249,9 @@ namespace EasyRehearsalManager.Web.Controllers
             return View("Result", reservation);
         }
 
+
+        //itt jó lenne ha megnyílna előbb egy felület ahol megadhatom a bérlendő eszközöket és foglalhatnék egyszerre két órát is
+        /*
         [HttpGet]
         public async Task<IActionResult> CreateFromTable(int dayIndex, int? roomId, int? hour)
         {
@@ -289,7 +297,20 @@ namespace EasyRehearsalManager.Web.Controllers
                 return RedirectToAction("Details", "RehearsalRooms", roomId);
             }
         }
-        
+        */
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult CreateFromTable(int dayIndex, int? roomId, int? hour)
+        {
+            if (roomId == null || hour == null)
+                return NotFound();
+
+            return RedirectToAction("Create", new { roomId = roomId, dayIndex = dayIndex, hour = hour });
+            //ez ugye a create get methodra irányít át?
+        }
+
+        [Authorize]
         // GET: Reservations/Edit/5
         public async Task<IActionResult> Edit(int? reservationId)
         {
@@ -470,6 +491,7 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(reservationViewModel);
         }
 
+        [Authorize]
         // GET: Reservations/Delete/5
         public async Task<IActionResult> Delete(int? reservationId)
         {

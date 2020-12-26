@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EasyRehearsalManager.Model;
 using EasyRehearsalManager.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -110,6 +111,7 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(rehearsalRoom);
         }
 
+        [Authorize(Roles = "owner, administrator")]
         // GET: RehearsalRooms/Create
         public async Task<IActionResult> Create()
         {
@@ -170,6 +172,8 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(rehearsalRoom);
         }
 
+        [Authorize(Roles = "owner, administrator")]
+        [HttpGet]
         // GET: RehearsalRooms/Edit/5
         public IActionResult Edit(int? id)
         {
@@ -222,6 +226,7 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(rehearsalRoom);
         }
 
+        [Authorize(Roles = "owner, administrator")]
         // GET: RehearsalRooms/Delete/5
         public IActionResult Delete(int? id)
         {

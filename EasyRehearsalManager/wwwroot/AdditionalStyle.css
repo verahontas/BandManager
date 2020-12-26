@@ -7,18 +7,15 @@
     background: #0070ad;
     margin: 0.3em;
 }
-
+/*
 .background-image {
-    /*background-image: url(images/background2-low-brightness.png);
-    background-position: center;
-    background-repeat: repeat;*/
     background-color: #004469;
 }
-
+*/
 .navbar {
     opacity: 0.8;
 }
-
+/*
 .container {
     background-color: white;
     border-radius: 8px;
@@ -26,7 +23,7 @@
     padding: 1em 1em 1em 1em;
     margin-bottom: 2em;
 }
-
+*/
 form {
     padding: 1em;
 }
@@ -42,14 +39,14 @@ input[type="checkbox"] {
 .btn-primary {
     margin-top: 15px;
 }
-
+/*
 footer {
     position: relative;
     bottom: 0;
     margin-bottom: 1em;
     width: 100%;
 }
-
+*/
 .search-box {
     width: 20%;
 }
@@ -66,7 +63,7 @@ footer {
 
 .form-control {
     width: 30%;
-    min-width: 200px;
+    /*min-width: 200px;*/
 }
 
 .form-control-wider {

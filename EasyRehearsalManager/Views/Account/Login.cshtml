@@ -1,66 +1,7 @@
 ﻿@model LoginViewModel
 
-<!--
-<div class="custom-form">
-    <form asp-controller="Account" asp-action="Login">
-        <div class="form-group">
-            <table>
-                <tr>
-                    <td>
-                        <div class="failureNotification">@ViewBag.Information</div>
-                        <div asp-validation-summary="ModelOnly" class="failureNotification"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="contentHead">
-                            <strong>BEJELENTKEZÉSI ADATOK</strong>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Felhasználónév:
-                    </td>
-                    <td class="failureNotification">
-                        <div class="form-group">
-                            <input class="form-control" asp-for="UserName" />
-                            <span asp-validation-for="UserName"></span>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Jelszó:
-                    </td>
-                    <td class="failureNotification">
-                        <div class="form-group">
-                            <input class="form-control" asp-for="UserPassword" />
-                            <span asp-validation-for="UserPassword"></span>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="rememberLogin" asp-for="RememberLogin" />
-                            <label class="form-check-label" for="rememberLogin">Bejelentkezés megjegyzése</label>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" height="50">
-                        <input type="submit" value="Bejelentkezés" class="btn btn-primary" />
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </form>
-</div>
--->
 
-    <form asp-controller="Account" asp-action="Login">
+    <form asp-controller="Account" asp-action="Login" asp-route-returnUrl=@Context.>
         <div class="form-group">
             <div class="failureNotification">@ViewBag.Information</div>
             <div asp-validation-summary="ModelOnly" class="failureNotification"></div>
@@ -88,6 +29,9 @@
             <input type="submit" value="Bejelentkezés" class="btn btn-primary" />
         </div>
     </form>
+
+
+
 
 
 @section Scripts

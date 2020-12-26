@@ -24,12 +24,14 @@ namespace EasyRehearsalManager.Web.Controllers
             _signInManager = signInManager;
         }
 
+        [Authorize(Roles = "administrator")]
         public IActionResult Index()
         {
             var users = _userManager.Users.AsEnumerable<User>();
             return View(users);
         }
 
+        [Authorize(Roles = "administrator")]
         [HttpGet]
         public async Task<IActionResult> Delete(int? userId)
         {

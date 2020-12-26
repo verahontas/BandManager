@@ -112,7 +112,7 @@ namespace EasyRehearsalManager
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=RehearsalRooms}/{action=Index}/{id?}");
             });
 
             DbInitializer.Initialize(serviceProvider, Configuration.GetValue<string>("ImageStore"));

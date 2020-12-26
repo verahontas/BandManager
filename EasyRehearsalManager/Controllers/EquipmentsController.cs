@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EasyRehearsalManager.Model;
 using EasyRehearsalManager.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
@@ -34,6 +35,7 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(equipments.ToList());
         }
 
+        [Authorize(Roles="owner, administrator")]
         [HttpGet]
         public IActionResult Create(int? studioId)
         {
@@ -66,12 +68,13 @@ namespace EasyRehearsalManager.Web.Controllers
             return RedirectToAction("Details", "RehearsalStudios", new { studioId = equipment.StudioId });
         }
 
+        [Authorize(Roles = "owner, administrator")]
         [HttpGet]
         public IActionResult Edit(int? equipmentId)
         {
             if (equipmentId == null)
             {
-                TempData["DangerAlert"] = "Létrehozás sikertelen, próbálja újra!";
+                TempData["DangerAlert"] = "Eszköz módosítása sikertelen, próbálja újra!";
                 return RedirectToAction("Index", "Home");
             }
 
@@ -89,6 +92,7 @@ namespace EasyRehearsalManager.Web.Controllers
             return RedirectToAction("Edit", equipment.StudioId);
         }
 
+        [Authorize(Roles = "owner, administrator")]
         public IActionResult Delete(int? equipmentId)
         {
             if (equipmentId == null)
