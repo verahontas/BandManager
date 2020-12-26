@@ -11,7 +11,7 @@ namespace EasyRehearsalManager.Model
     {
         public Reservation()
         {
-            Equipments = new List<Equipment>();
+            //Equipments = new List<Equipment>();
         }
 
         public int Id { get; set; }
@@ -35,7 +35,7 @@ namespace EasyRehearsalManager.Model
         public RehearsalRoom RehearsalRoom { get; set; }
 
         //bookable equipments which are not in the room by default
-        public List<Equipment> Equipments { get; set; }
+        //public List<Equipment> Equipments { get; set; } //ezt majd kitörölni
 
         public bool IsConflicting(DateTime start, DateTime end)
         {

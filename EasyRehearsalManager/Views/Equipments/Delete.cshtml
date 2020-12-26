@@ -1,0 +1,20 @@
+﻿@model EasyRehearsalManager.Model.Equipment
+
+<h3>Biztos benne, hogy törli az eszközt?</h3>
+
+<table class="table table-striped">
+    <tr>
+        <th>Eszköz megnevezése</th>
+        <td>@Model.Name</td>
+    </tr>
+    <tr>
+        <th>Darabszám</th>
+        <td>@Model.QuantityAvailable</td>
+    </tr>
+</table>
+
+<form asp-action="Delete" asp-route-equipmentId="@Model.Id">
+    <input type="hidden" asp-for="Id" />
+    <input type="submit" value="Törlés" class="btn btn-danger" /> |
+    <a asp-action="Index" asp-route-studioId="@Model.StudioId">Mégse</a>
+</form>

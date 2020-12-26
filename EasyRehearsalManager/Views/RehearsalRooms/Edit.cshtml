@@ -1,57 +1,66 @@
-﻿@model EasyRehearsalManager.Model.RehearsalRoom
+﻿@model RehearsalRoom
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Szerkesztés";
 }
 
-<h1>Edit</h1>
+<div class="display-4">Szerkesztés</div>
 
-<h4>RehearsalRoom</h4>
+<h2><strong>Stúdió neve: </strong>@Model.Studio.Name</h2>
+<h3><strong>Terem száma: </strong>@Model.Number</h3>
 <hr />
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="Number" class="control-label"></label>
+                <label asp-for="Number" class="control-label">Terem száma</label>
                 <input asp-for="Number" class="form-control" />
                 <span asp-validation-for="Number" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
+                <label asp-for="Description" class="control-label">Leírás</label>
                 <textarea asp-for="Description" class="form-control"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
+                <label asp-for="Price" class="control-label">Ár (Ft/óra)</label>
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Size" class="control-label"></label>
+                <label asp-for="Size" class="control-label">Méret (m<sup>2</sup>)</label>
                 <input asp-for="Size" class="form-control" />
                 <span asp-validation-for="Size" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Available" /> @Html.DisplayNameFor(model => model.Available)
+                    <input class="form-check-input" asp-for="Available" /> Jelenleg elérhető
+                    <small class="form-text text-muted">Adja meg, hogy jelenleg bérelhető-e a terem.</small>
                 </label>
             </div>
             <div class="form-group">
-                <label asp-for="StudioId" class="control-label"></label>
+                <label asp-for="StudioId" class="control-label">Próbahely neve</label>
                 <select asp-for="StudioId" class="form-control" asp-items="ViewBag.StudioId"></select>
                 <span asp-validation-for="StudioId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <label for="equipments" class="control-label">Felszereltség leírása</label>
+                <textarea asp-for="Equipments" class="form-control form-control-wider" id="equipments"></textarea>
+                <small class="form-text text-muted">Adja meg, milyen felszerelések állnak rendelkezésre ebben a teremben.</small>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Változatások mentése" class="btn btn-primary" />
+                <a asp-action="Details" asp-route-roomId="@Model.Id" class="btn btn-danger">Mégse</a>
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Vissza a ter</a>
 </div>
 
 @section Scripts {

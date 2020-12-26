@@ -25,8 +25,9 @@ namespace EasyRehearsalManager.Web.Controllers
                 return File("~/images/noprofilepicture.jpg", "image/jpeg");
 
             Byte[] imageContent = _reservationService.GetUserImage(userId);
+
             if (imageContent == null)
-                return File("~/images/noprofilepicture.png", "image/jpeg");
+                return File("~/images/noprofilepicture.jpg", "image/jpeg");
 
             return File(imageContent, "image/jpeg");
         }

@@ -3,8 +3,8 @@
 }
 
 <div class="text-center">
-    <p><a asp-controller="RehearsalRooms" asp-action="Index" class="btn btn-primary" role="button">Ugrás a próbatermek listájára</a></p>
-
-    <p><a asp-controller="RehearsalStudios" asp-action="Index" class="btn btn-primary" role="button">Ugrás a próbahelyek listájára</a></p>
-
+    <div class="row no-gutters">
+        <div class="col-sm"><a asp-controller="RehearsalRooms" asp-action="Index" class="btn btn-light btn-home" role="button">PRÓBATERMEK</a></div>
+        <div class="col-sm"><a asp-controller="RehearsalStudios" asp-action="Index" class="btn btn-light btn-home" role="button">PRÓBAHELYEK</a></div>
+    </div>
 </div>

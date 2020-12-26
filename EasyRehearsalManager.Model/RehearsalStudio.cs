@@ -47,9 +47,6 @@ namespace EasyRehearsalManager.Model
         [Url]
         public string Web { get; set; }
 
-        //necessary?
-        public int NumberOfRooms { get; set; }
-
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
 
@@ -102,5 +99,79 @@ namespace EasyRehearsalManager.Model
 
         [Range(0, 24)]
         public int ClosingHourSunday { get; set; }
+
+        public int EarliestOpeningHour()
+        {
+            int min = 24;
+            if (OpeningHourMonday <= min) min = OpeningHourMonday;
+            if (OpeningHourTuesday <= min) min = OpeningHourTuesday;
+            if (OpeningHourWednesday <= min) min = OpeningHourWednesday;
+            if (OpeningHourThursday <= min) min = OpeningHourThursday;
+            if (OpeningHourFriday <= min) min = OpeningHourFriday;
+            if (OpeningHourSaturday <= min) min = OpeningHourSaturday;
+            if (OpeningHourSunday <= min) min = OpeningHourSunday;
+
+            return min;
+        }
+
+        public int LatestClosingHour()
+        {
+            int max = 0;
+            if (ClosingHourMonday >= max) max = ClosingHourMonday;
+            if (ClosingHourTuesday >= max) max = ClosingHourTuesday;
+            if (ClosingHourWednesday >= max) max = ClosingHourWednesday;
+            if (ClosingHourThursday >= max) max = ClosingHourThursday;
+            if (ClosingHourFriday >= max) max = ClosingHourFriday;
+            if (ClosingHourSaturday >= max) max = ClosingHourSaturday;
+            if (ClosingHourSunday >= max) max = ClosingHourSunday;
+
+            return max;
+        }
+
+        public int GetOpeningHour(DateTime date)
+        {
+            switch (date.DayOfWeek)
+            {
+                case DayOfWeek.Sunday:
+                    return OpeningHourSunday;
+                case DayOfWeek.Monday:
+                    return OpeningHourMonday;
+                case DayOfWeek.Tuesday:
+                    return OpeningHourTuesday;
+                case DayOfWeek.Wednesday:
+                    return OpeningHourWednesday;
+                case DayOfWeek.Thursday:
+                    return OpeningHourThursday;
+                case DayOfWeek.Friday:
+                    return OpeningHourFriday;
+                case DayOfWeek.Saturday:
+                    return OpeningHourSaturday;
+                default:
+                    return 0;
+            }
+        }
+
+        public int GetClosingHour(DateTime date)
+        {
+            switch (date.DayOfWeek)
+            {
+                case DayOfWeek.Sunday:
+                    return ClosingHourSunday;
+                case DayOfWeek.Monday:
+                    return ClosingHourMonday;
+                case DayOfWeek.Tuesday:
+                    return ClosingHourTuesday;
+                case DayOfWeek.Wednesday:
+                    return ClosingHourWednesday;
+                case DayOfWeek.Thursday:
+                    return ClosingHourThursday;
+                case DayOfWeek.Friday:
+                    return ClosingHourFriday;
+                case DayOfWeek.Saturday:
+                    return ClosingHourSaturday;
+                default:
+                    return 0;
+            }
+        }
     }
 }

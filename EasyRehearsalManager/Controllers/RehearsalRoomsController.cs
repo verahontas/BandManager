@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EasyRehearsalManager.Model;
 using EasyRehearsalManager.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -27,13 +28,38 @@ namespace EasyRehearsalManager.Web.Controllers
         //currentFilter for search
         //note: could be sortable by properties
         // GET: RehearsalRooms
-        public IActionResult Index(string currentFilter, string sortOrder = "")
+        public IActionResult Index(DateTime date, int startTime, int endTime, string sortOrder = "")
         {
+            var rooms = _reservationService.Rooms.Where(l => l.Available);
+
+            DateTime init = new DateTime();
+
+            if (date != init && startTime != 0 && endTime != 0) //ha dátumra és időpontra keresnek
+            {
+                DateTime dateSearchStart = new DateTime(date.Year, date.Month, date.Day, startTime, 0, 0);
+                DateTime dateSearchEnd = new DateTime(date.Year, date.Month, date.Day, endTime, 0, 0);
+                rooms = rooms.Where(l => l.GetReservationForDate(dateSearchStart, dateSearchEnd) == "Foglalás");
+            }
+            else if (date != init && startTime == 0 && endTime  == 0) //ha dátumra keresnek, de időpontot nem adnak meg, akkor az egész napot nézzük
+            {
+                DateTime dateSearchStart = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0);
+                DateTime dateSearchEnd = new DateTime(date.Year, date.Month, date.Day, 23, 59, 59);
+                rooms = rooms.Where(l => l.GetReservationForDate(dateSearchStart, dateSearchEnd) == "Foglalás");
+            }
+
             if (User.Identity.IsAuthenticated && User.IsInRole("owner"))
             {
                 int ownerId = Int32.Parse(_userManager.GetUserId(User));
                 return View(_reservationService.GetRoomsByOwnerId(ownerId));
             }
+
+            List<int> hours = new List<int>();
+            for (int i = 0; i < 24; ++i)
+            {
+                hours.Add(i);
+            }
+
+            ViewData["Hours"] = new SelectList(hours);
 
             ViewData["CurrentSort"] = sortOrder;
             ViewData["NumberSortParam"] = sortOrder == "number_asc" ? "number_desc" : "number_asc";
@@ -42,7 +68,7 @@ namespace EasyRehearsalManager.Web.Controllers
             ViewData["StudioNameSortParam"] = sortOrder == "studioName_asc" ? "studioName_desc" : "studioName_asc";
             //ViewData["CurrentFilter"] = searchString;
 
-            var rooms = _reservationService.Rooms.Where(l => l.Available);
+            
 
             switch (sortOrder)
             {
@@ -85,6 +111,7 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(rehearsalRoom);
         }
 
+        [Authorize(Roles = "owner, administrator")]
         // GET: RehearsalRooms/Create
         public async Task<IActionResult> Create()
         {
@@ -145,6 +172,8 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(rehearsalRoom);
         }
 
+        [Authorize(Roles = "owner, administrator")]
+        [HttpGet]
         // GET: RehearsalRooms/Edit/5
         public IActionResult Edit(int? id)
         {
@@ -197,6 +226,7 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(rehearsalRoom);
         }
 
+        [Authorize(Roles = "owner, administrator")]
         // GET: RehearsalRooms/Delete/5
         public IActionResult Delete(int? id)
         {

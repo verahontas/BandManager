@@ -33,12 +33,6 @@ namespace EasyRehearsalManager.Web.Migrations
                     b.Property<int>("QuantityAvailable")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RehearsalRoomId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("RehearsalStudioId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ReservationId")
                         .HasColumnType("int");
 
@@ -47,11 +41,9 @@ namespace EasyRehearsalManager.Web.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RehearsalRoomId");
-
-                    b.HasIndex("RehearsalStudioId");
-
                     b.HasIndex("ReservationId");
+
+                    b.HasIndex("StudioId");
 
                     b.ToTable("Equipments");
                 });
@@ -67,6 +59,9 @@ namespace EasyRehearsalManager.Web.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Equipments")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Number")
@@ -140,9 +135,6 @@ namespace EasyRehearsalManager.Web.Migrations
                         .HasColumnType("nvarchar(80)")
                         .HasMaxLength(80);
 
-                    b.Property<int>("NumberOfRooms")
-                        .HasColumnType("int");
-
                     b.Property<int>("OpeningHourFriday")
                         .HasColumnType("int");
 
@@ -209,6 +201,30 @@ namespace EasyRehearsalManager.Web.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Reservations");
+                });
+
+            modelBuilder.Entity("EasyRehearsalManager.Model.ReservationEquipmentPairs", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("EquipmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EquipmentName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReservationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ReservationEquipmentPairs");
                 });
 
             modelBuilder.Entity("EasyRehearsalManager.Model.User", b =>
@@ -439,17 +455,15 @@ namespace EasyRehearsalManager.Web.Migrations
 
             modelBuilder.Entity("EasyRehearsalManager.Model.Equipment", b =>
                 {
-                    b.HasOne("EasyRehearsalManager.Model.RehearsalRoom", null)
-                        .WithMany("Equipments")
-                        .HasForeignKey("RehearsalRoomId");
-
-                    b.HasOne("EasyRehearsalManager.Model.RehearsalStudio", null)
-                        .WithMany("Equipments")
-                        .HasForeignKey("RehearsalStudioId");
-
                     b.HasOne("EasyRehearsalManager.Model.Reservation", null)
                         .WithMany("Equipments")
                         .HasForeignKey("ReservationId");
+
+                    b.HasOne("EasyRehearsalManager.Model.RehearsalStudio", "Studio")
+                        .WithMany("Equipments")
+                        .HasForeignKey("StudioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("EasyRehearsalManager.Model.RehearsalRoom", b =>

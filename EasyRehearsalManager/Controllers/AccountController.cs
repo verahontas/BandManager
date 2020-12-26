@@ -9,6 +9,7 @@ using EasyRehearsalManager.Model;
 using EasyRehearsalManager.Web.Models;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
@@ -31,11 +32,13 @@ namespace EasyRehearsalManager.Web.Controllers
             _signInManager = signInManager;
         }
 
+        [Authorize]
         public IActionResult Index(MusicianRegistrationViewModel model)
         {
             return View(model);
         }
 
+        [Authorize]
         public async Task<IActionResult> GetProfileDetails()
         {
             User user = await _userManager.FindByNameAsync(User.Identity.Name);
@@ -55,6 +58,7 @@ namespace EasyRehearsalManager.Web.Controllers
             return RedirectToAction("Index", model);
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> UpdateProfile()
         {
@@ -78,6 +82,7 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(model);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> UpdateProfile(MusicianRegistrationViewModel model)
         {
@@ -100,15 +105,16 @@ namespace EasyRehearsalManager.Web.Controllers
             return RedirectToAction("Index", model);
         }
 
+        [AllowAnonymous]
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl)
         {
             return View("Login");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel user)
+        public async Task<IActionResult> Login(LoginViewModel user, string returnUrl)
         {
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
@@ -130,9 +136,11 @@ namespace EasyRehearsalManager.Web.Controllers
 
             //ViewBag.SuccessAlert = "Sikeres bejelentkezés!";
 
-
             
-            return RedirectToAction("LoginSuccessful");
+            //return RedirectToAction("LoginSuccessful");
+            return RedirectToLocal(returnUrl);
+
+
             //return RedirectToAction("Index", "RehearsalRooms");
             //viewbag becomes empty when calling 'RedirectToAction'
             //return View("~/Views/Home/Index.cshtml");
@@ -143,13 +151,25 @@ namespace EasyRehearsalManager.Web.Controllers
             //i can put information into the viewbag without getting empty
         }
 
-        
+        private ActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            else
+            {
+                return RedirectToAction("Index", "RehearsalRooms");
+            }
+        }
+
+
         public IActionResult LoginSuccessful()
         {
             TempData["SuccessAlert"] = "Sikeres bejelentkezés!";
 
             
-            if (User.IsInRole("musician"))
+            if (User.IsInRole("musician")) //ez kell ide? a basecontrollerben is bele van téve
             {
                 TempData["CurrentUserRole"] = "musician";
                 return RedirectToAction("Index", "RehearsalRooms");
@@ -167,6 +187,7 @@ namespace EasyRehearsalManager.Web.Controllers
             
         }
         
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult RegisterAsMusician()
         {
@@ -208,6 +229,7 @@ namespace EasyRehearsalManager.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult RegisterAsOwner()
         {

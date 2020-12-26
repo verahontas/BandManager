@@ -8,19 +8,18 @@ using Microsoft.EntityFrameworkCore;
 using EasyRehearsalManager.Model;
 using EasyRehearsalManager.Web.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EasyRehearsalManager.Web.Controllers
 {
     public class RehearsalStudiosController : BaseController
     {
-        public int[] OpeningHours = new int[7];
-        public int[] ClosingHours = new int[7];
-
-        public int DayIndex;
+        private int[] OpeningHours = new int[7];
+        private int[] ClosingHours = new int[7];
 
         private UserManager<User> _userManager;
 
-        public int GetOpeningHour(RehearsalStudio studio, int index)
+        private int GetOpeningHour(RehearsalStudio studio, int index)
         {
             OpeningHours[0] = studio.OpeningHourMonday;
             OpeningHours[1] = studio.OpeningHourTuesday;
@@ -33,25 +32,25 @@ namespace EasyRehearsalManager.Web.Controllers
             switch (DateTime.Today.DayOfWeek)
             {
                 case DayOfWeek.Monday:
-                    return OpeningHours[index + 0];
+                    return OpeningHours[(index + 0) % 7];
                 case DayOfWeek.Tuesday:
-                    return OpeningHours[index + 1];
+                    return OpeningHours[(index + 1) % 7];
                 case DayOfWeek.Wednesday:
-                    return OpeningHours[index + 2];
+                    return OpeningHours[(index + 2) % 7];
                 case DayOfWeek.Thursday:
-                    return OpeningHours[index + 3];
+                    return OpeningHours[(index + 3) % 7];
                 case DayOfWeek.Friday:
-                    return OpeningHours[index + 4];
+                    return OpeningHours[(index + 4) % 7];
                 case DayOfWeek.Saturday:
-                    return OpeningHours[index + 5];
+                    return OpeningHours[(index + 5) % 7];
                 case DayOfWeek.Sunday:
-                    return OpeningHours[index + 6];
+                    return OpeningHours[(index + 6) % 7];
                 default:
                     return -1;
             }
         }
 
-        public int GetClosingHour(RehearsalStudio studio, int index)
+        private int GetClosingHour(RehearsalStudio studio, int index)
         {
             ClosingHours[0] = studio.ClosingHourMonday;
             ClosingHours[1] = studio.ClosingHourTuesday;
@@ -64,19 +63,19 @@ namespace EasyRehearsalManager.Web.Controllers
             switch (DateTime.Today.DayOfWeek)
             {
                 case DayOfWeek.Monday:
-                    return ClosingHours[index + 0];
+                    return ClosingHours[(index + 0) % 7];
                 case DayOfWeek.Tuesday:
-                    return ClosingHours[index + 1];
+                    return ClosingHours[(index + 1) % 7];
                 case DayOfWeek.Wednesday:
-                    return ClosingHours[index + 2];
+                    return ClosingHours[(index + 2) % 7];
                 case DayOfWeek.Thursday:
-                    return ClosingHours[index + 3];
+                    return ClosingHours[(index + 3) % 7];
                 case DayOfWeek.Friday:
-                    return ClosingHours[index + 4];
+                    return ClosingHours[(index + 4) % 7];
                 case DayOfWeek.Saturday:
-                    return ClosingHours[index + 5];
+                    return ClosingHours[(index + 5) % 7];
                 case DayOfWeek.Sunday:
-                    return ClosingHours[index + 6];
+                    return ClosingHours[(index + 6) % 7];
                 default:
                     return -1;
             }
@@ -86,10 +85,10 @@ namespace EasyRehearsalManager.Web.Controllers
             UserManager<User> userManager)
             : base(reservationService, applicationState)
         {
-            DayIndex = 0;
             _userManager = userManager;
         }
 
+        [AllowAnonymous]
         // GET: RehearsalStudios
         public IActionResult Index(string currentFilter, string searchString, int pageNumber = 1, string sortOrder = "")
         {
@@ -143,8 +142,9 @@ namespace EasyRehearsalManager.Web.Controllers
              */
         }
 
+        [AllowAnonymous]
         // GET: RehearsalStudios/Details/5
-        public IActionResult Details(int? studioId, int index = 0)
+        public IActionResult Details(int? studioId, int? index)
         {
             if (studioId == null)
             {
@@ -172,33 +172,14 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(rehearsalStudio);
         }
 
-        public ActionResult ReservationsTable(int studioId, bool isNext)
-        {
-            if (DayIndex < 0)
-                return NotFound();
-
-            DayIndex = isNext ? DayIndex + 1 : DayIndex - 1;
-
-            ReservationTableViewModel viewModel = new ReservationTableViewModel();
-
-            RehearsalStudio studio = _reservationService.GetStudio(studioId);
-
-            viewModel.Studio = studio;
-            viewModel.NumberOfAvailableRooms = studio.Rooms.Count;
-            viewModel.Index = DayIndex;
-            viewModel.OpeningHour = GetOpeningHour(studio, DayIndex);
-            viewModel.ClosingHour = GetClosingHour(studio, DayIndex);
-
-            viewModel.Reservations = _reservationService.GetReservationsByStudioId(studioId).ToList();
-            viewModel.Rooms = _reservationService.Rooms.Where(l => l.StudioId == studioId).ToList();
-
-
-            return PartialView("ReservationsTable", viewModel);
-        }
-
+        [Authorize(Roles = "administrator, owner")]
         // GET: RehearsalStudios/Create
         public IActionResult Create()
         {
+            if (User.IsInRole("musician") || User.IsInRole("owner"))
+            {
+                return View("Index", "Home");
+            }
             return View();
         }
 
@@ -207,7 +188,7 @@ namespace EasyRehearsalManager.Web.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,Name,Address,LocationX,LocationY,District,Phone,Email,Web,NumberOfRooms,Description,OpeningHourMonday,ClosingHourMonday,OpeningHourTuesday,ClosingHourTuesday,OpeningHourWednesday,ClosingHourWednesday,OpeningHourThursday,ClosingHourThursday,OpeningHourFriday,ClosingHourFriday,OpeningHourSaturday,ClosingHourSaturday,OpeningHourSunday,ClosingHourSunday")] RehearsalStudio rehearsalStudio)
+        public IActionResult Create([Bind("Id,Name,Address,LocationX,LocationY,District,Phone,Email,Web,Description,OpeningHourMonday,ClosingHourMonday,OpeningHourTuesday,ClosingHourTuesday,OpeningHourWednesday,ClosingHourWednesday,OpeningHourThursday,ClosingHourThursday,OpeningHourFriday,ClosingHourFriday,OpeningHourSaturday,ClosingHourSaturday,OpeningHourSunday,ClosingHourSunday")] RehearsalStudio rehearsalStudio)
         {
             if (ModelState.IsValid)
             {
@@ -219,6 +200,7 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(rehearsalStudio);
         }
 
+        [Authorize(Roles = "owner, administrator")]
         // GET: RehearsalStudios/Edit/5
         public IActionResult Edit(int? studioId)
         {
@@ -269,6 +251,7 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(rehearsalStudio);
         }
 
+        [Authorize(Roles = "owner, administrator")]
         // GET: RehearsalStudios/Delete/5
         public IActionResult Delete(int? studioId)
         {
@@ -292,8 +275,16 @@ namespace EasyRehearsalManager.Web.Controllers
         public IActionResult DeleteConfirmed(int studioId)
         {
             var rehearsalStudio = _reservationService.GetStudio(studioId);
-            _reservationService.RemoveStudio(studioId);
-            return RedirectToAction(nameof(Index));
+            if (_reservationService.RemoveStudio(studioId))
+            {
+                TempData["SuccessAlert"] = "Próbahely törlése sikeresen megtörtént! A hozzá tartozó termek, és a termek foglalásai is törlődtek.";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["DangerAlert"] = "Próbahely törlése sikertelen!";
+                return RedirectToAction("Details", studioId);
+            }
         }
 
         private bool RehearsalStudioExists(int studioId)
@@ -301,7 +292,9 @@ namespace EasyRehearsalManager.Web.Controllers
             return _reservationService.RehearsalStudioExist(studioId);
         }
 
-        public void AddStudio()
+        [Authorize(Roles = "administrator")]
+        //Generating a random studio.
+        public IActionResult AddStudio()
         {
             string userId = _userManager.GetUserId(User);
             int count = _reservationService.Studios.Count();
@@ -331,11 +324,52 @@ namespace EasyRehearsalManager.Web.Controllers
                 ClosingHourSaturday = 22,
                 OpeningHourSunday = 10,
                 ClosingHourSunday = 22,
-                Description = "No description",
-                NumberOfRooms = 1
+                Description = "No description"
             };
 
             _reservationService.AddStudio(rehearsalStudio);
+
+            return RedirectToAction("Index");
+        }
+
+        public PartialViewResult GetTableOfReservations(int studioId, int dayIndex)
+        {
+            if (studioId == 0)
+                return null;
+
+            if (dayIndex < 0)
+                dayIndex = 0;
+
+            if (dayIndex > 9)
+                dayIndex = 9;
+
+            RehearsalStudio studio = _reservationService.Studios.FirstOrDefault(l => l.Id == studioId);
+
+            if (studio == null)
+                return null;
+
+            DateTime currentStartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0);
+            currentStartDate = currentStartDate.AddDays(dayIndex);
+
+            DateTime currentEndDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
+            currentEndDate = currentEndDate.AddDays(dayIndex);
+
+
+            List<Reservation> reservations = _reservationService.Reservations
+                                                .Where(l => l.RehearsalRoom.StudioId == studioId && 
+                                                       l.IsConflicting(currentStartDate, currentEndDate))
+                                                .ToList();
+
+            ReservationTableViewModel reservationTableViewModel = new ReservationTableViewModel {
+                OpeningHour = GetOpeningHour(studio, dayIndex),
+                ClosingHour = GetClosingHour(studio, dayIndex),
+                NumberOfAvailableRooms = studio.Rooms.Where(l => l.Available).Count(),
+                Rooms = studio.Rooms.ToList(),
+                Reservations = reservations,
+                Studio = studio,
+                Index = dayIndex
+            };
+            return PartialView("_ReservationsTable", reservationTableViewModel);
         }
     }
 }
