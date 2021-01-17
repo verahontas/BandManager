@@ -1,0 +1,10 @@
+﻿@model ProfilePictureViewModel
+
+<form asp-controller="Account" asp-action="ChangeProfilePicture">
+    <input type="hidden" asp-for="UserId" />
+    <div class="form-group">
+        <label for="upload">Fájl feltöltése</label>
+        <input type="file" asp-for="ProfilePicture" class="form-control-file" id="upload" />
+    </div>
+    <button type="submit" class="btn btn-outline-primary">Profilkép módosítása</button>
+</form>

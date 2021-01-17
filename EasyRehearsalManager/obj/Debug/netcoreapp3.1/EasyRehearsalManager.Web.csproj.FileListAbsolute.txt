@@ -1202,3 +1202,6 @@ D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManag
 D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Web.dll
 D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Web.pdb
 D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Web.genruntimeconfig.cache
+D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager\obj\Debug\netcoreapp3.1\Razor\Views\Users\Delete.cshtml.g.cs
+D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_LoginMenu.cshtml.g.cs
+D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_ChangeProfilePicturePartial.cshtml.g.cs

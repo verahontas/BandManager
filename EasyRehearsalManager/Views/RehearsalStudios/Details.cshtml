@@ -66,87 +66,103 @@
     });
 </script>
 
-<h1>@Model.Name</h1>
+<h1 class="display-4">@Model.Name</h1>
 
 <h2>Elérhetőségek</h2>
-<table class="table table-striped">
-    <tr>
-        <th>Cím:</th>
-        <td>@Model.Address</td>
-    </tr>
-    <tr>
-        <th>Kerület:</th>
-        <td>@Model.District</td>
-    </tr>
-    <tr>
-        <th>Telefon:</th>
-        <td>@Model.Phone</td>
-    </tr>
-    <tr>
-        <th>Email cím:</th>
-        <td>@Model.Email</td>
-    </tr>
-    <tr>
-        <th>Weboldal:</th>
-        <td><a href="@Model.Web">@Model.Web</a></td>
-    </tr>
-    <tr>
-        <th>X koordináta:</th>
-        <td>@Model.LocationX</td>
-    </tr>
-    <tr>
-        <th>Y koordináta:</th>
-        <td>@Model.LocationY</td>
-    </tr>
-</table>
+<div class="table-responsive">
+    <table class="table table-striped w-auto table-bordered">
+        <tr>
+            <th>Cím:</th>
+            <td>@Model.Address</td>
+        </tr>
+        <tr>
+            <th>Kerület:</th>
+            <td>@Model.District. kerület</td>
+        </tr>
+        <tr>
+            <th>Telefon:</th>
+            <td>@Model.Phone</td>
+        </tr>
+        <tr>
+            <th>Email cím:</th>
+            <td>@Model.Email</td>
+        </tr>
+        <tr>
+            <th>Weboldal:</th>
+            <td><a href="@Model.Web">@Model.Web</a></td>
+        </tr>
+        <tr>
+            <th>X koordináta:</th>
+            <td>@Model.LocationX</td>
+        </tr>
+        <tr>
+            <th>Y koordináta:</th>
+            <td>@Model.LocationY</td>
+        </tr>
+    </table>
+</div>
 
 <h2>Adatok:</h2>
-<table class="table table-striped">
-    <tr>
-        <th>Termek száma:</th>
-        <td>@Model.Rooms.Count</td>
-    </tr>
-    <tr>
-        <th colspan="2">Nyitvatartás:</th>
-    </tr>
-    <tr>
-        <th>Hétfő</th>
-        <td>@Model.OpeningHourMonday - @Model.ClosingHourMonday</td>
-    </tr>
-    <tr>
-        <th>Kedd</th>
-        <td>@Model.OpeningHourTuesday - @Model.ClosingHourTuesday</td>
-    </tr>
-    <tr>
-        <th>Szerda</th>
-        <td>@Model.OpeningHourWednesday - @Model.ClosingHourWednesday</td>
-    </tr>
-    <tr>
-        <th>Csütörtök</th>
-        <td>@Model.OpeningHourThursday - @Model.ClosingHourThursday</td>
-    </tr>
-    <tr>
-        <th>Péntek</th>
-        <td>@Model.OpeningHourSaturday - @Model.ClosingHourSaturday</td>
-    </tr>
-    <tr>
-        <th>Szombat</th>
-        <td>@Model.OpeningHourMonday - @Model.ClosingHourMonday</td>
-    </tr>
-    <tr>
-        <th>Vasárnap</th>
-        <td>@Model.OpeningHourSunday - @Model.ClosingHourSunday</td>
-    </tr>
-</table>
+<div class="table-responsive">
+    <table class="table table-striped w-auto table-bordered">
+            <tr>
+                <th>Termek száma:</th>
+                <td>@Model.Rooms.Count</td>
+            </tr>
+            <tr>
+                <th colspan="2">Nyitvatartás:</th>
+            </tr>
+            <tr>
+                <th>Hétfő</th>
+                <td>@Model.OpeningHourMonday - @Model.ClosingHourMonday</td>
+            </tr>
+            <tr>
+                <th>Kedd</th>
+                <td>@Model.OpeningHourTuesday - @Model.ClosingHourTuesday</td>
+            </tr>
+            <tr>
+                <th>Szerda</th>
+                <td>@Model.OpeningHourWednesday - @Model.ClosingHourWednesday</td>
+            </tr>
+            <tr>
+                <th>Csütörtök</th>
+                <td>@Model.OpeningHourThursday - @Model.ClosingHourThursday</td>
+            </tr>
+            <tr>
+                <th>Péntek</th>
+                <td>@Model.OpeningHourSaturday - @Model.ClosingHourSaturday</td>
+            </tr>
+            <tr>
+                <th>Szombat</th>
+                <td>@Model.OpeningHourMonday - @Model.ClosingHourMonday</td>
+            </tr>
+            <tr>
+                <th>Vasárnap</th>
+                <td>@Model.OpeningHourSunday - @Model.ClosingHourSunday</td>
+            </tr>
+    </table>
+</div>
 
-@if (ViewBag.CurrentUserRole == "owner" || ViewBag.CurrentUserRole == "admin")
+@if (ViewBag.CurrentUserRole == "owner" || ViewBag.CurrentUserRole == "administrator")
 {
     <div>
-        <a asp-action="Edit" asp-route-studioId="@Model.Id" class="btn btn-primary">Szerkesztés</a> |
-        <a asp-action="Delete" asp-route-studioId="@Model.Id" class="btn btn-danger">Törlés</a> |
+        <a asp-action="Edit" asp-route-studioId="@Model.Id" class="btn btn-primary align-baseline">
+            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+            </svg>
+        Szerkesztés
+        </a>
+        <a asp-action="Delete" asp-route-studioId="@Model.Id" class="btn btn-danger align-baseline">
+            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+            </svg>
+        Törlés
+        </a>
     </div>
 }
-<a asp-action="Index" class="btn btn-secondary">Vissza a próbahelyek listájához</a>
+
 
 <div class="display-4 text-center">Elérhető termek listája:</div>
 
@@ -202,17 +218,17 @@
 
 <h4 class="display-4 text-center">Bérelhető eszközök:</h4>
 
-@if (ViewBag.CurrentUserRole == "owner" || ViewBag.CurrentUserRole == "admin")
+@if (ViewBag.CurrentUserRole == "owner" || ViewBag.CurrentUserRole == "administrator")
 {
-    <a asp-controller="Equipments" asp-action="Create" asp-route-studioId="@Model.Id" class="btn btn-outline-primary">Új bérelhető eszköz hozzáadása</a>
+    <a asp-controller="Equipments" asp-action="Create" asp-route-studioId="@Model.Id" class="btn btn-outline-primary mb-4">Új bérelhető eszköz hozzáadása</a>
     if (Model.Equipments.Any())
     {
-        <a asp-controller="Equipments" asp-action="Index" asp-route-studioId="@Model.Id" class="btn btn-outline-primary">Módosítás</a>
+        <a asp-controller="Equipments" asp-action="Index" asp-route-studioId="@Model.Id" class="btn btn-outline-primary mb-4">Módosítás</a>
     }
 }
 
 
-<ul class="list-group">
+<ul class="list-group w-50">
     @foreach (Equipment eq in @Model.Equipments)
     {
         <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -225,7 +241,8 @@
 <div class="display-4 text-center">Foglalások</div>
 
 <button class="btn btn-outline-dark" id="previousDayButton">Előző nap</button>
-<button class="btn btn-outline-dark" id="nextDayButton">Következő nap</button>
+<button class="btn btn-outline-dark float-right mb-4" id="nextDayButton">Következő nap</button>
 
 <div id="ReservationsTableContent"></div>
 
+<a asp-action="Index" class="btn btn-secondary mb-4">Vissza a próbahelyek listájához</a>

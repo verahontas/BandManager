@@ -1,167 +1,64 @@
 ﻿@model ReservationViewModel
 
-@{
-    ViewData["Title"] = "Create";
-}
+<h1 class="display-4">Foglalás rögzítése</h1>
 
-<h1>Foglalás rögzítése</h1>
+<table class="table table-borderless w-auto">
+    <tbody>
+        <tr>
+            <th scope="row">Próbahely neve:</th>
+            <td>@Model.Room.Studio.Name</td>
+        </tr>
+        <tr>
+            <th scope="row">Terem száma:</th>
+            <td>@Model.Room.Number</td>
+        </tr>
+    </tbody>
+</table>
 
-<hr />
-<!--
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Start" class="control-label"></label>
-                <input asp-for="Start" class="form-control" />
-                <span asp-validation-for="Start" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="End" class="control-label"></label>
-                <input asp-for="End" class="form-control" />
-                <span asp-validation-for="End" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="RehearsalRoomId" class="control-label"></label>
-                <select asp-for="RehearsalRoomId" class ="form-control" asp-items="ViewBag.RehearsalRoomId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-controller="Reservations" asp-action="Create" asp-route-roomId="@Model.Room.Id" class="w-auto">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group failureNotification">
+        <label for="name">Név</label>
+        <input class="form-control" asp-for="UserOwnName" id="name" style="max-width: 300px;" />
+        <span asp-validation-for="UserOwnName"></span>
     </div>
-</div>
--->
-
-<div class="row">
-    <div class="col-md-4">
-        <table>
-            <tr>
-                <td>
-                    <strong>Próbahely neve:</strong> @Model.Room.Studio.Name
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <strong>Terem száma:</strong> @Model.Room.Number
-                </td>
-            </tr>
-        </table>
-
-        <form asp-controller="Reservations" asp-action="Create" asp-route-roomId="@Model.Room.Id">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <table>
-                <tr>
-                    <td width="120">
-                        Név:
-                    </td>
-                    <td class="failureNotification">
-                        <input asp-for="UserOwnName" size="40" />
-                        <span asp-validation-for="UserOwnName"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Zenekar neve:
-                    </td>
-                    <td class="failureNotification">
-                        <input asp-for="BandName" size="40" />
-                        <span asp-validation-for="BandName"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Telefonszám:
-                    </td>
-                    <td class="failureNotification">
-                        <input asp-for="UserPhoneNumber" size="40" />
-                        <span asp-validation-for="UserPhoneNumber"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Email cím:
-                    </td>
-                    <td class="failureNotification">
-                        <input asp-for="UserEmail" size="40" />
-                        <span asp-validation-for="UserEmail"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Foglalás napja:
-                    </td>
-                    <td class="failureNotification">
-                        <input asp-for="Day" asp-format="{0:yyyy-MM-dd}" type="date" />
-                        <span asp-validation-for="Day"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="failureNotification">
-                        <div class="form-group">
-                            <label asp-for="StartHour" class="control-label">Foglalás kezdete</label>
-                            <select asp-for="StartHour" class="form-control" asp-items="ViewBag.Hours"></select>
-                            <span asp-validation-for="StartHour" class="text-danger"></span>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="failureNotification">
-                        <div class="form-group">
-                            <label asp-for="EndHour" class="control-label">Foglalás vége</label>
-                            <select asp-for="EndHour" class="form-control" asp-items="ViewBag.Hours"></select>
-                            <span asp-validation-for="EndHour" class="text-danger"></span>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="failureNotification">
-                        <div class="form-group">
-                            @foreach(var key in Model.Equipments.Keys)
-                            {
-                            <input asp-for="@Model.Equipments[key]" />
-                            <p>@key</p>
-                            }
-                        </div>
-                    </td>
-                </tr>
-                <!--<tr>
-                    <td>
-                        <input type="hidden" asp-for="Equipments" />
-                    </td>
-                </tr>-->
-                <tr>
-                    <td colspan="2" align="right">
-                        <input type="submit" value="Foglalás" class="btn btn-primary" />
-                        <a class="btn btn-outline-danger" asp-controller="RehearsalRooms" asp-action="Index">Mégsem</a>
-                    </td>
-                </tr>
-            </table>
-        </form>
+    <div class="form-group failureNotification">
+        <label for="band">Zenekar neve</label>
+        <input class="form-control" asp-for="BandName" id="band" style="max-width: 300px;" />
+        <span asp-validation-for="BandName"></span>
     </div>
-</div>
-
-<script type="text/javascript">
-    $(function () {
-        $('#datetimepicker1').datetimepicker();
-    });
-</script>
-
-<style type="text/css" class="cssStyles">
-
-    .control {
-        width: 70px;
-        height: 10px;
-        font-weight: bold;
-        padding: 10px;
-    }
-
-    .inner-display {
-        display: inline-block;
-    }
-</style>
+    <div class="form-group failureNotification">
+        <label for="phone">Telefonszám</label>
+        <input class="form-control" asp-for="UserPhoneNumber" id="phone" style="max-width: 300px;" />
+        <span asp-validation-for="UserPhoneNumber"></span>
+    </div>
+    <div class="form-group failureNotification">
+        <label for="email">Email-cím</label>
+        <input class="form-control" asp-for="UserEmail" id="email" style="max-width: 300px;" />
+        <span asp-validation-for="UserEmail"></span>
+    </div>
+    <div class="form-group failureNotification">
+        <label for="date">Dátum</label>
+        <input asp-for="Day" type="date" asp-format="{0:yyyy-MM-dd}" id="date" style="max-width: 300px;" class="form-control" />
+        <span asp-validation-for="Day"></span>
+    </div>
+    <div class="form-group failureNotification">
+        <label for="start">Foglalás kezdete (óra)</label>
+        <select asp-for="StartHour" id="start" class="form-control" asp-items="ViewBag.Hours" style="max-width: 70px;"></select>
+        <span asp-validation-for="StartHour" class="text-danger"></span>
+    </div>
+    <div class="form-group failureNotification">
+        <label for="end">Foglalás vége (óra)</label>
+        <select asp-for="EndHour" class="form-control" id="end" asp-items="ViewBag.Hours" style="max-width: 70px;"></select>
+        <span asp-validation-for="EndHour" class="text-danger"></span>
+    </div>
+    <div class="form-inline failureNotification">
+        @foreach (var key in Model.Equipments.Keys)
+        {
+            <input asp-for="@Model.Equipments[key]" />
+            <div class="mx-2">@key</div>
+        }
+    </div>
+    <input type="submit" value="Foglalás" class="btn btn-primary align-baseline" />
+    <a class="btn btn-outline-danger align-baseline" asp-controller="RehearsalRooms" asp-action="Index">Mégsem</a>      
+</form>

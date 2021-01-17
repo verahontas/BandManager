@@ -1,0 +1,18 @@
+﻿@model LoginViewModel
+
+<form class="form-inline my-2 my-lg-0" asp-controller="Account" asp-action="Login">
+
+    <input class="form-control mr-sm-2 mb-2 mb-sm-0" placeholder="Felhasználónév" id="userName" asp-for="UserName" />
+    <span asp-validation-for="UserName"></span>
+
+    <input type="password" class="form-control mr-sm-2" id="pwd" asp-for="UserPassword" />
+    <span asp-validation-for="UserPassword"></span>
+
+    <input type="submit" value="Bejelentkezés" class="btn btn-primary my-md-0 my-2 mr-md-2" />
+
+    <a asp-controller="Account" asp-action="RegisterAsMusician" class="btn btn-outline-light mx-md-0 my-2" style="margin-left: 10px;">Regisztráció</a>
+
+    <div asp-validation-summary="ModelOnly" class="failureNotification"></div>
+    <div class="failureNotification">@ViewBag.Information</div>
+
+</form>

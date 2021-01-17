@@ -1,5 +1,5 @@
 ﻿//using AspNetCore;
-using EasyRehearsalManager.Model;
+/*using EasyRehearsalManager.Model;
 using EasyRehearsalManager.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -108,3 +108,4 @@ namespace EasyRehearsalManager.Web.ViewComponents
         }
     }
 }
+*/

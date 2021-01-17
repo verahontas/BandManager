@@ -704,5 +704,45 @@ namespace EasyRehearsalManager.Web.Models
 
             return true;
         }
+
+        public bool UpdateProfilePicture(ProfilePictureViewModel viewModel)
+        {
+            UserImage userImage = _context.UserImages.FirstOrDefault(l => l.UserId == viewModel.UserId);
+            if (userImage == null) //ha még nincs benne a felhasználó id-ja a táblában
+            {
+                _context.UserImages.Add(new UserImage
+                {
+                    UserId = viewModel.UserId,
+                    User = _context.Users.FirstOrDefault(l => l.Id == viewModel.UserId),
+                    ImageSmall = viewModel.ProfilePicture
+                });
+
+                try
+                {
+                    _context.SaveChanges();
+                }
+                catch
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            else
+            {
+                _context.Update(userImage);
+
+                try
+                {
+                    _context.SaveChanges();
+                }
+                catch
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
     }
 }

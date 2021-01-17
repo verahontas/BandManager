@@ -1,5 +1,16 @@
 ﻿@model MusicianRegistrationViewModel
 
+<h1 class="display-4">Adataim</h1>
+
+<img src="@Url.Action("GetUserImage", "Home", new { userId = ViewBag.CurrentUserId })" class="img-thumbnail navbar-brand" height="70" width="70" alt="Profilkép" />
+
+
+@{
+    ProfilePictureViewModel viewModel = new ProfilePictureViewModel();
+    viewModel.UserId = Model.UserId;
+}
+@await Html.PartialAsync("_ChangeProfilePicturePartial", viewModel)
+
 <div class="table-responsive">
     <table class="table table-striped w-auto table-bordered">
         <tr>

@@ -86,10 +86,10 @@ namespace EasyRehearsalManager.Web.Controllers
         public IActionResult Edit(Equipment equipment)
         {
             if (_reservationService.UpdateEquipment(equipment))
-                return RedirectToAction("Index", equipment.StudioId);
+                return RedirectToAction("Index", new { studioId = equipment.StudioId });
 
             TempData["DangerAlert"] = "Módosítás sikertelen!";
-            return RedirectToAction("Edit", equipment.StudioId);
+            return RedirectToAction("Edit", new { equipmentId = equipment.StudioId });
         }
 
         [Authorize(Roles = "owner, administrator")]

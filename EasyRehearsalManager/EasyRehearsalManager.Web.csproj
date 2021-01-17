@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20210114212450_AddProfilePicture.cs" />
+    <Compile Remove="Migrations\20210114212450_AddProfilePicture.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BeginCollectionItemCore" Version="1.0.8" />
     <PackageReference Include="bootstrap" Version="4.5.0" />
     <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />

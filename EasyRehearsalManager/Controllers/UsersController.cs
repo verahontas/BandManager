@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EasyRehearsalManager.Web.Controllers
 {
+    [Authorize(Roles = "administrator")]
     public class UsersController : BaseController
     {
         private readonly UserManager<User> _userManager;
@@ -24,14 +25,70 @@ namespace EasyRehearsalManager.Web.Controllers
             _signInManager = signInManager;
         }
 
-        [Authorize(Roles = "administrator")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var users = _userManager.Users.AsEnumerable<User>();
-            return View(users);
+            List<UserListItemViewModel> usersWithRoles = new List<UserListItemViewModel>();
+
+            foreach (var user in users)
+            {
+                UserListItemViewModel viewModel = new UserListItemViewModel();
+
+                if (await _userManager.IsInRoleAsync(user, "musician"))
+                {
+                    viewModel.Role = "zenész";
+                }
+                else if (await _userManager.IsInRoleAsync(user, "owner"))
+                {
+                    viewModel.Role = "tulajdonos";
+                }
+                else
+                {
+                    viewModel.Role = "adminisztrátor";
+                }
+
+                viewModel.UserOwnName = user.UserOwnName;
+                viewModel.UserEmail = user.Email;
+                viewModel.UserPhoneNumber = user.PhoneNumber;
+                viewModel.UserName = user.UserName;
+                viewModel.BandName = user.DefaultBandName;
+                viewModel.Id = user.Id;
+
+                usersWithRoles.Add(viewModel);
+            }
+
+            return View(usersWithRoles);
         }
 
+        /* I dont need this... really unnecessarry function...
         [Authorize(Roles = "administrator")]
+        public async Task<IActionResult> Details(int? userId)
+        {
+            User user = await _userManager.FindByIdAsync(userId.ToString());
+
+            UserListItemViewModel viewModel = new UserListItemViewModel();
+
+            viewModel.UserOwnName = user.UserOwnName;
+            viewModel.UserName = user.UserName;
+            viewModel.UserEmail = user.Email;
+            viewModel.UserPhoneNumber = user.PhoneNumber;
+            viewModel.BandName = user.DefaultBandName;
+        }
+        */
+
+        [HttpGet]
+        public IActionResult Create(string role)
+        {
+            if (role == "musician")
+            {
+                return RedirectToAction("RegisterAsMusician", "Account");
+            }
+            else
+            {
+                return RedirectToAction("RegisterAsOwner", "Account");
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> Delete(int? userId)
         {
@@ -62,7 +119,7 @@ namespace EasyRehearsalManager.Web.Controllers
             }
             
             TempData["SuccessAlert"] = "Felhasználó törlése sikeres!";
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Users");
         }
     }
 }

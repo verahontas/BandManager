@@ -22,5 +22,8 @@ namespace EasyRehearsalManager.Web.Models
         [Compare(nameof(UserPassword), ErrorMessage = "A két jelszó nem egyezik.")]
         [DataType(DataType.Password)]
         public String UserConfirmPassword { get; set; }
+
+        //erre csak azért van szükség, hogy az admin is tudja módosítani a profil adatait
+        public int UserId { get; set; }
     }
 }

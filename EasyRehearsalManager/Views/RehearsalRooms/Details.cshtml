@@ -28,7 +28,7 @@
     </table>
 </div>
 
-@if (ViewBag.CurrentUserRole == "owner" || ViewBag.CurrentUserRole == "adminstrator")
+@if (ViewBag.CurrentUserRole == "owner" || ViewBag.CurrentUserRole == "administrator")
 {
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-lg">
         <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -43,15 +43,30 @@
 <div style="border: 2px solid black; padding: 1em; width: 40vw; min-width: 40px">@Model.Description</div>
 
 <h1>Felszereltség</h1>
-<p>@Model.Equipments</p>
+<small class="text-muted">A teremben található eszközök leírása.</small>
+@if (Model.Equipments == null)
+{
+    <p>Nincsenek eszközök ehhez a teremhez regisztrálva.</p>
+}
+else
+{
+    <p>@Model.Equipments</p>
+}
 
 <h1>Bérelhető eszközök</h1>
-<div style="margin-left: 3em">
-    @foreach (var equipment in Model.Studio.Equipments)
-    {
-        <p>- @equipment.Name</p>
-    }
-</div>
+@if (Model.Studio.Equipments == null || !Model.Studio.Equipments.Any())
+{
+    <p>Nincsenek bérelhető eszközök ehhez a teremhez regisztrálva.</p>
+}
+else
+{
+    <div style="margin-left: 3em">
+        @foreach (var equipment in Model.Studio.Equipments)
+        {
+            <p>- @equipment.Name</p>
+        }
+    </div>
+}
 
 <h1>Foglalások</h1>
 <p>- a következő 10 napban</p>

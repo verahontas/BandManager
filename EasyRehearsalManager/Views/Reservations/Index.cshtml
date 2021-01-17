@@ -1,16 +1,12 @@
 ﻿@model IEnumerable<Reservation>
 
-@{
-    ViewData["Title"] = "Foglalások";
-}
-
 @if (ViewBag.CurrentUserRole == "administrator")
 {
     <h1>A felhasználók foglalásai</h1>
 }
 else
 {
-    <h1>Aktuális foglalások</h1>
+    <h1 class="display-4">Aktuális foglalások</h1>
 }
 
 <table class="table table-striped">
@@ -47,7 +43,7 @@ else
                 @Html.DisplayFor(modelItem => item.BandName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.RehearsalRoom.Id)
+                @Html.DisplayFor(modelItem => item.RehearsalRoom.Number)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.RehearsalRoom.Studio.Name)
@@ -75,7 +71,7 @@ else
     </tbody>
 </table>
 
-<h1 class="display-4">Lejárt foglalások</h1>
+<h1>Lejárt foglalások</h1>
 
 <table class="table table-striped">
     <thead>
@@ -112,7 +108,7 @@ else
                     @Html.DisplayFor(modelItem => item.BandName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.RehearsalRoom.Id)
+                    @Html.DisplayFor(modelItem => item.RehearsalRoom.Number)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.RehearsalRoom.Studio.Name)

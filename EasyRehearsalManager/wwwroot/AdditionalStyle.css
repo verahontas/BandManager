@@ -11,7 +11,7 @@
 .background-image {
     background-color: #004469;
 }
-*/
+
 .navbar {
     opacity: 0.8;
 }
@@ -23,11 +23,12 @@
     padding: 1em 1em 1em 1em;
     margin-bottom: 2em;
 }
-*/
+
 form {
     padding: 1em;
 }
-
+*/
+/*
 input[type="checkbox"] {
     margin: 0px;
 }
@@ -35,15 +36,21 @@ input[type="checkbox"] {
 .form-check-input {
     position: unset;
 }
-
+*/
 .btn-primary {
     margin-top: 15px;
 }
+
+@media (max-width: 783px) {
+    .hide-icon {
+        display: none;
+    }
+}
+
 /*
 footer {
-    position: relative;
+    position: absolute;
     bottom: 0;
-    margin-bottom: 1em;
     width: 100%;
 }
 */
@@ -60,16 +67,18 @@ footer {
     padding: 1em;
     position: relative;
 }
-
+/*
 .form-control {
     width: 30%;
-    /*min-width: 200px;*/
+    /*min-width: 200px;
 }
-
-.form-control-wider {
-    width: 50%;
-}
+*/
 
 .description {
     border: 2px solid #004469;
+}
+
+.alert {
+    width: 50%;
+    padding: 2em;
 }

@@ -96,5 +96,7 @@ namespace EasyRehearsalManager.Web.Models
         /// </summary>
         /// <param name="roomId"></param>
         bool NewRoomAdded(int? studioId);
+
+        bool UpdateProfilePicture(ProfilePictureViewModel viewModel);
     }
 }

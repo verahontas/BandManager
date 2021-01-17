@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Security.Policy;
 using System.Threading;
@@ -60,8 +61,30 @@ namespace EasyRehearsalManager.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> UpdateProfile()
+        public async Task<IActionResult> UpdateProfile(int? userId)
         {
+            //if the admin wants to do some modification with that profile, then the given parameret is not null
+            if (User.IsInRole("administrator") && userId != null)
+            {
+                User userToModify = await _userManager.FindByIdAsync(userId.ToString());
+
+
+                MusicianRegistrationViewModel _model = new MusicianRegistrationViewModel
+                {
+                    UserOwnName = userToModify.UserOwnName,
+                    UserName = userToModify.UserName,
+                    UserPhoneNumber = userToModify.PhoneNumber,
+                    UserEmail = userToModify.Email,
+                    BandName = "",
+                    UserId = userToModify.Id
+                };
+
+                if (await _userManager.IsInRoleAsync(userToModify, "musician"))
+                    _model.BandName = userToModify.DefaultBandName;
+
+                return View(_model);
+            }
+
             User user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             if (user == null)
@@ -73,7 +96,8 @@ namespace EasyRehearsalManager.Web.Controllers
                 UserName = user.UserName,
                 UserPhoneNumber = user.PhoneNumber,
                 UserEmail = user.Email,
-                BandName = ""
+                BandName = "",
+                UserId = user.Id
             };
 
             if (await _userManager.IsInRoleAsync(user, "musician"))
@@ -86,6 +110,24 @@ namespace EasyRehearsalManager.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateProfile(MusicianRegistrationViewModel model)
         {
+            if (User.IsInRole("administrator"))
+            {
+                User _user = await _userManager.FindByIdAsync(model.UserId.ToString());
+
+                _user.UserOwnName = model.UserOwnName;
+                _user.UserName = model.UserName;
+                _user.PhoneNumber = model.UserPhoneNumber;
+                _user.Email = model.UserEmail;
+
+                if (await _userManager.IsInRoleAsync(_user, "musician"))
+                    _user.DefaultBandName = model.BandName;
+
+                await _userManager.UpdateAsync(_user);
+
+                TempData["SuccessAlert"] = "Adatok módosítása sikeres!";
+                return RedirectToAction("Index", "Users");
+            }
+
             User user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             if (user == null)
@@ -109,6 +151,7 @@ namespace EasyRehearsalManager.Web.Controllers
         [HttpGet]
         public IActionResult Login(string returnUrl)
         {
+            TempData["returnUrl"] = returnUrl;
             return View("Login");
         }
 
@@ -134,7 +177,7 @@ namespace EasyRehearsalManager.Web.Controllers
 
             _applicationState.UserCount++;
 
-            //ViewBag.SuccessAlert = "Sikeres bejelentkezés!";
+            TempData["SuccessAlert"] = "Sikeres bejelentkezés!";
 
             
             //return RedirectToAction("LoginSuccessful");
@@ -222,9 +265,16 @@ namespace EasyRehearsalManager.Web.Controllers
             }
             await _userManager.AddToRoleAsync(guest, "Musician");
 
+            //ha a zenész regisztrálását az adminisztrátor végzi, akkor nem kell a regisztráltat bejelentkeztetni
+            if (User.IsInRole("administrator"))
+            {
+                TempData["SuccessAlert"] = "Zenész regisztrálása sikeresen megtörtént!";
+                return RedirectToAction("Index", "Users");
+            }
+
             await _signInManager.SignInAsync(guest, false);
             _applicationState.UserCount++;
-            ViewBag.SuccessAlert = "Sikeresen bejelentkezve!";
+            TempData["SuccessAlert"] = "Sikeresen bejelentkezve!";
             //ViewBag.CurrentUserName = user.UserName;
             return RedirectToAction("Index", "Home");
         }
@@ -242,7 +292,7 @@ namespace EasyRehearsalManager.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.DangerAlert = "Sikertelen regisztráció";
+                TempData["DangerAlert"] = "Sikertelen regisztráció";
                 return View("Register", user);
             }
 
@@ -258,11 +308,18 @@ namespace EasyRehearsalManager.Web.Controllers
             {
                 foreach (var error in result.Errors)
                     ModelState.AddModelError("", error.Description);
-                ViewBag.DangerAlert = "Sikertelen regisztráció";
+                TempData["DangerAlert"] = "Sikertelen regisztráció";
                 return View("Register", user);
             }
 
             await _userManager.AddToRoleAsync(guest, "Owner");
+
+            //ha a tulajdonos regisztrálását az adminisztrátor végzi, akkor nem kell a regisztráltat bejelentkeztetni
+            if (User.IsInRole("administrator"))
+            {
+                TempData["SuccessAlert"] = "Tulajdonos regisztrálása sikeresen megtörtént!";
+                return RedirectToAction("Index", "Users");
+            }
 
             await _signInManager.SignInAsync(guest, false);
             _applicationState.UserCount++;
@@ -276,7 +333,33 @@ namespace EasyRehearsalManager.Web.Controllers
 
             _applicationState.UserCount--;
             TempData["SuccessAlert"] = "Sikeres kijelentkezés!";
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "RehearsalRooms");
+        }
+
+        [HttpPost]
+        public IActionResult ChangeProfilePicture(FileUpload obj)
+        {
+            /*
+            if (viewModel.ProfilePicture != null)
+            {
+                if (_reservationService.UpdateProfilePicture(viewModel))
+                {
+                    TempData["SuccessAlert"] = "Profilkép megváltoztatása sikeres!";
+                    return RedirectToAction("Index", "Account");
+                }
+            }
+            else
+            {
+                TempData["DangerAlert"] = "Válasszon ki egy képet!";
+            }
+            */
+            /*
+            using (var binaryReader = new BinaryReader(Request.Files[0].InputStream))
+            {
+                obj.Photo = binaryReader.ReadBytes(Request.Files[0].ContentLength);
+            }
+            */
+            return RedirectToAction("GetProfileDetails");
         }
     }
 }

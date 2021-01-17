@@ -1,125 +1,142 @@
-﻿@model IEnumerable<EasyRehearsalManager.Model.User>
+﻿@model List<UserListItemViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Felhasználók listája";
 }
-
-<h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" asp-route-role="owner" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus-fill" viewBox="0 0 16 16">
+            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+            <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
+        </svg>
+        Tulajdonos hozzáadása
+    </a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UserOwnName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DefaultBandName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NormalizedUserName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NormalizedEmail)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EmailConfirmed)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PasswordHash)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SecurityStamp)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ConcurrencyStamp)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PhoneNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PhoneNumberConfirmed)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TwoFactorEnabled)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LockoutEnd)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LockoutEnabled)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AccessFailedCount)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserOwnName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DefaultBandName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NormalizedUserName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NormalizedEmail)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EmailConfirmed)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PasswordHash)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SecurityStamp)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ConcurrencyStamp)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNumberConfirmed)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TwoFactorEnabled)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LockoutEnd)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LockoutEnabled)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AccessFailedCount)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    Felhasználó neve
+                </th>
+                <th>
+                    Szerepkör
+                </th>
+                <th>
+                    Felhasználónév
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Telefonszám
+                </th>
+                <th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                if (item.Role == "tulajdonos")
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserOwnName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Role)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserEmail)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserPhoneNumber)
+                        </td>
+                        <td>
+                            <a asp-action="UpdateProfile" asp-controller="Account" asp-route-userId="@item.Id">Szerkesztés</a> |
+                            <a asp-action="Delete" asp-route-userId="@item.Id" class="btn btn-outline-danger">Törlés</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<p>
+    <a asp-action="Create" asp-route-role="musician" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus-fill" viewBox="0 0 16 16">
+            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+            <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
+        </svg>
+        Zenész hozzáadása
+    </a>
+</p>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    Felhasználó neve
+                </th>
+                <th>
+                    Szerepkör
+                </th>
+                <th>
+                    Alapértelmezett zenekarnév
+                </th>
+                <th>
+                    Felhasználónév
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Telefonszám
+                </th>
+                <th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                if (item.Role == "zenész")
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserOwnName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Role)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BandName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserEmail)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserPhoneNumber)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Szerkesztés</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Részletek</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Törlés</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

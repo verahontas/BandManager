@@ -48,12 +48,12 @@
             </div>
             <div class="form-group">
                 <label for="equipments" class="control-label">Felszereltség leírása</label>
-                <textarea asp-for="Equipments" class="form-control form-control-wider" id="equipments"></textarea>
+                <textarea asp-for="Equipments" class="form-control" id="equipments"></textarea>
                 <small class="form-text text-muted">Adja meg, milyen felszerelések állnak rendelkezésre ebben a teremben.</small>
             </div>
             <div class="form-group">
-                <input type="submit" value="Változatások mentése" class="btn btn-primary" />
-                <a asp-action="Details" asp-route-roomId="@Model.Id" class="btn btn-danger">Mégse</a>
+                <input type="submit" value="Változatások mentése" class="btn btn-primary align-baseline" />
+                <a asp-action="Details" asp-route-roomId="@Model.Id" class="btn btn-danger align-baseline mt-2">Mégse</a>
             </div>
         </form>
     </div>

@@ -77,7 +77,7 @@ namespace EasyRehearsalManager.Web.Controllers
         [Authorize]
         //a dayIndex és a hour a táblázatból történő foglaláshoz kell
         // GET: Reservations/Create
-        public async Task<IActionResult> Create(int? roomId, int? dayIndex, int? hour) //kéne még egy paraméter a foglalás napjának is
+        public async Task<IActionResult> Create(int? roomId, int? dayIndex, int? hour)
         {
             if (!User.Identity.IsAuthenticated)
             {
@@ -120,6 +120,14 @@ namespace EasyRehearsalManager.Web.Controllers
                 });*/
 
                 reservation.Equipments[equipment.Name] = false;
+            }
+
+            //this statement is true when the reservation was made from table
+            if (dayIndex != null && hour != null)
+            {
+               reservation.Day = DateTime.Now.AddDays((double)dayIndex);
+                reservation.StartHour = (int)hour;
+                reservation.EndHour = (int)(hour + 2);
             }
 
             List<int> hours = new List<int>();
@@ -187,13 +195,13 @@ namespace EasyRehearsalManager.Web.Controllers
                     ModelState.AddModelError("EndHour", "A megadott foglalási idő érvénytelen (a foglalás vége korábban van, mint a kezdete)!");
                     break;
                 case ReservationDateError.Conflicting:
-                    ModelState.AddModelError("Start", "A megadott időpontban a terembe már van foglalás!");
+                    ModelState.AddModelError("StartHour", "A megadott időpontban a terembe már van foglalás!");
                     break;
                 case ReservationDateError.LengthInvalid:
-                    ModelState.AddModelError("End", "Üres az időintervallum!");
+                    ModelState.AddModelError("EndHour", "Üres az időintervallum!");
                     break;
                 case ReservationDateError.EquipmentNotAvailable:
-                    ModelState.AddModelError("End", "A kiválasztott eszköz már foglalt ebben az időpontban!"); //itt nem tudom hogyan lehetne az equipments-hez hozzárendelni az üzenetet
+                    ModelState.AddModelError("EndHour", "A kiválasztott eszköz már foglalt ebben az időpontban!"); //itt nem tudom hogyan lehetne az equipments-hez hozzárendelni az üzenetet
                     break;
             }
 

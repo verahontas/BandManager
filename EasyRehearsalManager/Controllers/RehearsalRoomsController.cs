@@ -28,19 +28,19 @@ namespace EasyRehearsalManager.Web.Controllers
         //currentFilter for search
         //note: could be sortable by properties
         // GET: RehearsalRooms
-        public IActionResult Index(DateTime date, int startTime, int endTime, string sortOrder = "")
+        public IActionResult Index(DateTime date, DateTime startTime, DateTime endTime, string sortOrder = "")
         {
             var rooms = _reservationService.Rooms.Where(l => l.Available);
 
             DateTime init = new DateTime();
 
-            if (date != init && startTime != 0 && endTime != 0) //ha dátumra és időpontra keresnek
+            if (date != init && startTime != init && endTime != init) //ha dátumra és időpontra keresnek
             {
-                DateTime dateSearchStart = new DateTime(date.Year, date.Month, date.Day, startTime, 0, 0);
-                DateTime dateSearchEnd = new DateTime(date.Year, date.Month, date.Day, endTime, 0, 0);
+                DateTime dateSearchStart = new DateTime(date.Year, date.Month, date.Day, startTime.Hour, startTime.Minute, 0);
+                DateTime dateSearchEnd = new DateTime(date.Year, date.Month, date.Day, endTime.Hour, endTime.Minute, 0);
                 rooms = rooms.Where(l => l.GetReservationForDate(dateSearchStart, dateSearchEnd) == "Foglalás");
             }
-            else if (date != init && startTime == 0 && endTime  == 0) //ha dátumra keresnek, de időpontot nem adnak meg, akkor az egész napot nézzük
+            else if (date != init && startTime == init && endTime  == init) //ha dátumra keresnek, de időpontot nem adnak meg, akkor az egész napot nézzük
             {
                 DateTime dateSearchStart = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0);
                 DateTime dateSearchEnd = new DateTime(date.Year, date.Month, date.Day, 23, 59, 59);
@@ -58,8 +58,6 @@ namespace EasyRehearsalManager.Web.Controllers
             {
                 hours.Add(i);
             }
-
-            ViewData["Hours"] = new SelectList(hours);
 
             ViewData["CurrentSort"] = sortOrder;
             ViewData["NumberSortParam"] = sortOrder == "number_asc" ? "number_desc" : "number_asc";
@@ -196,7 +194,7 @@ namespace EasyRehearsalManager.Web.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Number,Description,Price,Size,Available,StudioId")] RehearsalRoom rehearsalRoom)
+        public IActionResult Edit(int id, [Bind("Id,Number,Description,Price,Size,Available,StudioId,Equipments")] RehearsalRoom rehearsalRoom)
         {
             if (id != rehearsalRoom.Id)
             {
@@ -220,8 +218,11 @@ namespace EasyRehearsalManager.Web.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                TempData["SuccessAlert"] = "A próbaterem módosítása sikeresen megtörtént!";
+                return RedirectToAction("Details", new { roomId = rehearsalRoom.Id });
             }
+
+            TempData["DangerAlert"] = "A próbaterem módosítása sikertelen!";
             ViewData["StudioId"] = new SelectList(_reservationService.Studios, "Id", "Address", rehearsalRoom.StudioId);
             return View(rehearsalRoom);
         }
