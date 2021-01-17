@@ -361,7 +361,7 @@ namespace EasyRehearsalManager.Web.Controllers
             */
             return RedirectToAction("GetProfileDetails");
         }
-
+        /*
         [HttpPost]
         public ActionResult Upload(System.Web.HttpPostedFileBase file)
         {
@@ -373,5 +373,6 @@ namespace EasyRehearsalManager.Web.Controllers
             }
             return RedirectToAction("Index");
         }
+        */
     }
 }
