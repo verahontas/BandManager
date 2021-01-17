@@ -4,12 +4,13 @@
 
 <img src="@Url.Action("GetUserImage", "Home", new { userId = ViewBag.CurrentUserId })" class="img-thumbnail navbar-brand" height="70" width="70" alt="Profilkép" />
 
-
-@{
-    ProfilePictureViewModel viewModel = new ProfilePictureViewModel();
-    viewModel.UserId = Model.UserId;
-}
-@await Html.PartialAsync("_ChangeProfilePicturePartial", viewModel)
+<form asp-controller="Account" asp-action="ChangeProfilePicture">
+    <div class="form-group">
+        <label for="upload">Fájl feltöltése</label>
+        <input type="file" class="form-control-file" id="upload" />
+    </div>
+    <button type="submit" class="btn btn-outline-primary">Profilkép módosítása</button>
+</form>
 
 <div class="table-responsive">
     <table class="table table-striped w-auto table-bordered">
