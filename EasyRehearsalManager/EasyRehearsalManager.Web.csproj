@@ -1,12 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
+    <DocumentationFile>EasyRehearsalManager.Web.xml</DocumentationFile>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Migrations\20210114212450_AddProfilePicture.cs" />
     <Compile Remove="Migrations\20210114212450_AddProfilePicture.Designer.cs" />
+    <Compile Remove="Migrations\20210209153828_UserIdNotNull.cs" />
+    <Compile Remove="Migrations\20210209153828_UserIdNotNull.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

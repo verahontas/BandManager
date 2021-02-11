@@ -1,0 +1,54 @@
+﻿@model UserViewModel
+
+@{
+    ViewData["Title"] = "Profil szerkesztése";
+}
+<div class="light-color-letters">
+    <h1 class="display-4">Adatok módosítása</h1>
+
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="UserId" />
+                <input type="hidden" asp-for="UserRole" />
+                <div class="form-group">
+                    <label asp-for="UserOwnName" class="control-label">Név</label>
+                    <input asp-for="UserOwnName" class="form-control" style="max-width: 300px;" />
+                    <span asp-validation-for="UserOwnName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="UserName" class="control-label">Felhasználónév</label>
+                    <input asp-for="UserName" class="form-control" style="max-width: 300px;" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="UserEmail" class="control-label">Email cím</label>
+                    <input asp-for="UserEmail" class="form-control" style="max-width: 300px;" />
+                    <span asp-validation-for="UserEmail" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="UserPhoneNumber" class="control-label">Telefonszám</label>
+                    <input asp-for="UserPhoneNumber" class="form-control" style="max-width: 300px;" />
+                    <span asp-validation-for="UserPhoneNumber" class="text-danger"></span>
+                </div>
+                @if (Model.UserRole == "musician")
+                {
+                    <div class="form-group">
+                        <label asp-for="BandName" class="control-label">Alapértelmezett zenekarnév</label>
+                        <input asp-for="BandName" class="form-control" style="max-width: 300px;" />
+                        <span asp-validation-for="BandName" class="text-danger"></span>
+                    </div>
+                }
+                <input type="submit" value="Mentés" class="btn btn-primary align-baseline mt-4" />
+                <a class="btn btn-outline-danger align-baseline mt-4" asp-controller="Account" asp-action="Details" asp-route-userId="@Model.UserId">Mégsem</a>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

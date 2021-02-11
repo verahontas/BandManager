@@ -1,15 +1,29 @@
-﻿@model EasyRehearsalManager.Model.RehearsalRoom
+﻿@model RehearsalRoom
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Terem létrehozása";
 }
 
-<h1>Terem létrehozása</h1>
+<div class="light-color-letters">
+
+<h1 class="display-4">Terem létrehozása</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (Model != null && Model.StudioId != 0)
+            {
+                <input type="hidden" asp-for="StudioId" />
+            }
+            else
+            {
+                <div class="form-group">
+                    <label asp-for="StudioId" class="control-label">Próbahely</label>
+                    <select asp-for="StudioId" class="form-control" asp-items="ViewBag.Studios"></select>
+                    <span asp-validation-for="StudioId" class="text-danger"></span>
+                </div>
+            }
             <div class="form-group">
                 <label asp-for="Number" class="control-label">Terem száma</label>
                 <input asp-for="Number" class="form-control" />
@@ -30,23 +44,26 @@
                 <input asp-for="Size" class="form-control" />
                 <span asp-validation-for="Size" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
+            <div class="form-group">
+                <label asp-for="Equipments" class="control-label">Eszközök</label>
+                <textarea asp-for="Equipments" class="form-control"></textarea>
+                <small class="form-text text-muted">Adja meg, milyen felszerelések állnak rendelkezésre ebben a teremben.</small>
+            </div>
+            <div class="form-group form-check mt-2">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Available" /> Elérhető
+                    <input class="form-check-input" asp-for="Available" /> Bérelhető
                 </label>
-                <p>Jelölje be, hogy a terem jelenleg bérelhető állapotban van-e.</p>
+                <br />
+                <small>Jelölje be, hogy a terem jelenleg bérelhető állapotban van-e.</small>
             </div>
             <div class="form-group">
-                <label asp-for="StudioId" class="control-label">Stúdió</label>
-                <select asp-for="StudioId" class ="form-control" asp-items="ViewBag.Studios"></select>
-                <span asp-validation-for="StudioId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Létrehozás" class="btn btn-primary" />
-                <a class="btn btn-outline-danger" asp-action="Index">Mégsem</a>
+                <input type="submit" value="Létrehozás" class="btn btn-primary align-baseline mt-2" />
+                <a class="btn btn-outline-danger align-baseline mt-2" asp-action="Index">Mégsem</a>
             </div>
         </form>
     </div>
+</div>
+
 </div>
 
 @section Scripts {

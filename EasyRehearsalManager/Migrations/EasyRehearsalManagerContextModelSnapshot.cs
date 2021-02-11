@@ -33,15 +33,10 @@ namespace EasyRehearsalManager.Web.Migrations
                     b.Property<int>("QuantityAvailable")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ReservationId")
-                        .HasColumnType("int");
-
                     b.Property<int>("StudioId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ReservationId");
 
                     b.HasIndex("StudioId");
 
@@ -130,6 +125,9 @@ namespace EasyRehearsalManager.Web.Migrations
                     b.Property<double>("LocationY")
                         .HasColumnType("float");
 
+                    b.Property<byte[]>("Logo")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(80)")
@@ -203,7 +201,7 @@ namespace EasyRehearsalManager.Web.Migrations
                     b.ToTable("Reservations");
                 });
 
-            modelBuilder.Entity("EasyRehearsalManager.Model.ReservationEquipmentPairs", b =>
+            modelBuilder.Entity("EasyRehearsalManager.Model.ReservationEquipmentPair", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -225,6 +223,42 @@ namespace EasyRehearsalManager.Web.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ReservationEquipmentPairs");
+                });
+
+            modelBuilder.Entity("EasyRehearsalManager.Model.RoomImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<byte[]>("Image")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RoomImages");
+                });
+
+            modelBuilder.Entity("EasyRehearsalManager.Model.StudioImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<byte[]>("Image")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int>("StudioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("StudioImages");
                 });
 
             modelBuilder.Entity("EasyRehearsalManager.Model.User", b =>
@@ -274,6 +308,9 @@ namespace EasyRehearsalManager.Web.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<byte[]>("ProfilePicture")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -298,29 +335,6 @@ namespace EasyRehearsalManager.Web.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("EasyRehearsalManager.Model.UserImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<byte[]>("ImageLarge")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<byte[]>("ImageSmall")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserImages");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -455,10 +469,6 @@ namespace EasyRehearsalManager.Web.Migrations
 
             modelBuilder.Entity("EasyRehearsalManager.Model.Equipment", b =>
                 {
-                    b.HasOne("EasyRehearsalManager.Model.Reservation", null)
-                        .WithMany("Equipments")
-                        .HasForeignKey("ReservationId");
-
                     b.HasOne("EasyRehearsalManager.Model.RehearsalStudio", "Studio")
                         .WithMany("Equipments")
                         .HasForeignKey("StudioId")
@@ -495,15 +505,6 @@ namespace EasyRehearsalManager.Web.Migrations
                     b.HasOne("EasyRehearsalManager.Model.User", "User")
                         .WithMany("Reservations")
                         .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("EasyRehearsalManager.Model.UserImage", b =>
-                {
-                    b.HasOne("EasyRehearsalManager.Model.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

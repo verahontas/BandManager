@@ -10,6 +10,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EasyRehearsalManager.Web.Controllers
 {
+    /*
+    /// <summary>
+    /// All functions in this controller are only for the administrator to do operations with users.
+    /// </summary>
     [Authorize(Roles = "administrator")]
     public class UsersController : BaseController
     {
@@ -25,6 +29,11 @@ namespace EasyRehearsalManager.Web.Controllers
             _signInManager = signInManager;
         }
 
+        /// <summary>
+        /// List of all registrated users in the database, including the administrator.
+        /// However, in the view the administrator is not shown.
+        /// </summary>
+        /// <returns>View of the list of users.</returns>
         public async Task<IActionResult> Index()
         {
             var users = _userManager.Users.AsEnumerable<User>();
@@ -60,21 +69,42 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(usersWithRoles);
         }
 
-        /* I dont need this... really unnecessarry function...
-        [Authorize(Roles = "administrator")]
         public async Task<IActionResult> Details(int? userId)
         {
+            if (userId == null)
+            {
+                TempData["DangerAlert"] = "Felhasználó nem található!";
+                return View(nameof(Index));
+            }
+
             User user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user == null)
+            {
+                TempData["DangerAlert"] = "Felhasználó nem található!";
+                return View(nameof(Index));
+            }
 
             UserListItemViewModel viewModel = new UserListItemViewModel();
 
+            viewModel.Id = user.Id;
             viewModel.UserOwnName = user.UserOwnName;
             viewModel.UserName = user.UserName;
             viewModel.UserEmail = user.Email;
             viewModel.UserPhoneNumber = user.PhoneNumber;
-            viewModel.BandName = user.DefaultBandName;
+
+            if (await _userManager.IsInRoleAsync(user, "musician"))
+            {
+                viewModel.BandName = user.DefaultBandName;
+                viewModel.Role = "zenész";
+            }
+            else if (await _userManager.IsInRoleAsync(user, "owner"))
+                viewModel.Role = "tulajdonos";
+            else
+                viewModel.Role = "adminisztrátor";
+
+            return View(viewModel);
         }
-        */
 
         [HttpGet]
         public IActionResult Create(string role)
@@ -121,5 +151,7 @@ namespace EasyRehearsalManager.Web.Controllers
             TempData["SuccessAlert"] = "Felhasználó törlése sikeres!";
             return RedirectToAction("Index", "Users");
         }
+    
     }
+    */
 }

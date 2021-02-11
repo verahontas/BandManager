@@ -1,18 +1,35 @@
 ﻿@model LoginViewModel
 
-<form class="form-inline my-2 my-lg-0" asp-controller="Account" asp-action="Login">
+<form class="input-group" asp-controller="Account" asp-action="Login" style="width: fit-content; float: right;">
+    <div class="row">
+        <div class="col-auto">
+            <input class="form-control" placeholder="Felhasználónév" id="userNameInNavbar" asp-for="UserName" />
+            <span asp-validation-for="UserName"></span>
+        </div>
+        
+        <div class="col-auto">
+            <input type="password" placeholder="Jelszó" class="form-control" id="pwdInNavbar" asp-for="UserPassword" />
+            <span asp-validation-for="UserPassword"></span>
 
-    <input class="form-control mr-sm-2 mb-2 mb-sm-0" placeholder="Felhasználónév" id="userName" asp-for="UserName" />
-    <span asp-validation-for="UserName"></span>
+        </div>
+        
+        <div class="col-auto">
+            <div class="row">
 
-    <input type="password" class="form-control mr-sm-2" id="pwd" asp-for="UserPassword" />
-    <span asp-validation-for="UserPassword"></span>
 
-    <input type="submit" value="Bejelentkezés" class="btn btn-primary my-md-0 my-2 mr-md-2" />
+                <div class="col-auto">
+                    <input type="submit" value="Bejelentkezés" class="btn btn-primary mt-2 mt-xl-0 align-baseline" id="loginButton" />
+                </div>
+                <div class="col-auto">
+                    <a asp-controller="Account" asp-action="RegisterAsMusician" class="btn btn-outline-dark mt-2 mt-xl-0 align-baseline" id="registrationButton">Regisztráció</a>
+                </div>
+            </div>
+        </div>
+        
+        
 
-    <a asp-controller="Account" asp-action="RegisterAsMusician" class="btn btn-outline-light mx-md-0 my-2" style="margin-left: 10px;">Regisztráció</a>
-
-    <div asp-validation-summary="ModelOnly" class="failureNotification"></div>
-    <div class="failureNotification">@ViewBag.Information</div>
-
+        <div asp-validation-summary="ModelOnly" class="failureNotification"></div>
+        <div class="failureNotification">@ViewBag.Information</div>
+    </div>
+    
 </form>

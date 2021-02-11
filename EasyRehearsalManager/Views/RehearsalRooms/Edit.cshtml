@@ -4,6 +4,8 @@
     ViewData["Title"] = "Szerkesztés";
 }
 
+<div class="light-color-letters">
+
 <div class="display-4">Szerkesztés</div>
 
 <h2><strong>Stúdió neve: </strong>@Model.Studio.Name</h2>
@@ -12,9 +14,10 @@
 
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" asp-route-roomId="@Model.Id">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="StudioId" />
             <div class="form-group">
                 <label asp-for="Number" class="control-label">Terem száma</label>
                 <input asp-for="Number" class="form-control" />
@@ -41,11 +44,13 @@
                     <small class="form-text text-muted">Adja meg, hogy jelenleg bérelhető-e a terem.</small>
                 </label>
             </div>
+            <!--
             <div class="form-group">
                 <label asp-for="StudioId" class="control-label">Próbahely neve</label>
                 <select asp-for="StudioId" class="form-control" asp-items="ViewBag.StudioId"></select>
                 <span asp-validation-for="StudioId" class="text-danger"></span>
             </div>
+            -->
             <div class="form-group">
                 <label for="equipments" class="control-label">Felszereltség leírása</label>
                 <textarea asp-for="Equipments" class="form-control" id="equipments"></textarea>
@@ -59,8 +64,6 @@
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Vissza a ter</a>
 </div>
 
 @section Scripts {

@@ -3,56 +3,62 @@
 @{
     ViewData["Title"] = "Foglalás részletei";
 }
+<div class="light-color-letters">
 
 <h1 class="display-4">Foglalás részletei</h1>
 
-<table class="table table-striped w-auto">
-    <tr>
-        <th>Foglalás kezdete:</th>
-        <td>@Model.Start</td>
-    </tr>
-    <tr>
-        <th>Foglalás vége:</th>
-        <td>@Model.End</td>
-    </tr>
-    <tr>
-        <th>Zenekar neve:</th>
-        <td>@Model.BandName</td>
-    </tr>
-    <tr>
-        <th>Foglaló neve:</th>
-        <td>@Model.User.UserOwnName</td>
-    </tr>
-    <tr>
-        <th>Próbahely neve:</th>
-        <td>@Model.RehearsalRoom.Studio.Name</td>
-    </tr>
-    <tr>
-        <th>Terem száma:</th>
-        <td>@Model.RehearsalRoom.Number</td>
-    </tr>
-    <tr>
-        <th>Bérelt eszközök:</th>
-        @{ 
-            if (ViewBag.Equipments == null || ViewBag.Equipments.Count == 0)
-            {
-                <td>Ön nem bérelt semmit a foglaláshoz.</td>
-            }
-            else
-            {
-                <td>
-                @foreach(var e in ViewBag.Equipments)
+<div class="table-responsive">
+    <table class="table w-auto light-color-letters">
+        <tr>
+            <th>Foglalás kezdete:</th>
+            <td>@Model.Start</td>
+        </tr>
+        <tr>
+            <th>Foglalás vége:</th>
+            <td>@Model.End</td>
+        </tr>
+        <tr>
+            <th>Zenekar neve:</th>
+            <td>@Model.BandName</td>
+        </tr>
+        <tr>
+            <th>Foglaló neve:</th>
+            <td>@Model.User.UserOwnName</td>
+        </tr>
+        <tr>
+            <th>Próbahely neve:</th>
+            <td>@Model.RehearsalRoom.Studio.Name</td>
+        </tr>
+        <tr>
+            <th>Terem száma:</th>
+            <td>@Model.RehearsalRoom.Number</td>
+        </tr>
+        <tr>
+            <th>Bérelt eszközök:</th>
+            @{
+                if (ViewBag.Equipments == null || ViewBag.Equipments.Count == 0)
                 {
-                    <div>@e</div>
+                    <td>Ön nem bérelt semmit a foglaláshoz.</td>
                 }
-                </td>
+                else
+                {
+                    <td>
+                        @foreach (var e in ViewBag.Equipments)
+                        {
+                            <div>@e</div>
+                        }
+                    </td>
+                }
             }
-        }
 
-    </tr>
-</table>
+        </tr>
+    </table>
+</div>
 
 <div>
     <a asp-action="Edit" asp-route-reservationId="@Model.Id" class="btn btn-primary align-baseline">Szerkesztés</a>
+    <a asp-action="Delete" asp-route-reservationId="@Model.Id" class="btn btn-outline-danger align-baseline">Törlés</a>
     <a asp-action="Index" class="btn btn-secondary align-baseline">Vissza a foglalásokhoz</a>
+</div>
+
 </div>

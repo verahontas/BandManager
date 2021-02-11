@@ -1,20 +1,33 @@
 ﻿@model EasyRehearsalManager.Model.Equipment
 
-<h3>Biztos benne, hogy törli az eszközt?</h3>
+<div class="light-color-letters">
 
-<table class="table table-striped">
-    <tr>
-        <th>Eszköz megnevezése</th>
-        <td>@Model.Name</td>
-    </tr>
-    <tr>
-        <th>Darabszám</th>
-        <td>@Model.QuantityAvailable</td>
-    </tr>
-</table>
 
-<form asp-action="Delete" asp-route-equipmentId="@Model.Id">
-    <input type="hidden" asp-for="Id" />
-    <input type="submit" value="Törlés" class="btn btn-danger" /> |
-    <a asp-action="Index" asp-route-studioId="@Model.StudioId">Mégse</a>
-</form>
+    <h3>Biztos benne, hogy törli az eszközt?</h3>
+
+    <table class="table light-color-letters w-auto">
+        <tr>
+            <th>Eszköz megnevezése</th>
+            <td>@Model.Name</td>
+        </tr>
+        <tr>
+            <th>Darabszám</th>
+            <td>@Model.QuantityAvailable</td>
+        </tr>
+    </table>
+
+    <form asp-action="Delete" asp-route-equipmentId="@Model.Id">
+        <input type="hidden" asp-for="Id" />
+        <div class="row">
+            <div class="col-auto">
+                <input type="submit" value="Törlés" class="btn btn-danger align-baseline" />
+            </div>
+            <div class="col-auto">
+                <a asp-action="Index" asp-route-studioId="@Model.StudioId" class="btn btn-secondary align-baseline">Mégse</a>
+            </div>
+        </div>
+        
+        
+    </form>
+
+</div>

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace EasyRehearsalManager.Web.Models
 {
+    /*
     public class MusicianRegistrationViewModel : MusicianViewModel
     {
         //username to use for login
@@ -23,7 +24,6 @@ namespace EasyRehearsalManager.Web.Models
         [DataType(DataType.Password)]
         public String UserConfirmPassword { get; set; }
 
-        //erre csak azért van szükség, hogy az admin is tudja módosítani a profil adatait
-        public int UserId { get; set; }
     }
+    */
 }

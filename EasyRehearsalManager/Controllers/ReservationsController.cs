@@ -26,18 +26,18 @@ namespace EasyRehearsalManager.Web.Controllers
             _userManager = userManager;
         }
 
-        [AllowAnonymous]
+        [Authorize]
         // GET: Reservations
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
+            /*
             if (!User.Identity.IsAuthenticated)
             {
                 TempData["DangerAlert"] = "A foglalások listázásához jelentkezzen be!";
                 return RedirectToAction("Login", "Account");
             }
-
+            */
             string userId = _userManager.GetUserId(User);
-            User user = await _userManager.FindByIdAsync(userId);
 
             if (User.IsInRole("administrator"))
                 return View(_reservationService.Reservations);
@@ -47,7 +47,7 @@ namespace EasyRehearsalManager.Web.Controllers
                 return View(_reservationService.GetReservations(Int32.Parse(userId), "musician"));
         }
 
-        [AllowAnonymous]
+        [Authorize]
         // GET: Reservations/Details/5
         public async Task<IActionResult> Details(int? reservationId)
         {
@@ -62,11 +62,16 @@ namespace EasyRehearsalManager.Web.Controllers
             {
                 return NotFound();
             }
-            string userId = _userManager.GetUserId(User);
-            User user = await _userManager.FindByIdAsync(userId);
-
-            reservation.User = user;
-
+            if (User.IsInRole("musician"))
+            {
+                reservation.User = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+            }
+            else //owner or admin
+            {
+                int userId = (int)reservation.UserId;
+                User user = await _userManager.FindByIdAsync(userId.ToString());
+                reservation.User = user;
+            }
             List<string> equipmentNames = _reservationService.GetEquipmentNamesForReservation(reservationId);
 
             ViewBag.Equipments = equipmentNames;
@@ -74,60 +79,70 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(reservation);
         }
 
+        /// <summary>
+        /// Only authenticated users can make a reservation.
+        /// Musicians can book only for themselves.
+        /// Owners can book for anybody but only to their own rooms.
+        /// Administrator can book for anybody to any room.
+        /// DayIndex and Hour is used when reservation is made from table.
+        /// </summary>
+        /// <param name="roomId">Cannot be null. Reservation can be only made from those page that know the roomId.</param>
+        /// <param name="dayIndex">If not null then we know which day to book to. If 0 then the default day is today.</param>
+        /// <param name="hour">If it is null then the default starting hour is next hour.</param>
+        /// <returns></returns>
         [Authorize]
-        //a dayIndex és a hour a táblázatból történő foglaláshoz kell
-        // GET: Reservations/Create
         public async Task<IActionResult> Create(int? roomId, int? dayIndex, int? hour)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                TempData["DangerAlert"] = "A foglaláshoz bejelentkezés szükséges!";
-                return RedirectToAction("Login", "Account");
-            }
-
-            if (roomId == null || roomId <= 0 || roomId > _reservationService.Rooms.OrderByDescending(l => l.Id).FirstOrDefault().Id)
+            if (roomId == null)
             {
                 TempData["DangerAlert"] = "Hiba lépett fel a foglalás során!";
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "RehearsalRooms");
             }
 
-            ReservationViewModel reservation = _reservationService.NewReservation(roomId);
+            RehearsalRoom room = _reservationService.GetRoom(roomId);
 
-            if (reservation == null)
+            if (room == null)
             {
                 TempData["DangerAlert"] = "Hiba lépett fel a foglalás során!";
-                return RedirectToAction("Details", "RehearsalRooms", new { roomId = roomId });
+                return RedirectToAction("Index", "RehearsalRooms");
             }
 
-            if (User.Identity.IsAuthenticated)
+            ReservationViewModel viewModel = new ReservationViewModel
+            {
+                RoomId = room.Id,
+                RoomNumber = room.Number,
+                StudioName = room.Studio.Name,
+                Day = dayIndex == null ? DateTime.Now : DateTime.Now.AddDays((int)dayIndex),
+                StartHour = hour == null ? DateTime.Now.Hour + 1 : (int)hour,
+                EndHour = hour == null ? DateTime.Now.Hour + 3 : (int)hour + 2
+            };
+
+            if (User.IsInRole("musician"))
             {
                 User user = await _userManager.FindByNameAsync(User.Identity.Name);
 
-                if (user != null)
+                if (user == null) //just to be sure
                 {
-                    reservation.UserOwnName = user.UserOwnName;
-                    reservation.BandName = user.DefaultBandName;
-                    reservation.UserEmail = user.Email;
-                    reservation.UserPhoneNumber = user.PhoneNumber;
+                    TempData["DangerAlert"] = "Hiba lépett fel a foglalás során!";
+                    return RedirectToAction("Index", "RehearsalRooms");
                 }
+
+                viewModel.UserId = user.Id;
+                viewModel.BandName = user.DefaultBandName;
+                viewModel.UserOwnName = user.UserOwnName;
+            }
+            else //owner or administrator
+            {
+                List<User> users = _reservationService.Users.ToList();
+                ViewData["Users"] = new SelectList(users, "Id", "UserOwnName");
             }
 
-            foreach (var equipment in _reservationService.GetEquipmentsForStudio(reservation.Room.StudioId).ToList())
-            {
-                /*reservation.Equipments.Add(new EquipmentToBook { 
-                    IsChecked = false,
-                    Equipment = equipment
-                });*/
+            RehearsalStudio studio = _reservationService.GetStudioByRoomId(roomId);
 
-                reservation.Equipments[equipment.Name] = false;
-            }
-
-            //this statement is true when the reservation was made from table
-            if (dayIndex != null && hour != null)
+            //get all equipment that can be booked
+            foreach (var equipment in _reservationService.GetEquipmentsForStudio(studio.Id).ToList())
             {
-               reservation.Day = DateTime.Now.AddDays((double)dayIndex);
-                reservation.StartHour = (int)hour;
-                reservation.EndHour = (int)(hour + 2);
+                viewModel.Equipments[equipment.Name] = false;
             }
 
             List<int> hours = new List<int>();
@@ -136,57 +151,44 @@ namespace EasyRehearsalManager.Web.Controllers
             //ez a fv csak akkor hívódik meg, amikor nem konkrétan táblázatból foglalunk, hanem pl a termek felsorolásánál van közvetlenül foglalás gomb.
             //tehát vagy ahhoz kell igazítani a viewbag elemeit, hogy a felhasználó milyen dátumot válaszott ki,
             //vagy a foglalás ellenőrzésekor kell ellenőrizni azt is, hogy adott napon a megadott időpontban nyitva van-e a terem.
-            for (int i = reservation.Room.Studio.EarliestOpeningHour(); i <= reservation.Room.Studio.LatestClosingHour(); ++i)
+            //we need to add all opening hours, because the date can be modified in the create form
+            //so when validating the reservation we have to check whether on the selected date in the selected hour the room is open
+            for (int i = studio.EarliestOpeningHour(); i <= studio.LatestClosingHour(); ++i)
             {
                 hours.Add(i);
             }
-            //mindenesetre egyelőre beleraktam az összes lehetséges időpontot
 
             ViewData["Hours"] = new SelectList(hours);
-            return View(reservation);
+            return View(viewModel);
         }
 
-        // POST: Reservations/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// If the administrator made a reservation for a selected user,
+        /// then all properties of the user will be unset,
+        /// except the UserId. So in this case we have to find the user and set the properties.
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create(int? roomId, [Bind("StartHour,EndHour,Day,BandName,UserOwnName,UserPhoneNumber,UserEmail,Equipments")] ReservationViewModel reservation)
-        public async Task<IActionResult> Create(int? roomId, ReservationViewModel reservation)
+        public async Task<IActionResult> Create(ReservationViewModel viewModel)
         {
-            if (roomId == null || reservation == null)
+            if (viewModel == null)
             {
                 TempData["DangerAlert"] = "Hiba lépett fel a foglalás során, kérjük próbálja újra!";
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "RehearsalRooms");
             }
 
-            //if (roomId != null) //wat??
-            if (roomId != null && reservation == null)
-            {
-                TempData["DangerAlert"] = "Hiba lépett fel a foglalás során, kérjük próbálja újra!";
-                return RedirectToAction("Details", "RehearsalRooms", new { roomId = roomId });
-            }
-
-            if (roomId <= 0 || roomId > _reservationService.Rooms.OrderByDescending(l => l.Id).FirstOrDefault().Id) // ha rossz intervallumban keressük a szobát
-            {
-                return NotFound();
-            }
-
-            reservation.Room = _reservationService.GetRoom(roomId);
-
-            User user = await _userManager.FindByNameAsync(User.Identity.Name);
-
-            reservation.UserEmail = user.Email;
-            reservation.UserPhoneNumber = user.PhoneNumber;
-
-            DateTime day = reservation.Day;
-            DateTime startDate = new DateTime(day.Year, day.Month, day.Day, reservation.StartHour, 0, 0);
-            DateTime endDate = new DateTime(day.Year, day.Month, day.Day, reservation.EndHour, 0, 0);
+            DateTime day = viewModel.Day;
+            DateTime startDate = new DateTime(day.Year, day.Month, day.Day, viewModel.StartHour, 0, 0);
+            DateTime endDate = new DateTime(day.Year, day.Month, day.Day, viewModel.EndHour, 0, 0);
 
             //a reservationDateErrorban kéne azt is ellenőrizni hogy az adott időpontban foglalt-e a terem
+            //ellenőrizni kell azt is, hogy nyitva van-e a terem
             //valahol ellenőrizni kell azt is hogy az eszközofoglalás valid-e
             //itt mindegy mi a reservation id-ja, mert létrehozáskor minden foglalást megvizsgálja
-            switch (_reservationService.ValidateReservation(startDate, endDate, "create", 1, reservation.Equipments, roomId.Value))
+            switch (_reservationService.ValidateReservation(startDate, endDate, "create", 1, viewModel.Equipments, viewModel.RoomId))
             {
                 case ReservationDateError.StartInvalid:
                     ModelState.AddModelError("StartHour", "A kezdés dátuma nem megfelelő!");
@@ -215,97 +217,44 @@ namespace EasyRehearsalManager.Web.Controllers
             {
                 List<int> hours = new List<int>();
 
-                //itt attól függően legyenek benne a hours-ban az órák hogy melyik napra akar a felhasználó foglalni
-                //some killing dynamic stuff.....
-                for (int i = reservation.Room.Studio.OpeningHourMonday; i <= reservation.Room.Studio.ClosingHourMonday; ++i)
+                RehearsalStudio studio = _reservationService.GetStudioByRoomId(viewModel.RoomId);
+
+                for (int i = studio.EarliestOpeningHour(); i <= studio.LatestClosingHour(); ++i)
                 {
                     hours.Add(i);
                 }
 
+                ModelState.AddModelError("", "A foglalás sikertelen!");
+                TempData["DangerAlert"] = "A foglalás sikertelen!";
                 ViewData["Hours"] = new SelectList(hours);
-                return View("Create", reservation);
+                ViewData["Users"] = new SelectList(_reservationService.Users, "Id", "Name");
+                return View("Create", viewModel);
             }
 
-            /*User user;
-
-            if (User.Identity.IsAuthenticated)
-                user = await _userManager.FindByNameAsync(User.Identity.Name);
-            else
-                return RedirectToAction("Login", "Account");
-            */
-            /*
-            save reservation and equipment pair to database
-            */
-            if (!await _reservationService.SaveReservationAsync(roomId, user.UserName, reservation))
+            if (!await _reservationService.SaveReservationAsync(viewModel.RoomId, viewModel.UserId, viewModel))
             {
                 ModelState.AddModelError("", "A foglalás sikertelen!");
                 TempData["DangerAlert"] = "A foglalás sikertelen!";
                 List<int> hours = new List<int>();
 
-                //itt attól függően legyenek benne a hours-ban az órák hogy melyik napra akar a felhasználó foglalni
-                //some killing dynamic stuff.....
-                for (int i = reservation.Room.Studio.OpeningHourMonday; i <= reservation.Room.Studio.ClosingHourMonday; ++i)
+                RehearsalStudio studio = _reservationService.GetStudioByRoomId(viewModel.RoomId);
+
+                for (int i = studio.EarliestOpeningHour(); i <= studio.LatestClosingHour(); ++i)
                 {
                     hours.Add(i);
                 }
 
                 ViewData["Hours"] = new SelectList(hours);
-                return View("Create", reservation);
+                ViewData["Users"] = new SelectList(_reservationService.Users, "Id", "Name");
+                return View("Create", viewModel);
             }
 
+            User user = await _userManager.FindByIdAsync(viewModel.UserId.ToString());
+            viewModel.UserOwnName = user.UserOwnName;
+            viewModel.BandName = user.DefaultBandName;
             TempData["SuccessAlert"] = "A foglalást sikeresen rögzítettük!";
-            return View("Result", reservation);
+            return View("Result", viewModel);
         }
-
-
-        //itt jó lenne ha megnyílna előbb egy felület ahol megadhatom a bérlendő eszközöket és foglalhatnék egyszerre két órát is
-        /*
-        [HttpGet]
-        public async Task<IActionResult> CreateFromTable(int dayIndex, int? roomId, int? hour)
-        {
-            if (!User.Identity.IsAuthenticated)
-            {
-                TempData["DangerAlert"] = "A foglaláshoz bejelentkezés szükséges!";
-                return RedirectToAction("Login", "Account");
-            }
-
-            if (roomId == null || hour == null)
-                return NotFound();
-
-            //dayIndex: shows the day of the wanted reservation. 0 means today, 1 means tomorrow, etc.
-            DateTime day = DateTime.Now.AddDays(dayIndex);
-            DateTime dateForReservation = new DateTime(day.Year, day.Month, day.Day, (int)hour, 0, 0);
-            User user = await _userManager.FindByNameAsync(User.Identity.Name);
-
-            Reservation reservation = new Reservation
-            {
-                RehearsalRoomId = (int)roomId,
-                //RehearsalRoom = _reservationService.GetRoom(roomId),
-                Start = dateForReservation,
-                End = dateForReservation.AddHours(1),
-                UserId = Int32.Parse(_userManager.GetUserId(User)),
-                BandName = User.IsInRole("musician") ? user.DefaultBandName : ""
-            };
-
-            if (_reservationService.AddReservation(reservation))
-            {
-                ReservationViewModel viewModel = _reservationService.NewReservation(roomId);
-
-                viewModel.BandName = User.IsInRole("musician") ? user.DefaultBandName : "";
-                viewModel.UserOwnName = user.UserOwnName;
-                viewModel.UserEmail = user.Email;
-                viewModel.UserPhoneNumber = user.PhoneNumber;
-
-                TempData["SuccessAlert"] = "Foglalását sikeresen rögzítettük!";
-                return View("Result", viewModel);
-            }
-            else
-            {
-                TempData["DangerAlert"] = "Hiba lépett fel a foglalás során!";
-                return RedirectToAction("Details", "RehearsalRooms", roomId);
-            }
-        }
-        */
 
         [Authorize]
         [HttpGet]
@@ -333,19 +282,24 @@ namespace EasyRehearsalManager.Web.Controllers
             {
                 return NotFound();
             }
-
+            /*
             string userId = _userManager.GetUserId(User);
             User user = await _userManager.FindByIdAsync(userId);
+            */
+            reservation.User = await _userManager.FindByIdAsync(reservation.UserId.ToString());
 
-            reservation.User = user;
+            //a musician can edit only his own reservatrions.
+            if (User.IsInRole("musician") && reservation.User.Id != Int32.Parse(_userManager.GetUserId(User)))
+            {
+                TempData["DangerAlert"] = "Más foglalását nem módosíthatja!";
+                return RedirectToAction("Index");
+            }
 
             ViewData["RehearsalRoomId"] = new SelectList(_reservationService.Rooms, "Id", "Number", reservation.RehearsalRoomId);
             
             List<int> hours = new List<int>();
 
-            //itt attól függően legyenek benne a hours-ban az órák hogy melyik napra akar a felhasználó foglalni
-            //some killing dynamic stuff.....
-            for (int i = reservation.RehearsalRoom.Studio.OpeningHourMonday; i <= reservation.RehearsalRoom.Studio.ClosingHourMonday; ++i)
+            for (int i = reservation.RehearsalRoom.Studio.EarliestOpeningHour(); i <= reservation.RehearsalRoom.Studio.LatestClosingHour(); ++i)
             {
                 hours.Add(i);
             }
@@ -354,15 +308,16 @@ namespace EasyRehearsalManager.Web.Controllers
 
             ReservationViewModel viewModel = new ReservationViewModel
             {
+                UserId = reservation.User.Id,
                 UserOwnName = reservation.User.UserOwnName,
-                UserPhoneNumber = reservation.User.PhoneNumber,
-                UserEmail = reservation.User.Email,
-                Room = reservation.RehearsalRoom,
+                RoomId = reservation.RehearsalRoom.Id,
+                RoomNumber = reservation.RehearsalRoom.Number,
+                StudioName = reservation.RehearsalRoom.Studio.Name,
                 BandName = reservation.BandName,
                 Day = reservation.Start,
                 StartHour = reservation.Start.Hour,
                 EndHour = reservation.End.Hour,
-                Id = reservation.Id
+                ReservationId = reservation.Id
             };
 
             Dictionary<string, int> equipments = new Dictionary<string, int>();
@@ -391,14 +346,18 @@ namespace EasyRehearsalManager.Web.Controllers
             return View(viewModel);
         }
 
-        // POST: Reservations/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int reservationId, ReservationViewModel reservationViewModel)
+        public async Task<IActionResult> Edit(ReservationViewModel reservationViewModel)
         {
-            Reservation reservation = _reservationService.Reservations.FirstOrDefault(l => l.Id == reservationId);
+            Reservation reservation = _reservationService.Reservations.FirstOrDefault(l => l.Id == reservationViewModel.ReservationId);
+
+            if (reservation == null)
+            {
+                TempData["DangerAlert"] = "Foglalás módosítása sikertelen, kérjük próbálja újra!";
+                return RedirectToAction("Index");
+            }
 
             reservation.Start = new DateTime(
                 reservationViewModel.Day.Year,
@@ -466,7 +425,7 @@ namespace EasyRehearsalManager.Web.Controllers
                 try
                 {
                     _reservationService.UpdateReservation(reservation);
-                    _reservationService.UpdateReservationEquipmentTable(reservationId, studio.Id, reservationViewModel.Equipments);
+                    _reservationService.UpdateReservationEquipmentTable(reservationViewModel.ReservationId, studio.Id, reservationViewModel.Equipments);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -483,8 +442,10 @@ namespace EasyRehearsalManager.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            reservationViewModel.Room = reservation.RehearsalRoom;
-            reservationViewModel.Id = reservation.Id;
+            IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
+
+            //reservationViewModel.RoomId = reservation.RehearsalRoom;
+            reservationViewModel.ReservationId = reservation.Id;
             TempData["DangerAlert"] = "Foglalás módosítása sikertelen!";
 
             List<int> hours = new List<int>();
@@ -500,7 +461,6 @@ namespace EasyRehearsalManager.Web.Controllers
         }
 
         [Authorize]
-        // GET: Reservations/Delete/5
         public async Task<IActionResult> Delete(int? reservationId)
         {
             if (reservationId == null)
@@ -521,12 +481,23 @@ namespace EasyRehearsalManager.Web.Controllers
             return NotFound();
         }
 
-        // POST: Reservations/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int reservationId)
         {
             var reservation = _reservationService.GetReservation(reservationId);
+
+            //if the reservation starts in the next 72 hour then we cannot delete it
+            //but the administrator and the owner can delete it anytime
+            if (User.IsInRole("musician"))
+            {
+                if (reservation.Start < DateTime.Now.AddDays(3))
+                {
+                    TempData["DangerAlert"] = "Foglalás lemondása sikertelen! Próbát lemondani legkésőbb a foglalás előtt 72 órával lehetséges!";
+                    return RedirectToAction("Details", new { reservationId = reservationId });
+                }
+            }
 
             User user = await _userManager.FindByNameAsync(User.Identity.Name);
 
@@ -535,10 +506,11 @@ namespace EasyRehearsalManager.Web.Controllers
                 Day = reservation.Start.Date,
                 StartHour = reservation.Start.Hour,
                 EndHour = reservation.End.Hour,
-                Room = reservation.RehearsalRoom,
+                RoomId = reservation.RehearsalRoom.Id,
+                RoomNumber = reservation.RehearsalRoom.Number,
+                StudioName = reservation.RehearsalRoom.Studio.Name,
                 BandName = reservation.BandName,
-                UserOwnName = user.UserOwnName,
-                UserPhoneNumber = user.PhoneNumber
+                UserOwnName = user.UserOwnName
             };
 
             if (_reservationService.RemoveReservation(reservationId))

@@ -4,53 +4,52 @@
     ViewData["Title"] = "Próbaterem törlése";
 }
 
-<h1>@Model.Studio.Name</h1>
+<div class="light-color-letters">
+
+<h1 class="display-4">Próbaterem törlése</h1>
 
 <h3>Biztosan törölni szeretné?</h3>
-<div>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Number)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Number)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Size)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Size)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Available)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Available)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Studio)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Studio.Address)
-        </dd class>
-    </dl>
-    
-    <form asp-action="Delete" asp-route-id="@Model.Id">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Törlés" class="btn btn-danger" /> |
-        <a asp-action="Index">Vissza a próbatermek listájához</a>
-    </form>
+
+<div class="table-responsive">
+    <table class="table w-auto table-borderless light-color-letters">
+        <tr>
+            <th>Stúdió neve:</th>
+            <td>@Model.Studio.Name</td>
+        </tr>
+        <tr>
+            <th>Terem száma:</th>
+            <td>@Model.Number</td>
+        </tr>
+        <tr>
+            <th>Ár:</th>
+            <td>@Model.Price</td>
+        </tr>
+        <tr>
+            <th>Méret:</th>
+            <td>@Model.Size</td>
+        </tr>
+        <tr>
+            <th>Elérhetőség:</th>
+            @if (@Model.Available)
+            {
+                <td>Elérhető</td>
+            }
+            else
+            {
+                <td>Nem elérhető</td>
+            }
+        </tr>
+        <tr>
+            <th>Leírás:</th>
+            <td>@Model.Description</td>
+        </tr>
+    </table>
+</div>
+
+<form asp-action="Delete" asp-route-roomId="@Model.Id">
+    <input type="hidden" asp-for="Id" />
+    <input type="submit" value="Törlés" class="btn btn-danger align-baseline" />
+    <a asp-action="Index" class="btn btn-secondary align-baseline">Mégsem</a>
+</form>
+
 </div>

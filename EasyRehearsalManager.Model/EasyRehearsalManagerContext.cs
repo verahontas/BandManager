@@ -23,16 +23,18 @@ namespace EasyRehearsalManager.Model
             builder.Entity<User>().ToTable("Users");
         }
 
-        public DbSet<RehearsalStudio> Studios { get; set; }
+        public virtual DbSet<RehearsalStudio> Studios { get; set; }
 
-        public DbSet<RehearsalRoom> Rooms { get; set; }
+        public virtual DbSet<RehearsalRoom> Rooms { get; set; }
 
-        public DbSet<Equipment> Equipments { get; set; }
+        public virtual DbSet<Equipment> Equipments { get; set; }
 
-        public DbSet<Reservation> Reservations { get; set; }
+        public virtual DbSet<Reservation> Reservations { get; set; }
 
-        public DbSet<UserImage> UserImages { get; set; }
+        public virtual DbSet<RoomImage> RoomImages { get; set; }
 
-        public DbSet<ReservationEquipmentPair> ReservationEquipmentPairs { get; set; }
+        public virtual DbSet<StudioImage> StudioImages { get; set; }
+
+        public virtual DbSet<ReservationEquipmentPair> ReservationEquipmentPairs { get; set; }
     }
 }

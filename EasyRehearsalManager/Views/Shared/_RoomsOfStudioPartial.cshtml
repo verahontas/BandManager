@@ -1,0 +1,28 @@
+﻿@model List<RehearsalRoom>
+
+@{ 
+    int count = Model.Count();
+}
+
+@if (count == 0)
+{
+    <div class="alert alert-warning">Nincs terem ehhez a próbahelyhez regisztrálva.</div>
+}
+
+
+@for (int i = 0; i < (count + 2) / 3; ++i)
+{
+    <div class="row">
+        @for (int j = 0; j < 3; ++j)
+        {
+            @if ((i * 3 + j) < count)
+            {
+                <div class="col mt-4">
+
+                    @await Html.PartialAsync("_RoomCardPartial", Model.ToList()[i * 3 + j])
+
+                </div>
+            }
+        }
+    </div>
+}

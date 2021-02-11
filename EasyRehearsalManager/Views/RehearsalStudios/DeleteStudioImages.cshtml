@@ -1,0 +1,19 @@
+﻿@model DeleteStudioImagesViewModel
+<div class="light-color-letters">
+<h1 class="display-4">Képek törlése</h1>
+
+<p>A törölni kívánt képek mellett lévő checkboxokból vegye ki a pipákat. A végén kattintson a mentés gombra.</p>
+
+<form asp-action="DeleteStudioImages" asp-controller="RehearsalStudios">
+    <input type="hidden" asp-for="StudioId" />
+    @foreach (var id in Model.Images.Keys)
+    {
+        <div class="my-2">
+            <img src="@Url.Action("GetImage", "RehearsalStudios", new { imageId = id })" class="img-thumbnail" style="max-width: 200px; max-height: 200px;" />
+            <input asp-for="@Model.Images[id]" />
+        </div>
+    }
+    <input type="submit" value="Mentés" class="btn btn-primary align-baseline mt-2" />
+    <a asp-controller="RehearsalStudios" asp-action="Details" asp-route-studioId="@Model.StudioId"  class="btn btn-outline-danger align-baseline mt-2">Mégsem</a>
+</form>
+</div>

@@ -8,12 +8,25 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
 
+    <!-- Added from MDB -->
+   
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
+    <link rel="stylesheet" href="~/MDB/css/mdb.min.css" />
+    
+    <!-- Personalized CSS -->
     <link href="~/AdditionalStyle.css" rel="stylesheet" />
+    <!--<link href="~/CardStyle.css" rel="stylesheet" />-->
+
+    <!--scripts by default bootstrap-->
+    <!--
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-
+    -->
     <script src="~/lib/jquery/dist/jquery.js"></script>
 
     <title>Próbák egyszerűen</title>
@@ -22,8 +35,8 @@
     @if (ViewBag.CurrentUserName == null)
     {
 
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand mb-0 h1" href="#">Próbamenedzser</a>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light px-2">
+            <a class="navbar-brand mb-0 h1 px-1" href="#">Próbamenedzser</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -40,14 +53,16 @@
                 @{
                     LoginViewModel viewModel = new LoginViewModel();
                 }
-                @await Html.PartialAsync("_LoginMenu", viewModel)
+                <div class="justify-content-end" style="width: inherit;">
+                    @await Html.PartialAsync("_LoginMenu", viewModel)
+                </div>
             </div>
         </nav>
     }
     else
     {
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <img src="@Url.Action("GetUserImage", "Home", new { userId = ViewBag.CurrentUserId })" class="img-thumbnail navbar-brand" height="30" width="30" alt="Profilkép" />
+        <nav class="navbar navbar-expand-lg navbar-light bg-light px-2">
+            <img src="@Url.Action("GetUserImage", "Account", new { userId = ViewBag.CurrentUserId })" class="img-thumbnail navbar-brand px-1" height="30" width="30" alt="Profilkép" />
             <div class="navbar-brand" href="#">Üdvözöljük, <strong>@ViewBag.CurrentUserName</strong>!</div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -56,7 +71,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="navbar-brand" asp-controller="Account" asp-action="GetProfileDetails">Profilom</a>
+                        <a class="navbar-brand" asp-controller="Account" asp-action="Details" asp-route-userId="@ViewBag.CurrentUserId">Profilom</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="navbar-brand dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -73,18 +88,19 @@
                             {
                                 <a class="dropdown-item" asp-controller="RehearsalStudios" asp-action="Index" asp-route-ownerId="@ViewBag.CurrentUserId">Próbahelyeim</a>
                                 <a class="dropdown-item" asp-controller="RehearsalRooms" asp-action="Index" asp-route-ownerId="@ViewBag.CurrentUserId">Próbatermeim</a>
+                                <a class="dropdown-item" asp-controller="Reservations" asp-action="Index">Foglalások</a>
                             }
                             else if (ViewBag.CurrentUserRole == "administrator")
                             {
                                 <a class="dropdown-item" asp-controller="RehearsalStudios" asp-action="Index">Próbahelyek</a>
                                 <a class="dropdown-item" asp-controller="RehearsalRooms" asp-action="Index">Próbatermek</a>
-                                <a class="dropdown-item" asp-controller="Users" asp-action="Index">Felhasználók</a>
+                                <a class="dropdown-item" asp-controller="Account" asp-action="Index">Felhasználók</a>
                                 <a class="dropdown-item" asp-controller="Reservations" asp-action="Index">Foglalások</a>
                             }
                         </div>
                     </li>
                 </ul>
-                <ul class="navbar-nav">
+                <ul class="navbar-nav justify-content-end" style="width: inherit;">
                     <li class="nav-item">
                         <a class="navbar-brand" asp-controller="Account" asp-action="Logout">Kijelentkezés</a>
                     </li>
@@ -111,20 +127,67 @@
         </div>
     }
 
-    <div class="container-fluid">
-        @RenderBody()
+    <div id="wrap">
+        <div class="container" id="main">
+            @RenderBody()
+        </div>
     </div>
+
+
+    <!-- Footer from MDB template-->
+    <footer class="footer bg-light text-center text-lg-start">
+        <!-- Grid container -->
+        <!--
+        <div class="container p-4">
+
+            <div class="row">
+
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Próbamenedzser</h5>
+
+                    <p>
+                        <h6>Készítette:</h6>
+                        Herczegfalvy Veronika<br />
+                        hallgató
+                    </p>
+                </div>
+
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                    <h5 class="text-uppercase"></h5>
+
+                    <p>
+                        Eötvös Loránd Tudományegyetem<br />
+                        Informatikai Kar<br />
+                        Algoritmusok és Alkalmazásaik Tanszék
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+        -->
+        <!-- Grid container -->
+        <!-- Copyright -->
+        <div class="text-center p-3" style="background-color: rgba(206, 208, 187, 0.2)">
+            <!--sand color-->
+            2021.
+        </div>
+        <!-- Copyright -->
+    </footer>
 
     @if (IsSectionDefined("Scripts"))
     {
         @RenderSection("Scripts", required: true)
     }
+
 </body>
 </html>
 
-<footer class="bg-light">
-        <div class="mx-auto" style="width: 95%;">Készítette: <br /><strong>Herczegfalvy Veronika </strong><br />hallgató, Eötvös Loránd Tudományegyetem <br /> 2020. </div>
-</footer>
+<!-- Added from MDB -->
+<!--
+<script type="text/javascript" src="~/MDB/js/mdb.min.js"></script>
+-->
+
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>

@@ -1,0 +1,8 @@
+D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager\obj\Release\netcoreapp3.1\EasyRehearsalManager.Web.csprojAssemblyReference.cache
+D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager\obj\Release\netcoreapp3.1\EasyRehearsalManager.Web.AssemblyInfoInputs.cache
+D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager\obj\Release\netcoreapp3.1\EasyRehearsalManager.Web.AssemblyInfo.cs
+D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager\obj\Release\netcoreapp3.1\EasyRehearsalManager.Web.csproj.CoreCompileInputs.cache
+D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager\obj\Release\netcoreapp3.1\EasyRehearsalManager.Web.MvcApplicationPartsAssemblyInfo.cs
+D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager\obj\Release\netcoreapp3.1\EasyRehearsalManager.Web.MvcApplicationPartsAssemblyInfo.cache
+D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager\obj\Release\netcoreapp3.1\EasyRehearsalManager.Web.RazorAssemblyInfo.cache
+D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager\obj\Release\netcoreapp3.1\EasyRehearsalManager.Web.RazorAssemblyInfo.cs

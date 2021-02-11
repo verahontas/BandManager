@@ -7,15 +7,24 @@ using System.Threading.Tasks;
 
 namespace EasyRehearsalManager.Web.Models
 {
-    public class ReservationViewModel : MusicianViewModel
+    public class ReservationViewModel
     {
         public ReservationViewModel()
         {
             Equipments = new Dictionary<string, bool>();
-            //Equipments = new List<EquipmentToBook>();
         }
 
-        public RehearsalRoom Room { get; set; }
+        public int UserId { get; set; }
+
+        public string BandName { get; set; }
+
+        public string UserOwnName { get; set; }
+
+        public int RoomId { get; set; }
+
+        public int RoomNumber { get; set; }
+
+        public string StudioName { get; set; }
 
         //day of the reservation
         public DateTime Day { get; set; }
@@ -28,7 +37,7 @@ namespace EasyRehearsalManager.Web.Models
         [Range(0, 23)]
         public int EndHour { get; set; }
 
-        public int Id { get; set; }
+        public int ReservationId { get; set; } //id of the reservation or what??
 
         public Dictionary<string, bool> Equipments { get; set; }
     }

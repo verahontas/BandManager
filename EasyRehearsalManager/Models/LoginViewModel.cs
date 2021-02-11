@@ -9,12 +9,12 @@ namespace EasyRehearsalManager.Web.Models
     public class LoginViewModel
     {
         [Required(ErrorMessage = "A felhasználónév megadása kötelező.")]
-        public String UserName { get; set; }
+        public string UserName { get; set; }
 
         [Required(ErrorMessage = "A jelszó megadása kötelező.")]
         [DataType(DataType.Password)]
-        public String UserPassword { get; set; }
+        public string UserPassword { get; set; }
 
-        public Boolean RememberLogin { get; set; }
+        public bool RememberLogin { get; set; }
     }
 }

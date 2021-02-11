@@ -27,10 +27,10 @@ D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManag
 D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\bin\Debug\netcoreapp3.1\EasyRehearsalManager.Model.runtimeconfig.dev.json
 D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\bin\Debug\netcoreapp3.1\EasyRehearsalManager.Model.dll
 D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\bin\Debug\netcoreapp3.1\EasyRehearsalManager.Model.pdb
-D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.csprojAssemblyReference.cache
 D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.AssemblyInfoInputs.cache
 D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.AssemblyInfo.cs
 D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.csproj.CoreCompileInputs.cache
 D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.dll
 D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.pdb
 D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.genruntimeconfig.cache
+D:\Documents\EGYETEM\szakdolgozat\bootstrap-proba\BandManager\EasyRehearsalManager.Model\obj\Debug\netcoreapp3.1\EasyRehearsalManager.Model.csprojAssemblyReference.cache

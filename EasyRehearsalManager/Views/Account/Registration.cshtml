@@ -1,0 +1,86 @@
+﻿@model RegistrationViewModel
+
+
+<div class="light-color-letters">
+
+
+        @if (ViewBag.CurrentUserRole == null)
+        {
+            <h1 class="display-4">Regisztráció</h1>
+        }
+        else if (ViewBag.CurrentUserRole == "administrator" && Model.UserRole == "musician")
+        {
+            <h1 class="display-4">Zenész regisztrálása</h1>
+        }
+        else if (ViewBag.CurrentUserRole == "administrator" && Model.UserRole == "owner")
+        {
+            <h1 class="display-4">Tulajdonos regisztrálása</h1>
+        }
+
+        <form asp-controller="Account" asp-action="Registration">
+                    <div class="row">
+                        <div class="col">
+                            <input type="hidden" asp-for="UserRole" />
+                            <div class="failureNotification">@Html.ValidationSummary(true, "A regisztráció sikertelen!")</div>
+
+                            <h1>Személyes adatok:</h1>
+                            <div class="form-group">
+                                <label asp-for="UserOwnName" class="control-label">Név</label>
+                                <input asp-for="UserOwnName" class="form-control" style="max-width: 300px;" />
+                                <span asp-validation-for="UserOwnName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="UserEmail" class="control-label">Email cím</label>
+                                <input asp-for="UserEmail" class="form-control" style="max-width: 300px;" />
+                                <span asp-validation-for="UserEmail" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="UserPhoneNumber" class="control-label">Telefonszám</label>
+                                <input asp-for="UserPhoneNumber" class="form-control" style="max-width: 300px;" />
+                                <span asp-validation-for="UserPhoneNumber" class="text-danger"></span>
+                            </div>
+
+                            @if (@Model.UserRole == "musician")
+                            {
+                                <div class="form-group">
+                                    <label asp-for="BandName" class="control-label">Alapértelmezett zenekarnév</label>
+                                    <input asp-for="BandName" class="form-control" style="max-width: 300px;" />
+                                    <span asp-validation-for="BandName" class="text-danger"></span>
+                                </div>
+                            }
+                        </div>
+                        <div class="col">
+                            <h1>Bejelentkezési adatok:</h1>
+
+                            <div class="form-group">
+                                <label asp-for="UserName" class="control-label">Felhasználónév</label>
+                                <input asp-for="UserName" class="form-control" style="max-width: 300px;" />
+                                <span asp-validation-for="UserName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="UserPassword" class="control-label">Jelszó</label>
+                                <input asp-for="UserPassword" class="form-control" style="max-width: 300px;" />
+                                <span asp-validation-for="UserPassword" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="UserConfirmPassword" class="control-label">Jelszó megerősítése</label>
+                                <input asp-for="UserConfirmPassword" class="form-control" style="max-width: 300px;" />
+                                <span asp-validation-for="UserConfirmPassword" class="text-danger"></span>
+                            </div>
+                            <p>
+                                A felhasználónév és a jelszó minimum 8, maximum 40 karakter hosszú lehet. Csak betűt, számot és kötőjelet tartalmathat.
+                            </p>
+                            <input type="submit" value="Regisztráció" class="btn btn-primary align-baseline" />
+                            @if (ViewBag.CurrentUserRole == "administrator")
+                            {
+                                <a asp-action="Index" class="btn btn-outline-danger align-baseline">Mégsem</a>
+                            }
+                        </div>
+                    </div>
+                </form>
+    </div>
+
+    @section Scripts
+{
+        <partial name="_ValidationScriptsPartial" />
+    }

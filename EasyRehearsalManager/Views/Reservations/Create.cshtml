@@ -1,64 +1,87 @@
 ﻿@model ReservationViewModel
 
-<h1 class="display-4">Foglalás rögzítése</h1>
+<div class="light-color-letters">
+    <h1 class="display-4">Foglalás rögzítése</h1>
+    <hr />
+    <form asp-controller="Reservations" asp-action="Create" class="w-auto">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<table class="table table-borderless w-auto">
-    <tbody>
-        <tr>
-            <th scope="row">Próbahely neve:</th>
-            <td>@Model.Room.Studio.Name</td>
-        </tr>
-        <tr>
-            <th scope="row">Terem száma:</th>
-            <td>@Model.Room.Number</td>
-        </tr>
-    </tbody>
-</table>
+        <div class="row">
+            <div class="col">
+                <h2>Foglalás helye</h2>
+                <div class="form-group">
+                    <label for="studio">Próbahely neve</label>
+                    <input id="studio" class="form-control" asp-for="@Model.StudioName" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="room">Terem száma</label>
+                    <input id="room" class="form-control" asp-for="@Model.RoomNumber" readonly />
+                </div>
+                <input type="hidden" asp-for="RoomId" />
+            </div>
+            <div class="col">
+                <h2>Foglaló adatai</h2>
+                @if (ViewBag.CurrentUserRole == "musician")
+                {
+                    <div class="form-group failureNotification">
+                        <label for="name">Név</label>
+                        <input class="form-control" asp-for="UserOwnName" id="name" readonly />
+                        <span asp-validation-for="UserOwnName"></span>
+                    </div>
+                    <input type="hidden" asp-for="UserId" />
+                    <div class="form-group failureNotification">
+                        <label for="band">Zenekar neve</label>
+                        <input class="form-control" asp-for="BandName" id="band" />
+                        <span asp-validation-for="BandName"></span>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <label asp-for="UserId" class="control-label">Felhasználó neve</label>
+                        <select asp-for="UserId" class="form-control" asp-items="ViewBag.Users" style="max-width: 300px;"></select>
+                    </div>
+                    <input type="hidden" asp-for="UserOwnName" />
+                }
+            </div>
+            <div class="col">
+                <h2>Foglalás adatai</h2>
+                <div class="form-group failureNotification">
+                    <label for="date">Dátum</label>
+                    <input asp-for="Day" type="date" asp-format="{0:yyyy-MM-dd}" id="date" style="max-width: 300px;" class="form-control" />
+                    <span asp-validation-for="Day"></span>
+                </div>
+                <div class="form-group failureNotification">
+                    <label for="start">Foglalás kezdete (óra)</label>
+                    <select asp-for="StartHour" id="start" class="form-control" asp-items="ViewBag.Hours" style="max-width: 70px;"></select>
+                    <span asp-validation-for="StartHour" class="text-danger"></span>
+                </div>
+                <div class="form-group failureNotification">
+                    <label for="end">Foglalás vége (óra)</label>
+                    <select asp-for="EndHour" class="form-control" id="end" asp-items="ViewBag.Hours" style="max-width: 70px;"></select>
+                    <span asp-validation-for="EndHour" class="text-danger"></span>
+                </div>
+                <div class="form-inline failureNotification">
+                    @foreach (var key in Model.Equipments.Keys)
+                    {
+                        <div class="row">
+                            <div class="col-auto">
+                                <input asp-for="@Model.Equipments[key]" />
+                            </div>
+                            <div class="col-auto">
+                                <div class="mx-2">@key</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
 
-<form asp-controller="Reservations" asp-action="Create" asp-route-roomId="@Model.Room.Id" class="w-auto">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="form-group failureNotification">
-        <label for="name">Név</label>
-        <input class="form-control" asp-for="UserOwnName" id="name" style="max-width: 300px;" />
-        <span asp-validation-for="UserOwnName"></span>
-    </div>
-    <div class="form-group failureNotification">
-        <label for="band">Zenekar neve</label>
-        <input class="form-control" asp-for="BandName" id="band" style="max-width: 300px;" />
-        <span asp-validation-for="BandName"></span>
-    </div>
-    <div class="form-group failureNotification">
-        <label for="phone">Telefonszám</label>
-        <input class="form-control" asp-for="UserPhoneNumber" id="phone" style="max-width: 300px;" />
-        <span asp-validation-for="UserPhoneNumber"></span>
-    </div>
-    <div class="form-group failureNotification">
-        <label for="email">Email-cím</label>
-        <input class="form-control" asp-for="UserEmail" id="email" style="max-width: 300px;" />
-        <span asp-validation-for="UserEmail"></span>
-    </div>
-    <div class="form-group failureNotification">
-        <label for="date">Dátum</label>
-        <input asp-for="Day" type="date" asp-format="{0:yyyy-MM-dd}" id="date" style="max-width: 300px;" class="form-control" />
-        <span asp-validation-for="Day"></span>
-    </div>
-    <div class="form-group failureNotification">
-        <label for="start">Foglalás kezdete (óra)</label>
-        <select asp-for="StartHour" id="start" class="form-control" asp-items="ViewBag.Hours" style="max-width: 70px;"></select>
-        <span asp-validation-for="StartHour" class="text-danger"></span>
-    </div>
-    <div class="form-group failureNotification">
-        <label for="end">Foglalás vége (óra)</label>
-        <select asp-for="EndHour" class="form-control" id="end" asp-items="ViewBag.Hours" style="max-width: 70px;"></select>
-        <span asp-validation-for="EndHour" class="text-danger"></span>
-    </div>
-    <div class="form-inline failureNotification">
-        @foreach (var key in Model.Equipments.Keys)
-        {
-            <input asp-for="@Model.Equipments[key]" />
-            <div class="mx-2">@key</div>
-        }
-    </div>
-    <input type="submit" value="Foglalás" class="btn btn-primary align-baseline" />
-    <a class="btn btn-outline-danger align-baseline" asp-controller="RehearsalRooms" asp-action="Index">Mégsem</a>      
-</form>
+
+
+
+
+        <input type="submit" value="Foglalás" class="btn btn-primary align-baseline" />
+        <a class="btn btn-outline-danger align-baseline" asp-controller="RehearsalRooms" asp-action="Index">Mégsem</a>
+    </form>
+</div>

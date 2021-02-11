@@ -1,5 +1,6 @@
 ﻿using EasyRehearsalManager.Model;
 using IdentityModel.Client;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,6 +20,19 @@ namespace EasyRehearsalManager.Web.Models
         private readonly ReservationDateValidator _reservationDateValidator;
         private readonly UserManager<User> _userManager;
 
+        //ez a teszthez kell (ha a másik van akkor ez kell?)
+        /*public ReservationService(EasyRehearsalManagerContext context)
+        {
+            _context = context;
+        }*/
+
+        //ez is a teszthez kell
+        public ReservationService(EasyRehearsalManagerContext context, ReservationDateValidator validator)
+        {
+            _context = context;
+            _reservationDateValidator = validator;
+        }
+
         public ReservationService(EasyRehearsalManagerContext context, UserManager<User> userManager)
         {
             _context = context;
@@ -25,9 +40,12 @@ namespace EasyRehearsalManager.Web.Models
             _reservationDateValidator = new ReservationDateValidator(_context);
         }
 
+        #region Data sets
+
         public IEnumerable<RehearsalStudio> Studios => _context.Studios
                                                             .Include(l => l.Rooms)
                                                             .Include(l => l.Equipments)
+                                                            .Include(l => l.User)
                                                             .OrderBy(l => l.Name);
 
         public IEnumerable<RehearsalRoom> Rooms => _context.Rooms
@@ -39,13 +57,20 @@ namespace EasyRehearsalManager.Web.Models
         public IEnumerable<Reservation> Reservations => _context.Reservations
                                                             .Include(l => l.RehearsalRoom)
                                                             .Include(l => l.RehearsalRoom.Studio)
-                                                            //.Include(l => l.Equipments)
                                                             .OrderByDescending(l => l.Start);
 
         public IEnumerable<Equipment> Equipments => _context.Equipments
                                                         .Include(l => l.Studio);
 
         public IEnumerable<ReservationEquipmentPair> ReservationEquipmentPairs => _context.ReservationEquipmentPairs;
+
+        public IEnumerable<User> Users => _context.Users
+                                            .Include(l => l.Reservations)
+                                            .Include(l => l.RehearsalStudios);
+
+        #endregion
+
+        #region Operations with studios
 
         public RehearsalStudio GetStudio(int? studioId)
         {
@@ -69,48 +94,6 @@ namespace EasyRehearsalManager.Web.Models
             return null;
         }
 
-        public RehearsalRoom GetRoom(int? roomId)
-        {
-            if (roomId == null)
-                return null;
-
-            return Rooms.FirstOrDefault(l => l.Id == roomId);
-        }
-
-        /// <summary>
-        /// Gets the reservation by ID.
-        /// </summary>
-        /// <param name="reservationId"></param>
-        /// <returns>Returns the reservation, including the room and the studio.</returns>
-        public Reservation GetReservation(int? reservationId)
-        {
-            if (reservationId == null)
-                return null;
-
-            return Reservations.FirstOrDefault(l => l.Id == reservationId);
-        }
-
-        public Equipment GetEquipment(int? equipmentId)
-        {
-            if (equipmentId == null)
-                return null;
-
-            return Equipments.FirstOrDefault(l => l.Id == equipmentId);
-        }
-
-        public ReservationEquipmentPair GetReservationEquipmentPair(int? pairId)
-        {
-            if (pairId == null)
-                return null;
-
-            return ReservationEquipmentPairs.FirstOrDefault(l => l.Id == pairId);
-        }
-
-        public IEnumerable<Equipment> GetEquipmentsForStudio(int? studioId)
-        {
-            return Equipments.Where(l => l.StudioId == studioId);
-        }
-
         public bool AddStudio(RehearsalStudio studio)
         {
             _context.Studios.Add(studio);
@@ -124,6 +107,216 @@ namespace EasyRehearsalManager.Web.Models
             }
 
             return true;
+        }
+
+        public bool RemoveStudio(int? studioId)
+        {
+            if (studioId == null)
+                return false;
+
+            var studio = _context.Studios.FirstOrDefault(l => l.Id == studioId);
+
+            _context.Studios.Remove(studio);
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch
+            {
+                return false;
+            }
+            
+            //deleting all rooms that belonged to this studio
+            //deleting all reservations that were in this studio (for any room)
+            foreach (var room in Rooms)
+            {
+                if (room.StudioId == studioId)
+                {
+                    foreach (var reservation in Reservations)
+                    {
+                        if (reservation.RehearsalRoomId == room.Id)
+                        {
+                            _context.Reservations.Remove(reservation);
+                        }
+                    }
+                    _context.Rooms.Remove(room);
+                }
+            }
+
+            //foglalásokat is törölni
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch
+            {
+
+                return false;
+            }
+            
+            return true;
+        }
+
+        public bool UpdateStudio(RehearsalStudio studio)
+        {
+            _context.Studios.Update(studio);
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public IEnumerable<RehearsalStudio> GetStudiosByOwner(int? ownerId)
+        {
+            if (ownerId == null)
+                return Studios;
+
+            return Studios.Where(l => l.UserId == ownerId);
+        }
+
+        public int? GetStudioIdByEquipment(int? equipmentId)
+        {
+            if (equipmentId == null)
+                return null;
+
+            var equipment = Equipments.FirstOrDefault(l => l.Id == equipmentId);
+
+            if (equipment == null)
+                return null;
+
+            return equipment.StudioId;
+        }
+
+        public bool RehearsalStudioExist(int? studioId)
+        {
+            if (studioId == null)
+                return false;
+
+            return _context.Studios.Select(l => l.Id).ToList().Contains((int)studioId);
+        }
+
+        public byte[] GetStudioImage(int? imageId)
+        {
+            if (imageId == null)
+                return null;
+
+            byte[] image = _context.StudioImages.FirstOrDefault(l => l.Id == imageId).Image;
+
+            return image;
+        }
+
+        public byte[] GetLogo(int studioId)
+        {
+            byte[] image = Studios.FirstOrDefault(l => l.Id == studioId).Logo;
+
+            return image;
+        }
+
+        public bool UploadImagesForStudio(int studioId, List<IFormFile> images)
+        {
+            foreach (var image in images)
+            {
+                byte[] fileBytes = null;
+                if (image.Length > 0)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        image.CopyTo(ms);
+                        fileBytes = ms.ToArray();
+                    }
+                }
+
+                _context.StudioImages.Add(new StudioImage
+                {
+                    StudioId = studioId,
+                    Image = fileBytes
+                });
+            }
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool ChangeLogoForStudio(int studioId, IFormFile logo)
+        {
+            byte[] fileBytes = null;
+            if (logo.Length > 0)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    logo.CopyTo(ms);
+                    fileBytes = ms.ToArray();
+                }
+            }
+
+            RehearsalStudio studio = Studios.FirstOrDefault(l => l.Id == studioId);
+            studio.Logo = fileBytes;
+
+            _context.Studios.Update(studio);
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public List<int> GetImagesForStudio(int studioId)
+        {
+            return _context.StudioImages.Where(l => l.StudioId == studioId).Select(l => l.Id).ToList();
+        }
+
+        public bool DeleteImagesForStudio(int studioId, List<int> images)
+        {
+            foreach (var id in images)
+            {
+                StudioImage imageToDelete = _context.StudioImages.Where(l => l.StudioId == studioId).FirstOrDefault(l => l.Id == id);
+                _context.StudioImages.Remove(imageToDelete);
+            }
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
+        #region Operations with rooms
+
+        public RehearsalRoom GetRoom(int? roomId)
+        {
+            if (roomId == null)
+                return null;
+
+            return Rooms.FirstOrDefault(l => l.Id == roomId);
         }
 
         public bool AddRoom(RehearsalRoom room)
@@ -141,84 +334,11 @@ namespace EasyRehearsalManager.Web.Models
             return true;
         }
 
-        public bool AddReservation(Reservation reservation)
-        {
-            _context.Reservations.Add(reservation);
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool AddEquipment(Equipment equipment)
-        {
-            _context.Equipments.Add(equipment);
-
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool RemoveStudio(int? studioId)
-        {
-            var studio = _context.Studios.FirstOrDefault(l => l.Id == studioId);
-
-            _context.Studios.Remove(studio);
-
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch
-            {
-                return false;
-            }
-
-            //deleting all rooms that belonged to this studio
-            //deleting all reservations that were in this studio (for any room)
-            foreach (var room in _context.Rooms)
-            {
-                if (room.StudioId == studioId)
-                {
-                    foreach (var reservation in _context.Reservations)
-                    {
-                        if (reservation.RehearsalRoomId == room.Id)
-                        {
-                            _context.Reservations.Remove(reservation);
-                        }
-                    }
-                    _context.Rooms.Remove(room);
-                }
-            }
-
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch
-            {
-
-                return false;
-            }
-
-            return true;
-        }
-
         public bool RemoveRoom(int? roomId)
         {
+            if (roomId == null)
+                return false;
+
             var room = _context.Rooms.FirstOrDefault(l => l.Id == roomId);
 
             _context.Rooms.Remove(room);
@@ -234,7 +354,7 @@ namespace EasyRehearsalManager.Web.Models
             }
 
             //deleting all reservations to this room
-            foreach (var reservation in _context.Reservations)
+            foreach (var reservation in Reservations)
             {
                 if (reservation.RehearsalRoomId == roomId)
                 {
@@ -253,6 +373,139 @@ namespace EasyRehearsalManager.Web.Models
             }
 
             return true;
+        }
+
+        public bool UpdateRoom(RehearsalRoom room)
+        {
+            _context.Rooms.Update(room);
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public IEnumerable<RehearsalRoom> GetRoomsByOwnerId(int? ownerId)
+        {
+            if (ownerId == null)
+                return Rooms;
+
+            return Rooms.Where(l => l.Studio.UserId == ownerId);
+        }
+
+        public byte[] GetRoomImage(int? imageId)
+        {
+            if (imageId == null)
+                return null;
+
+            byte[] image = _context.RoomImages.FirstOrDefault(l => l.Id == imageId).Image;
+
+            return image;
+        }
+
+        public bool UploadImagesForRoom(int roomId, List<IFormFile> images)
+        {
+            foreach (var image in images)
+            {
+                byte[] fileBytes = null;
+                if (image.Length > 0)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        image.CopyTo(ms);
+                        fileBytes = ms.ToArray();
+                    }
+                }
+
+                _context.RoomImages.Add(new RoomImage
+                {
+                    RoomId = roomId,
+                    Image = fileBytes
+                });
+            }
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public List<int> GetImagesForRoom(int roomId)
+        {
+            return _context.RoomImages.Where(l => l.RoomId == roomId).Select(l => l.Id).ToList();
+        }
+
+        public byte[] GetDefaultRoomImage(int? roomId)
+        {
+            if (roomId == null)
+                return null;
+
+            if (RoomImageExist((int)roomId))
+            {
+                return _context.RoomImages.FirstOrDefault(l => l.RoomId == roomId).Image;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Determines whether a room has any picture uploaded.
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
+        private bool RoomImageExist(int roomId)
+        {
+            return _context.RoomImages.Where(l => l.RoomId == roomId).Any();
+        }
+
+        public bool DeleteImagesForRoom(int roomId, List<int> images)
+        {
+            foreach (var id in images)
+            {
+                RoomImage imageToDelete = _context.RoomImages.Where(l => l.RoomId == roomId).FirstOrDefault(l => l.Id == id); //just to be sure we're deleting the right picture
+                if (imageToDelete != null)
+                    _context.RoomImages.Remove(imageToDelete);
+            }
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
+        #region Operations with reservations
+
+        /// <summary>
+        /// Gets the reservation by ID.
+        /// </summary>
+        /// <param name="reservationId"></param>
+        /// <returns>Returns the reservation, including the room and the studio.</returns>
+        public Reservation GetReservation(int? reservationId)
+        {
+            if (reservationId == null)
+                return null;
+
+            return Reservations.FirstOrDefault(l => l.Id == reservationId);
         }
 
         public bool RemoveReservation(int? reservationId)
@@ -274,6 +527,185 @@ namespace EasyRehearsalManager.Web.Models
             catch
             {
 
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool UpdateReservation(Reservation reservation)
+        {
+            _context.Reservations.Update(reservation);
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public IEnumerable<Reservation> GetReservations(int userId, string role)
+        {
+            switch (role)
+            {
+                case "owner":
+                    List<Reservation> result = new List<Reservation>();
+                    foreach (var reservation in Reservations)
+                    {
+                        if (reservation.RehearsalRoom.Studio.UserId == userId)
+                            result.Add(reservation);
+                    }
+                    return result;
+                case "musician":
+                    List<Reservation> res = new List<Reservation>();
+                    foreach (var reservation in Reservations)
+                    {
+                        if (reservation.UserId == userId)
+                            res.Add(reservation);
+                    }
+                    return res;
+                default:
+                    return Reservations;
+            }
+        }
+
+        public IEnumerable<Reservation> GetReservationsByStudioId(int? studioId)
+        {
+            if (studioId == null)
+                return null;
+
+            return Reservations.Where(l => l.RehearsalRoom.StudioId == studioId);
+        }
+
+        public bool ReservationExist(int? reservationId)
+        {
+            if (reservationId == null)
+                return false;
+
+            var reservation = GetReservation(reservationId);
+
+            if (reservation == null)
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// This function is only called when creating a reservation.
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <param name="userId"></param>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
+        public async Task<bool> SaveReservationAsync(int? roomId, int userId, ReservationViewModel viewModel)
+        {
+            if (roomId == null || viewModel == null)
+                return false;
+
+            if (!Validator.TryValidateObject(viewModel, new ValidationContext(viewModel, null, null), null))
+                return false;
+
+            DateTime start = viewModel.Day.AddHours(viewModel.StartHour);
+            DateTime end = viewModel.Day.AddHours(viewModel.EndHour);
+
+            if (_reservationDateValidator.Validate(start, end, roomId.Value, "create", viewModel.ReservationId, viewModel.Equipments) != ReservationDateError.None)
+                return false;
+
+            User user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user == null)
+                return false;
+
+            _context.Reservations.Add(new Reservation
+            {
+                RehearsalRoomId = (int)roomId,
+                UserId = userId,
+                User = user,
+                Start = viewModel.Day.AddHours(viewModel.StartHour),
+                End = viewModel.Day.AddHours(viewModel.EndHour),
+                BandName = viewModel.BandName != "" ? viewModel.BandName : user.DefaultBandName
+            });
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            if (!AddReservationEquipmentPair((int)roomId, viewModel, user.Id))
+                return false;
+
+            return true;
+        }
+
+        //roomId cannot be null, because it is checked before this function is called
+        public ReservationDateError ValidateReservation(DateTime start, DateTime end, string action, int reservationId, Dictionary<string, bool> equipments, int roomId)
+        {
+            return _reservationDateValidator.Validate(start, end, roomId, action, reservationId, equipments);
+        }
+
+        /*
+        public IEnumerable<DateTime> GetReservationDates(int roomId, int year, int month)
+        {
+            List<DateTime> isAvailable = new List<DateTime>();
+
+            DateTime start = new DateTime(year, month, 1) - TimeSpan.FromDays(50);
+            DateTime end = new DateTime(year, month, 1) + TimeSpan.FromDays(80);
+
+            if (end < DateTime.Today)
+                return isAvailable;
+
+            List<Reservation> possibleConflicts = _context.Reservations.Where(l => l.RehearsalRoomId == roomId && l.Start <= end && l.End >= start).ToList();
+
+            for (DateTime date = start; date < end; date += TimeSpan.FromDays(1))
+            {
+                if (date > DateTime.Today &&
+                    possibleConflicts.All(l => !l.IsConflicting(date)))
+                {
+                    isAvailable.Add(date);
+                }
+            }
+
+            return isAvailable;
+        }
+        */
+
+        #endregion
+
+        #region Operations with equipments
+
+        public Equipment GetEquipment(int? equipmentId)
+        {
+            if (equipmentId == null)
+                return null;
+
+            return Equipments.FirstOrDefault(l => l.Id == equipmentId);
+        }
+
+        public IEnumerable<Equipment> GetEquipmentsForStudio(int? studioId)
+        {
+            //return Equipments.Where(l => l.StudioId == studioId); why isn't it working?
+            return _context.Equipments.Where(l => l.StudioId == studioId);
+        }
+
+        public bool AddEquipment(Equipment equipment)
+        {
+            _context.Equipments.Add(equipment);
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch
+            {
                 return false;
             }
 
@@ -305,57 +737,63 @@ namespace EasyRehearsalManager.Web.Models
             return true;
         }
 
-        public bool UpdateStudio(RehearsalStudio studio)
-        {
-            _context.Studios.Update(studio);
-
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool UpdateRoom(RehearsalRoom room)
-        {
-            _context.Rooms.Update(room);
-
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool UpdateReservation(Reservation reservation)
-        {
-            _context.Reservations.Update(reservation);
-
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         public bool UpdateEquipment(Equipment equipment)
         {
             _context.Equipments.Update(equipment);
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
+        #region Operations with ReservationEquipmentPairs
+
+        public ReservationEquipmentPair GetReservationEquipmentPair(int? pairId)
+        {
+            if (pairId == null)
+                return null;
+
+            return ReservationEquipmentPairs.FirstOrDefault(l => l.Id == pairId);
+        }
+
+        public bool AddReservationEquipmentPair(int roomId, ReservationViewModel viewModel, int userId)
+        {
+            int studioId = GetStudioByRoomId(roomId).Id;
+
+            List<ReservationEquipmentPair> pairs = new List<ReservationEquipmentPair>();
+            foreach (var eq in viewModel.Equipments)
+            {
+                if (eq.Value == true) //if we want to book this equipment
+                {
+                    ReservationEquipmentPair pair = new ReservationEquipmentPair
+                    {
+                        StudioId = studioId,
+                        EquipmentId = _context.Equipments.Where(l => l.StudioId == studioId).FirstOrDefault(l => l.Name == eq.Key).Id,
+                        EquipmentName = eq.Key,
+                        ReservationId = _context.Reservations.FirstOrDefault(l =>
+                                            l.RehearsalRoomId == roomId &&
+                                            l.UserId == userId &&
+                                            l.BandName == viewModel.BandName &&
+                                            l.Start == viewModel.Day.AddHours(viewModel.StartHour) &&
+                                            l.End == viewModel.Day.AddHours(viewModel.EndHour)).Id
+                    };
+                    pairs.Add(pair);
+                }
+            }
+
+            foreach (var pair in pairs)
+            {
+                _context.ReservationEquipmentPairs.Add(pair);
+            }
 
             try
             {
@@ -418,63 +856,6 @@ namespace EasyRehearsalManager.Web.Models
             return true;
         }
 
-        public IEnumerable<RehearsalStudio> GetStudiosByOwner(int? ownerId)
-        {
-            if (ownerId == null)
-                return Studios;
-
-            return Studios.Where(l => l.UserId == ownerId);
-        }
-
-        public IEnumerable<RehearsalRoom> GetRoomsByOwnerId(int? ownerId)
-        {
-            if (ownerId == null)
-                return Rooms;
-
-            return Rooms.Where(l => l.Studio.UserId == ownerId);
-        }
-
-        public IEnumerable<Reservation> GetReservations(int userId, string role)
-        {
-            switch (role)
-            {
-                case "owner":
-                    List<Reservation> result = new List<Reservation>();
-                    foreach (var reservation in Reservations)
-                    {
-                        if (reservation.RehearsalRoom.Studio.UserId == userId)
-                            result.Add(reservation);
-                    }
-                    return result;
-                case "musician":
-                    List<Reservation> res = new List<Reservation>();
-                    foreach (var reservation in Reservations)
-                    {
-                        if (reservation.UserId == userId)
-                            res.Add(reservation);
-                    }
-                    return res;
-                default:
-                    return Reservations;
-            }
-        }
-
-        public IEnumerable<Reservation> GetReservationsByStudioId(int? studioId)
-        {
-            if (studioId == null)
-                return null;
-
-            return Reservations.Where(l => l.RehearsalRoom.StudioId == studioId);
-        }
-
-        public int? GetStudioIdByEquipment(int? equipmentId)
-        {
-            if (equipmentId == null)
-                return null;
-
-            return Equipments.FirstOrDefault(l => l.Id == equipmentId).StudioId;
-        }
-
         public IEnumerable<ReservationEquipmentPair> GetReservationEquipmentPairsForStudio(int? studioId)
         {
             if (studioId == null)
@@ -499,178 +880,6 @@ namespace EasyRehearsalManager.Web.Models
             return ReservationEquipmentPairs.Where(l => l.ReservationId == reservationId);
         }
 
-        /// <summary>
-        /// Creates a new reservation and adds the room by the given ID including the studio
-        /// and sets the start date to NOW and the end date to NOW+2hours.
-        /// </summary>
-        /// <param name="roomId">The ID of the room on which you want to make a reservation.</param>
-        /// <returns>The new reservation.</returns>
-        public ReservationViewModel NewReservation(int? roomId)
-        {
-            if (roomId == null)
-                return null;
-
-            RehearsalRoom room = Rooms.FirstOrDefault(l => l.Id == roomId);
-
-            ReservationViewModel reservation = new ReservationViewModel { Room = room };
-
-            reservation.Day = DateTime.Today;
-
-            reservation.StartHour = DateTime.Now.Hour + 1;
-
-            reservation.EndHour = DateTime.Now.Hour + 3;
-
-            return reservation;
-        }
-
-        public bool ReservationExist(int? reservationId)
-        {
-            if (reservationId == null)
-                return false;
-
-            var reservation = GetReservation(reservationId);
-
-            if (reservation == null)
-                return false;
-
-            return true;
-        }
-
-        public bool RehearsalStudioExist(int? studioId)
-        {
-            if (studioId == null)
-                return false;
-
-            var studio = GetStudio(studioId);
-
-            if (studio == null)
-                return false;
-
-            return true;
-        }
-
-        public async Task<bool> SaveReservationAsync(int? roomId, string userName, ReservationViewModel reservation) //ez csak a foglalás létrehozásánál hívódik meg
-        {
-            /*
-             * ide hozzá kell majd írni hogy a reservationEqipmentPairs táblába bekerüljön a megfelelő elem
-             */
-            if (roomId == null || reservation == null)
-                return false;
-
-            if (!Validator.TryValidateObject(reservation, new ValidationContext(reservation, null, null), null))
-                return false;
-
-            DateTime start = reservation.Day.AddHours(reservation.StartHour);
-            DateTime end = reservation.Day.AddHours(reservation.EndHour);
-
-            if (_reservationDateValidator.Validate(start, end, roomId.Value, "create", reservation.Id, reservation.Equipments) != ReservationDateError.None)
-                return false;
-
-            User user = await _userManager.FindByNameAsync(userName);
-
-            if (user == null)
-                return false;
-            /*
-            List<Equipment> equipments = new List<Equipment>();
-
-            foreach (var equipment in reservation.Equipments)
-            {
-                if (equipment.Value)
-                {
-                    Equipment e = _context.Equipments.FirstOrDefault(l => l.Name == equipment.Key);
-                    equipments.Add(e);
-                }
-            }
-            */
-            _context.Reservations.Add(new Reservation
-            {
-                RehearsalRoomId = reservation.Room.Id,
-                UserId = user.Id,
-                Start = reservation.Day.AddHours(reservation.StartHour),
-                End = reservation.Day.AddHours(reservation.EndHour),
-                BandName = reservation.BandName
-                //Equipments = equipments
-                //remove equipments
-            });
-
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            int studioId = GetStudioByRoomId(reservation.Room.Id).Id;
-
-            List<ReservationEquipmentPair> pairs = new List<ReservationEquipmentPair>();
-            foreach (var eq in reservation.Equipments)
-            {
-                if (eq.Value == true) //ha ezt kibéreltük
-                {
-                    ReservationEquipmentPair pair = new ReservationEquipmentPair
-                    {
-                        StudioId = studioId,
-                        EquipmentId = _context.Equipments.Where(l => l.StudioId == studioId).FirstOrDefault(l => l.Name == eq.Key).Id,
-                        EquipmentName = eq.Key,
-                        ReservationId = _context.Reservations.FirstOrDefault(l => 
-                                            l.RehearsalRoomId == reservation.Room.Id && 
-                                            l.UserId == user.Id && 
-                                            l.BandName == reservation.BandName && 
-                                            l.Start == reservation.Day.AddHours(reservation.StartHour) &&
-                                            l.End == reservation.Day.AddHours(reservation.EndHour)).Id //somehow we have to find the last(?) added reservation
-                    };
-                }
-            }
-
-            foreach (var pair in pairs)
-            {
-                _context.ReservationEquipmentPairs.Add(pair);
-            }
-
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        //roomId cannot be null, because it is checked before this function is called
-        public ReservationDateError ValidateReservation(DateTime start, DateTime end, string action, int reservationId, Dictionary<string, bool> equipments, int roomId)
-        {
-            return _reservationDateValidator.Validate(start, end, roomId, action, reservationId, equipments);
-        }
-
-        public IEnumerable<DateTime> GetReservationDates(int roomId, int year, int month)
-        {
-            List<DateTime> isAvailable = new List<DateTime>();
-
-            DateTime start = new DateTime(year, month, 1) - TimeSpan.FromDays(50);
-            DateTime end = new DateTime(year, month, 1) + TimeSpan.FromDays(80);
-
-            if (end < DateTime.Today)
-                return isAvailable;
-
-            List<Reservation> possibleConflicts = _context.Reservations.Where(l => l.RehearsalRoomId == roomId && l.Start <= end && l.End >= start).ToList();
-
-            for (DateTime date = start; date < end; date += TimeSpan.FromDays(1))
-            {
-                if (date > DateTime.Today &&
-                    possibleConflicts.All(l => !l.IsConflicting(date)))
-                {
-                    isAvailable.Add(date);
-                }
-            }
-
-            return isAvailable;
-        }
-
         public List<string> GetEquipmentNamesForReservation(int? reservationId)
         {
             if (reservationId == null)
@@ -679,25 +888,41 @@ namespace EasyRehearsalManager.Web.Models
             return ReservationEquipmentPairs.Where(l => l.ReservationId == reservationId).Select(l => l.EquipmentName).ToList();
         }
 
+        #endregion
+
+        #region Operations with users
+
         public Byte[] GetUserImage(int? userId)
         {
             if (userId == null)
                 return null;
 
-            return _context.UserImages
-                .Where(l => l.UserId == userId)
-                .Select(l => l.ImageSmall)
-                .FirstOrDefault();
+            return _context.Users.FirstOrDefault(l => l.Id == userId).ProfilePicture;
         }
 
-        public bool NewRoomAdded(int? studioId)
+        public bool UpdateProfilePicture(int userId, IFormFile image)
         {
-            var studio = _context.Studios.FirstOrDefault(l => l.Id == studioId);
+            byte[] fileBytes = null;
+
+            if (image.Length > 0)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    image.CopyTo(ms);
+                    fileBytes = ms.ToArray();
+                }
+            }
+
+            User user = _context.Users.FirstOrDefault(l => l.Id == userId);
+            user.ProfilePicture = fileBytes;
+
+            _context.Users.Update(user);
+
             try
             {
                 _context.SaveChanges();
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }
@@ -705,44 +930,6 @@ namespace EasyRehearsalManager.Web.Models
             return true;
         }
 
-        public bool UpdateProfilePicture(ProfilePictureViewModel viewModel)
-        {
-            UserImage userImage = _context.UserImages.FirstOrDefault(l => l.UserId == viewModel.UserId);
-            if (userImage == null) //ha még nincs benne a felhasználó id-ja a táblában
-            {
-                _context.UserImages.Add(new UserImage
-                {
-                    UserId = viewModel.UserId,
-                    User = _context.Users.FirstOrDefault(l => l.Id == viewModel.UserId),
-                    ImageSmall = viewModel.ProfilePicture
-                });
-
-                try
-                {
-                    _context.SaveChanges();
-                }
-                catch
-                {
-                    return false;
-                }
-
-                return true;
-            }
-            else
-            {
-                _context.Update(userImage);
-
-                try
-                {
-                    _context.SaveChanges();
-                }
-                catch
-                {
-                    return false;
-                }
-
-                return true;
-            }
-        }
+        #endregion
     }
 }

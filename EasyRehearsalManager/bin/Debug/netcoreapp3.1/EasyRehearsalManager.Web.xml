@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EasyRehearsalManager.Web</name>
+    </assembly>
+    <members>
+        <member name="M:EasyRehearsalManager.Web.Controllers.AccountController.Index">
+            <summary>
+            List of users.
+            </summary>
+            <hu>Az összes regisztrált felhasználó listája.</hu>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EasyRehearsalManager.Web.Controllers.AccountController.Details(System.Nullable{System.Int32})">
+            <summary>
+            Gets user details.
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EasyRehearsalManager.Web.Controllers.AccountController.Edit(System.Nullable{System.Int32})">
+            <summary>
+            This function is to modify a profile.
+            </summary>
+            <param name="userId"></param>
+            <returns>Edit form with the user's details.</returns>
+        </member>
+        <member name="M:EasyRehearsalManager.Web.Controllers.AccountController.ChangePassword">
+            <summary>
+            As the admin cannot change anyone's password,
+            anyone who calls this function will change his own password.
+            So no need for any parameter.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:EasyRehearsalManager.Web.Controllers.RehearsalRoomsController.Create(System.Nullable{System.Int32})">
+            <summary>
+            
+            </summary>
+            <param name="studioId">If not null: we clicked the "Terem hozzáadása" button on the 'Details' page of a studio.</param>
+            <returns></returns>
+        </member>
+        <member name="M:EasyRehearsalManager.Web.Controllers.ReservationsController.Create(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Only authenticated users can make a reservation.
+            Musicians can book only for themselves.
+            Owners can book for anybody but only to their own rooms.
+            Administrator can book for anybody to any room.
+            DayIndex and Hour is used when reservation is made from table.
+            </summary>
+            <param name="roomId">Cannot be null. Reservation can be only made from those page that know the roomId.</param>
+            <param name="dayIndex">If not null then we know which day to book to. If 0 then the default day is today.</param>
+            <param name="hour">If it is null then the default starting hour is next hour.</param>
+            <returns></returns>
+        </member>
+        <member name="M:EasyRehearsalManager.Web.Controllers.ReservationsController.Create(EasyRehearsalManager.Web.Models.ReservationViewModel)">
+            <summary>
+            If the administrator made a reservation for a selected user,
+            then all properties of the user will be unset,
+            except the UserId. So in this case we have to find the user and set the properties.
+            </summary>
+            <param name="roomId"></param>
+            <param name="viewModel"></param>
+            <returns></returns>
+        </member>
+        <member name="P:EasyRehearsalManager.Web.Models.DeleteRoomImagesViewModel.Images">
+            <summary>
+            int: represents the image's id
+            bool: false if image is to delete
+            </summary>
+        </member>
+        <member name="P:EasyRehearsalManager.Web.Models.DeleteStudioImagesViewModel.Images">
+            <summary>
+            int: represents the image's id
+            bool: false if image is to delete
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:EasyRehearsalManager.Web.Models.ImageUploadViewModel" -->
+        <member name="M:EasyRehearsalManager.Web.Models.IReservationService.UploadImagesForStudio(System.Int32,System.Collections.Generic.List{Microsoft.AspNetCore.Http.IFormFile})">
+            <summary>
+            Increases the NumberOfRooms property of the studio.
+            </summary>
+            <param name="roomId"></param>
+        </member>
+        <member name="M:EasyRehearsalManager.Web.Models.ReservationDateValidator.Validate(System.DateTime,System.DateTime,System.Int32,System.String,System.Int32,System.Collections.Generic.Dictionary{System.String,System.Boolean})">
+            <summary>
+            Determines wheter the reservation that we want to create or modify
+            conflicts with an existing reservation.
+            Conflict can be caused by conflicting time period or booked equipments.
+            </summary>
+            <param name="start"></param>
+            <param name="end"></param>
+            <param name="roomId"></param>
+            <param name="action"></param>
+            <param name="reservationId"></param>
+            <param name="equipments"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EasyRehearsalManager.Web.Models.ReservationService.RoomImageExist(System.Int32)">
+            <summary>
+            Determines whether a room has any picture uploaded.
+            </summary>
+            <param name="roomId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EasyRehearsalManager.Web.Models.ReservationService.GetReservation(System.Nullable{System.Int32})">
+            <summary>
+            Gets the reservation by ID.
+            </summary>
+            <param name="reservationId"></param>
+            <returns>Returns the reservation, including the room and the studio.</returns>
+        </member>
+        <member name="M:EasyRehearsalManager.Web.Models.ReservationService.SaveReservationAsync(System.Nullable{System.Int32},System.Int32,EasyRehearsalManager.Web.Models.ReservationViewModel)">
+            <summary>
+            This function is only called when creating a reservation.
+            </summary>
+            <param name="roomId"></param>
+            <param name="userId"></param>
+            <param name="viewModel"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

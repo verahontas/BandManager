@@ -22,6 +22,7 @@ namespace EasyRehearsalManager.Web.Controllers
             _userManager = userManager;
         }
 
+        [Authorize(Roles = "owner, administrator")]
         public IActionResult Index(int? studioId)
         {
             if (studioId == null)
@@ -45,8 +46,10 @@ namespace EasyRehearsalManager.Web.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            Equipment equipment = new Equipment();
-            equipment.StudioId = (int)studioId;
+            Equipment equipment = new Equipment
+            {
+                StudioId = (int)studioId
+            };
 
             string studioName = _reservationService.Studios.FirstOrDefault(l => l.Id == studioId).Name;
             ViewBag.StudioName = studioName;
@@ -112,17 +115,18 @@ namespace EasyRehearsalManager.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int equipmentId)
         {
+            //we need to get this ID before the equipment is deleted.
+            var studioId = _reservationService.GetStudioIdByEquipment(equipmentId);
             if (_reservationService.RemoveEquipment(equipmentId))
             {
                 TempData["SuccessAlert"] = "Az eszközt sikeresen töröltük!";
-                int? studioId = _reservationService.GetStudioIdByEquipment(equipmentId);
-                if (studioId == null)
+                if (studioId != null)
                 {
-                    return RedirectToAction("Index", "RehearsalStudios");
+                    return RedirectToAction("Index", new { studioId = studioId });
                 }
                 else
                 {
-                    return RedirectToAction("Details", "RehearsalStudios", new { studioId =  studioId });
+                    return RedirectToAction("Index", "RehearsalStudios");
                 }
             }
 

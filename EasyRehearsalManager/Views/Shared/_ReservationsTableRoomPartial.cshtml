@@ -1,0 +1,91 @@
+﻿@model RehearsalRoom
+
+
+<h1>Terem Nr. @Model.Number</h1>
+
+<h4>Foglalások</h4>
+<p>- a következő 10 napban</p>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-dark">
+        <thead>
+            <tr>
+                <th scope="col"><sub>dátum</sub>\<sup>óra</sup></th>
+                @for (int i = Model.Studio.EarliestOpeningHour(); i < Model.Studio.LatestClosingHour(); ++i)
+                {
+                    var end = i + 1;
+                    <th scope="col">@i<sup>00</sup>-@end<sup>00</sup> </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < 10; ++i)
+            {
+                <tr>
+                    @{
+                        DateTime date = new DateTime();
+                        date = DateTime.Now.AddDays(i);
+
+                        string year = date.Year.ToString();
+                        string month = date.Month.ToString();
+                        string day = date.Day.ToString();
+                        DayOfWeek dayName = date.DayOfWeek;
+                        string nap = "";
+                        switch (dayName)
+                        {
+                            case DayOfWeek.Sunday:
+                                nap = "vasárnap";
+                                break;
+                            case DayOfWeek.Monday:
+                                nap = "hétfő";
+                                break;
+                            case DayOfWeek.Tuesday:
+                                nap = "kedd";
+                                break;
+                            case DayOfWeek.Wednesday:
+                                nap = "szerda";
+                                break;
+                            case DayOfWeek.Thursday:
+                                nap = "csütörtök";
+                                break;
+                            case DayOfWeek.Friday:
+                                nap = "péntek";
+                                break;
+                            case DayOfWeek.Saturday:
+                                nap = "szombat";
+                                break;
+                            default:
+                                break;
+                        }
+                        string dateToShow = year + ". " + month + ". " + day + ". " + nap;
+                    }
+                    <th scope="row">@dateToShow</th>
+                    @for (int j = Model.Studio.EarliestOpeningHour(); j < Model.Studio.LatestClosingHour(); ++j)
+                    {
+                        @if (j >= Model.Studio.GetOpeningHour(date) && j <= Model.Studio.GetClosingHour(date) && (j > DateTime.Now.Hour && i == 0 || i > 0))
+                        {
+                            DateTime currentDate = new DateTime(date.Year, date.Month, date.Day, j, 0, 0);
+                            string result = @Model.GetReservationForDate(currentDate, currentDate.AddHours(1));
+                            if (result == "Foglalás")
+                            {
+                                <td><a asp-controller="Reservations" asp-action="CreateFromTable" asp-route-dayIndex="@i" asp-route-roomId="@Model.Id" asp-route-hour="@currentDate.Hour">Foglalás</a></td>
+                            }
+                            else
+                            {
+                                <td>@result</td>
+                            }
+                        }
+                        else if (i == 0 && j <= DateTime.Now.Hour)
+                        {
+                            <td>Lejárt</td>
+                        }
+                        else
+                        {
+                            <td>Zárva</td>
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

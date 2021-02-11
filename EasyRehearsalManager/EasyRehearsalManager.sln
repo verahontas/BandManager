@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29920.165
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyRehearsalManager.Web", "EasyRehearsalManager.Web.csproj", "{E5492DD9-E9B2-422E-B429-AF42DDC3FA92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyRehearsalManager.Model", "..\EasyRehearsalManager.Model\EasyRehearsalManager.Model.csproj", "{317453F5-EE90-4D21-B786-20A9800988A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyRehearsalManager.Model", "..\EasyRehearsalManager.Model\EasyRehearsalManager.Model.csproj", "{317453F5-EE90-4D21-B786-20A9800988A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyRehearsalManager.Test", "..\EasyRehearsalManager.Test\EasyRehearsalManager.Test.csproj", "{F3597AD4-0223-45E1-858A-6AA02864F16D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{317453F5-EE90-4D21-B786-20A9800988A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{317453F5-EE90-4D21-B786-20A9800988A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{317453F5-EE90-4D21-B786-20A9800988A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3597AD4-0223-45E1-858A-6AA02864F16D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3597AD4-0223-45E1-858A-6AA02864F16D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3597AD4-0223-45E1-858A-6AA02864F16D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3597AD4-0223-45E1-858A-6AA02864F16D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

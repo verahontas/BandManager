@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace EasyRehearsalManager.Web.Models
 {
+    /*
     public class UserListItemViewModel : MusicianViewModel
     {
         public string Role { get; set; }
@@ -13,4 +14,5 @@ namespace EasyRehearsalManager.Web.Models
 
         public int Id { get; set; }
     }
+    */
 }

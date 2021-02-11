@@ -12,7 +12,6 @@ namespace EasyRehearsalManager.Model
 {
     public class RehearsalRoom
     {
-
         public RehearsalRoom()
         {
             Reservations = new HashSet<Reservation>();
@@ -47,7 +46,10 @@ namespace EasyRehearsalManager.Model
 
         public ICollection<Reservation> Reservations { get; set; }
 
-        //description about stuff in the room
+        /// <summary>
+        /// Description of stuff in the room.
+        /// Note: equipments written here are cannot be reservated. These are fix part of the room.
+        /// </summary>
         [DataType(DataType.MultilineText)]
         public string Equipments { get; set; }
 

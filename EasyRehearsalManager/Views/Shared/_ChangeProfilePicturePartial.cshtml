@@ -1,10 +1,14 @@
-﻿@model ProfilePictureViewModel
+﻿@model ImageUploadViewModel
 
-<form asp-controller="Account" asp-action="ChangeProfilePicture">
-    <input type="hidden" asp-for="UserId" />
+<form asp-controller="Account" asp-action="ChangeProfilePicture" enctype="multipart/form-data">
+    <input type="hidden" asp-for="EntityId" />
     <div class="form-group">
         <label for="upload">Fájl feltöltése</label>
-        <input type="file" asp-for="ProfilePicture" class="form-control-file" id="upload" />
+        <input asp-for="Images" class="form-control-file" id="upload" />
+        <!--
+            
+            NOTE: List<IFormFile> propertybe több fájlt feltölteni
+            <input asp-for="Multiple" class="form-control-file" id="upload" data-show-upload="false" data-show-caption="true" multiple />-->
     </div>
-    <button type="submit" class="btn btn-outline-primary">Profilkép módosítása</button>
+    <button type="submit" class="btn btn-sm btn-secondary my-4">Profilkép módosítása</button>
 </form>

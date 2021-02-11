@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -25,7 +27,7 @@ namespace EasyRehearsalManager.Model
             _context.Database.Migrate();
 
             if (!_context.Users.Any())
-                SeedUsersAndRoles();
+                SeedUsersAndRoles(imageDirectory);
 
             if (!_context.Studios.Any())
                 SeedStudios();
@@ -39,11 +41,14 @@ namespace EasyRehearsalManager.Model
             if (!_context.Reservations.Any())
                 SeedReservations();
 
-            if (!_context.UserImages.Any())
-                SeedUserImages(imageDirectory);
-
             if (!_context.ReservationEquipmentPairs.Any())
                 SeedReservationEquipmentPairs();
+
+            if (!_context.StudioImages.Any())
+                SeedRehearsalStudioImages(imageDirectory);
+
+            if (!_context.RoomImages.Any())
+                SeedRehearsalRoomImages(imageDirectory);
         }
 
         private static void SeedEquipments()
@@ -190,7 +195,7 @@ namespace EasyRehearsalManager.Model
             
         }
 
-        private static void SeedUsersAndRoles()
+        private static void SeedUsersAndRoles(string imageDirectory)
         {
             var adminUser = new User
             {
@@ -203,7 +208,7 @@ namespace EasyRehearsalManager.Model
             var adminPassword = "Almafa123";
             var adminRole = new IdentityRole<int>("administrator");
 
-            var result1 = _userManager.CreateAsync(adminUser, adminPassword).Result;
+            var result1 =_userManager.CreateAsync(adminUser, adminPassword).Result;
             var result2 = _roleManager.CreateAsync(adminRole).Result;
             var result3 = _userManager.AddToRoleAsync(adminUser, adminRole.Name).Result;
 
@@ -233,6 +238,15 @@ namespace EasyRehearsalManager.Model
                 PhoneNumber = "+36301234567"
             };
 
+            if (Directory.Exists(imageDirectory))
+            {
+                var imagePath = Path.Combine(imageDirectory, "kovacspetertak.jpg");
+                if (File.Exists(imagePath))
+                {
+                    owner1.ProfilePicture = File.ReadAllBytes(imagePath);
+                }
+            }
+            
             owner1.SecurityStamp = Guid.NewGuid().ToString();
 
             var pwd2 = "Durerszervezo123";
@@ -242,30 +256,118 @@ namespace EasyRehearsalManager.Model
             var result8 = _roleManager.CreateAsync(ownerRole).Result;
             var result9 = _userManager.AddToRoleAsync(owner1, ownerRole.Name).Result;
         }
-
-        private static void SeedUserImages(string imageDirectory)
+        
+        public static void SeedRehearsalStudioImages(string imageDirectory)
         {
             if (Directory.Exists(imageDirectory))
             {
-                var images = new List<UserImage>();
+                List<StudioImage> defaultImages = new List<StudioImage>();
 
-                var largePath = Path.Combine(imageDirectory, "kovacspetertak.jpg");
-                var smallPath = Path.Combine(imageDirectory, "kovacspetertak.jpg");
-
-                if (File.Exists(largePath) && File.Exists(smallPath))
+                var imagePath = Path.Combine(imageDirectory, "probazona1.jpg");
+                if (File.Exists(imagePath))
                 {
-                    images.Add(new UserImage
+                    defaultImages.Add(new StudioImage
                     {
-                        UserId = 3,
-                        ImageLarge = File.ReadAllBytes(largePath),
-                        ImageSmall = File.ReadAllBytes(smallPath)
+                        StudioId = 1,
+                        Image = File.ReadAllBytes(imagePath)
                     });
                 }
 
-                foreach (var image in images)
+                imagePath = Path.Combine(imageDirectory, "probazona2.png");
+                if (File.Exists(imagePath))
                 {
-                    _context.UserImages.Add(image);
+                    defaultImages.Add(new StudioImage
+                    {
+                        StudioId = 1,
+                        Image = File.ReadAllBytes(imagePath)
+                    });
                 }
+
+                imagePath = Path.Combine(imageDirectory, "probazona3.png");
+                if (File.Exists(imagePath))
+                {
+                    defaultImages.Add(new StudioImage
+                    {
+                        StudioId = 1,
+                        Image = File.ReadAllBytes(imagePath)
+                    });
+                }
+
+                foreach (StudioImage image in defaultImages)
+                    _context.StudioImages.Add(image);
+
+                _context.SaveChanges();
+            }
+        }
+
+        public static void SeedRehearsalRoomImages(string imageDirectory)
+        {
+            if (Directory.Exists(imageDirectory))
+            {
+                List<RoomImage> defaultImages = new List<RoomImage>();
+
+                var imagePath = Path.Combine(imageDirectory, "probazona_terem_1.jpg");
+                if (File.Exists(imagePath))
+                {
+                    defaultImages.Add(new RoomImage
+                    {
+                        RoomId = 3,
+                        Image = File.ReadAllBytes(imagePath)
+                    });
+                }
+
+                imagePath = Path.Combine(imageDirectory, "probazona_terem_2.jpg");
+                if (File.Exists(imagePath))
+                {
+                    defaultImages.Add(new RoomImage
+                    {
+                        RoomId = 2,
+                        Image = File.ReadAllBytes(imagePath)
+                    });
+                }
+
+                imagePath = Path.Combine(imageDirectory, "probazona_terem_3.jpg");
+                if (File.Exists(imagePath))
+                {
+                    defaultImages.Add(new RoomImage
+                    {
+                        RoomId = 1,
+                        Image = File.ReadAllBytes(imagePath)
+                    });
+                }
+
+                imagePath = Path.Combine(imageDirectory, "probazona_terem_4.jpg");
+                if (File.Exists(imagePath))
+                {
+                    defaultImages.Add(new RoomImage
+                    {
+                        RoomId = 4,
+                        Image = File.ReadAllBytes(imagePath)
+                    });
+                }
+
+                imagePath = Path.Combine(imageDirectory, "probazona_terem_5.jpg");
+                if (File.Exists(imagePath))
+                {
+                    defaultImages.Add(new RoomImage
+                    {
+                        RoomId = 5,
+                        Image = File.ReadAllBytes(imagePath)
+                    });
+                }
+
+                imagePath = Path.Combine(imageDirectory, "probazona_terem_6.jpg");
+                if (File.Exists(imagePath))
+                {
+                    defaultImages.Add(new RoomImage
+                    {
+                        RoomId = 6,
+                        Image = File.ReadAllBytes(imagePath)
+                    });
+                }
+
+                foreach (RoomImage image in defaultImages)
+                    _context.RoomImages.Add(image);
 
                 _context.SaveChanges();
             }

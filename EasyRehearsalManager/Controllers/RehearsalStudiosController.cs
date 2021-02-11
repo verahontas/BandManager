@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using EasyRehearsalManager.Model;
+using EasyRehearsalManager.Web.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using EasyRehearsalManager.Model;
-using EasyRehearsalManager.Web.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace EasyRehearsalManager.Web.Controllers
 {
@@ -29,25 +30,17 @@ namespace EasyRehearsalManager.Web.Controllers
             OpeningHours[5] = studio.OpeningHourSaturday;
             OpeningHours[6] = studio.OpeningHourSunday;
 
-            switch (DateTime.Today.DayOfWeek)
+            return DateTime.Today.DayOfWeek switch
             {
-                case DayOfWeek.Monday:
-                    return OpeningHours[(index + 0) % 7];
-                case DayOfWeek.Tuesday:
-                    return OpeningHours[(index + 1) % 7];
-                case DayOfWeek.Wednesday:
-                    return OpeningHours[(index + 2) % 7];
-                case DayOfWeek.Thursday:
-                    return OpeningHours[(index + 3) % 7];
-                case DayOfWeek.Friday:
-                    return OpeningHours[(index + 4) % 7];
-                case DayOfWeek.Saturday:
-                    return OpeningHours[(index + 5) % 7];
-                case DayOfWeek.Sunday:
-                    return OpeningHours[(index + 6) % 7];
-                default:
-                    return -1;
-            }
+                DayOfWeek.Monday => OpeningHours[(index + 0) % 7],
+                DayOfWeek.Tuesday => OpeningHours[(index + 1) % 7],
+                DayOfWeek.Wednesday => OpeningHours[(index + 2) % 7],
+                DayOfWeek.Thursday => OpeningHours[(index + 3) % 7],
+                DayOfWeek.Friday => OpeningHours[(index + 4) % 7],
+                DayOfWeek.Saturday => OpeningHours[(index + 5) % 7],
+                DayOfWeek.Sunday => OpeningHours[(index + 6) % 7],
+                _ => -1,
+            };
         }
 
         private int GetClosingHour(RehearsalStudio studio, int index)
@@ -142,9 +135,22 @@ namespace EasyRehearsalManager.Web.Controllers
              */
         }
 
+        public FileResult GetLogo(int? studioId)
+        {
+            if (studioId == null)
+                return File("~/images/nologo.png", "image/jpeg");
+
+            Byte[] imageContent = _reservationService.GetLogo((int)studioId);
+
+            if (imageContent == null)
+                return File("~/images/nologo.png", "image/jpeg");
+
+            return File(imageContent, "image/jpeg");
+        }
+
         [AllowAnonymous]
         // GET: RehearsalStudios/Details/5
-        public IActionResult Details(int? studioId, int? index)
+        public IActionResult Details(int? studioId)
         {
             if (studioId == null)
             {
@@ -166,6 +172,8 @@ namespace EasyRehearsalManager.Web.Controllers
                 list.Add(r);
             }
 
+            ViewBag.Images = _reservationService.GetImagesForStudio((int)studioId);
+
             ViewBag.Reservations = list;
                 
                 //csak azokat adom vissza amik legkésőbb egy nappal ezelőtt végetértek
@@ -174,13 +182,30 @@ namespace EasyRehearsalManager.Web.Controllers
 
         [Authorize(Roles = "administrator, owner")]
         // GET: RehearsalStudios/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            if (User.IsInRole("musician") || User.IsInRole("owner"))
+            if (User.IsInRole("administrator"))
             {
-                return View("Index", "Home");
+                List<User> owners = new List<User>();
+                var users = _reservationService.Users;
+                foreach (var user in users)
+                {
+                    if (await _userManager.IsInRoleAsync(user, "owner"))
+                    {
+                        owners.Add(user);
+                    }
+                }
+
+                ViewData["Owners"] = new SelectList(owners, "Id", "UserOwnName");
+                return View();
             }
-            return View();
+
+            //if current user is an owner
+            RehearsalStudioViewModel viewModel = new RehearsalStudioViewModel
+            {
+                UserId = Int32.Parse(_userManager.GetUserId(User))
+            };
+            return View(viewModel);
         }
 
         // POST: RehearsalStudios/Create
@@ -188,16 +213,41 @@ namespace EasyRehearsalManager.Web.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,Name,Address,LocationX,LocationY,District,Phone,Email,Web,Description,OpeningHourMonday,ClosingHourMonday,OpeningHourTuesday,ClosingHourTuesday,OpeningHourWednesday,ClosingHourWednesday,OpeningHourThursday,ClosingHourThursday,OpeningHourFriday,ClosingHourFriday,OpeningHourSaturday,ClosingHourSaturday,OpeningHourSunday,ClosingHourSunday")] RehearsalStudio rehearsalStudio)
+        public IActionResult Create(RehearsalStudioViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                string userId = _userManager.GetUserId(User);
-                rehearsalStudio.UserId = Int32.Parse(userId);
-                _reservationService.AddStudio(rehearsalStudio);
-                return RedirectToAction(nameof(Index));
+                RehearsalStudio studio = viewModel;
+
+                if (viewModel.LogoImage != null)
+                {
+                    byte[] fileBytes = null;
+
+                    if (viewModel.LogoImage.Length > 0)
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            viewModel.LogoImage.CopyTo(ms);
+                            fileBytes = ms.ToArray();
+                        }
+                    }
+
+                    studio.Logo = fileBytes;
+                }
+
+                if (!_reservationService.AddStudio(studio))
+                {
+                    TempData["DangerAlert"] = "Próbahely létrehozása sikertelen, próbálja újra!";
+                    return View(viewModel);
+                }
+                else
+                {
+                    TempData["SuccessAlert"] = "Próbahely létrehozása sikeres!";
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            return View(rehearsalStudio);
+
+            return View(viewModel);
         }
 
         [Authorize(Roles = "owner, administrator")]
@@ -209,11 +259,15 @@ namespace EasyRehearsalManager.Web.Controllers
                 return NotFound();
             }
 
-            var rehearsalStudio = _reservationService.GetStudio(studioId);
+            RehearsalStudio rehearsalStudio = _reservationService.GetStudio(studioId);
             if (rehearsalStudio == null)
             {
                 return NotFound();
             }
+
+            //if the current user is an owner
+            rehearsalStudio.UserId = Int32.Parse(_userManager.GetUserId(User));
+
             return View(rehearsalStudio);
         }
 
@@ -222,13 +276,8 @@ namespace EasyRehearsalManager.Web.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Name,Address,LocationX,LocationY,District,Phone,Email,Web,NumberOfRooms,Description,OpeningHourMonday,ClosingHourMonday,OpeningHourTuesday,ClosingHourTuesday,OpeningHourWednesday,ClosingHourWednesday,OpeningHourThursday,ClosingHourThursday,OpeningHourFriday,ClosingHourFriday,OpeningHourSaturday,ClosingHourSaturday,OpeningHourSunday,ClosingHourSunday")] RehearsalStudio rehearsalStudio)
-        {
-            if (id != rehearsalStudio.Id)
-            {
-                return NotFound();
-            }
-
+        public IActionResult Edit(RehearsalStudio rehearsalStudio)
+        { 
             if (ModelState.IsValid)
             {
                 try
@@ -246,8 +295,10 @@ namespace EasyRehearsalManager.Web.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                TempData["SuccessAlert"] = "A próbahely módosítása sikeresen megtörtént!";
+                return RedirectToAction("Details", new { studioId = rehearsalStudio.Id });
             }
+            TempData["SuccessAlert"] = "Hiba történt, próbálja újra!";
             return View(rehearsalStudio);
         }
 
@@ -274,7 +325,6 @@ namespace EasyRehearsalManager.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int studioId)
         {
-            var rehearsalStudio = _reservationService.GetStudio(studioId);
             if (_reservationService.RemoveStudio(studioId))
             {
                 TempData["SuccessAlert"] = "Próbahely törlése sikeresen megtörtént! A hozzá tartozó termek, és a termek foglalásai is törlődtek.";
@@ -370,6 +420,251 @@ namespace EasyRehearsalManager.Web.Controllers
                 Index = dayIndex
             };
             return PartialView("_ReservationsTable", reservationTableViewModel);
+        }
+
+        public PartialViewResult GetStudioReservationsTablePartial(int? studioId)
+        {
+            if (studioId == null)
+                return null;
+
+            return PartialView("_StudioReservationsTablePartial", studioId);
+        }
+
+        public PartialViewResult AddPicturesToStudioPartial(int? studioId)
+        {
+            if (studioId == null)
+                return null;
+
+            ImageUploadViewModel viewModel = new ImageUploadViewModel
+            {
+                EntityId = (int)studioId
+            };
+
+
+            return PartialView("_AddPicturesToStudioPartial", viewModel);
+        }
+
+        public PartialViewResult ChangeLogoPartial(int? studioId)
+        {
+            if (studioId == null)
+                return null;
+
+            ImageUploadViewModel viewModel = new ImageUploadViewModel
+            {
+                EntityId = (int)studioId
+            };
+
+
+            return PartialView("_UploadLogoPartial", viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult AddImages(ImageUploadViewModel viewModel)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return RedirectToAction("Details", "RehearsalStudios", new { studioId = viewModel.EntityId });
+
+                if (viewModel.Images == null || viewModel.Images.Count == 0)
+                {
+                    TempData["DangerAlert"] = "Válasszon ki képeket!";
+                    return RedirectToAction("Details", "RehearsalStudios", new { studioId = viewModel.EntityId });
+                }
+
+                //the input field allows us to upload multiple files, so we have to handle all of them
+
+                foreach (var image in viewModel.Images)
+                {
+                    string ext = Path.GetExtension(image.FileName);
+                    if (ext != ".jpg" && ext != ".JPG" && ext != ".png" && ext != ".PNG")
+                    {
+                        TempData["DangerAlert"] = "A feltölteni kívánt fájlok formátuma csak PNG vagy JPG lehet.";
+                        ModelState.AddModelError("", "A feltölteni kívánt fájlok formátuma csak PNG vagy JPG lehet.");
+                        return RedirectToAction("Details", "RehearsalStudios", new { studioId = viewModel.EntityId });
+                    }
+                }
+
+                if (!_reservationService.UploadImagesForStudio(viewModel.EntityId, viewModel.Images))
+                {
+                    TempData["DangerAlert"] = "Valami hiba történt, próbálja újra!";
+                    ModelState.AddModelError("", "Valami hiba történt, próbálja újra!");
+                    return RedirectToAction("Details", "RehearsalStudios", new { studioId = viewModel.EntityId });
+                }
+            }
+            catch
+            {
+                TempData["DangerAlert"] = "Valami hiba történt, próbálja újra!";
+                ModelState.AddModelError("", "Valami hiba történt, próbálja újra!");
+                return RedirectToAction("Details", "RehearsalStudios", new { studioId = viewModel.EntityId });
+            }
+
+            TempData["SucessAlert"] = "Képek feltöltése sikeres!";
+            return RedirectToAction("Details", "RehearsalStudios", new { studioId = viewModel.EntityId });
+        }
+
+        [HttpPost]
+        public IActionResult ChangeLogo(ImageUploadViewModel viewModel)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return RedirectToAction("Details", "RehearsalStudios", new { studioId = viewModel.EntityId });
+
+                if (viewModel.Images == null || viewModel.Images.Count == 0)
+                {
+                    TempData["DangerAlert"] = "Válasszon ki egy képet!";
+                    return RedirectToAction("Details", "RehearsalStudios", new { studioId = viewModel.EntityId });
+                }
+
+                string ext = Path.GetExtension(viewModel.Images.First().FileName);
+                if (ext != ".jpg" && ext != ".JPG" && ext != ".png" && ext != ".PNG")
+                {
+                    TempData["DangerAlert"] = "A logo kép formátuma csak PNG vagy JPG lehet.";
+                    ModelState.AddModelError("", "A logo kép formátuma csak PNG vagy JPG lehet.");
+                    return RedirectToAction("Details", "RehearsalStudios", new { studioId = viewModel.EntityId });
+                }
+
+                if (!_reservationService.ChangeLogoForStudio(viewModel.EntityId, viewModel.Images.First()))
+                {
+                    TempData["DangerAlert"] = "Valami hiba történt, próbálja újra!";
+                    ModelState.AddModelError("", "Valami hiba történt, próbálja újra!");
+                    return RedirectToAction("Details", "RehearsalStudios", new { studioId = viewModel.EntityId });
+                }
+            }
+            catch
+            {
+                TempData["DangerAlert"] = "Valami hiba történt, próbálja újra!";
+                ModelState.AddModelError("", "Valami hiba történt, próbálja újra!");
+                return RedirectToAction("Details", "RehearsalStudios", new { studioId = viewModel.EntityId });
+            }
+
+            TempData["SucessAlert"] = "Logo feltöltése sikeres!";
+            return RedirectToAction("Details", "RehearsalStudios", new { studioId = viewModel.EntityId });
+        }
+
+        public FileResult GetImage(int? imageId)
+        {
+            if (imageId == null)
+                return null;
+
+            byte[] image = _reservationService.GetStudioImage(imageId);
+
+            if (image == null)
+                return null;
+
+            return File(image, "image/png"); //jpg-re nem kell külön felkészülni?
+        }
+
+        [HttpGet]
+        public IActionResult DeleteStudioImages(int? studioId)
+        {
+            if (studioId == null)
+                return NotFound();
+
+            DeleteStudioImagesViewModel viewModel = new DeleteStudioImagesViewModel
+            {
+                StudioId = (int)studioId
+            };
+
+            List<int> imageIds = _reservationService.GetImagesForStudio((int)studioId);
+            viewModel.Images = new Dictionary<int, bool>();
+
+            foreach (var id in imageIds)
+            {
+                viewModel.Images.Add(id, true);
+            }
+
+            return View("DeleteStudioImages", viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteStudioImages(DeleteStudioImagesViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["DangerAlert"] = "Hiba történt, kérem próbálja újra!";
+                return View(viewModel);
+            }
+
+            List<int> imagesToDelete = new List<int>();
+            foreach (var image in viewModel.Images)
+            {
+                if (image.Value == false) //then we have to delete it
+                {
+                    imagesToDelete.Add(image.Key);
+                }
+            }
+
+            if (!_reservationService.DeleteImagesForStudio(viewModel.StudioId, imagesToDelete))
+            {
+                TempData["DangerAlert"] = "Képek törlése sikertelen, kérem próbálja újra!";
+                return View(viewModel);
+            }
+
+            TempData["SuccessAlert"] = "Képek törlése sikeres!";
+            return RedirectToAction("Details", new { studioId = viewModel.StudioId });
+        }
+
+        public PartialViewResult GetAboutStudioPartial(int? studioId)
+        {
+            if (studioId == null)
+                return null;
+
+            var studio = _reservationService.GetStudio(studioId);
+
+            if (studio == null)
+                return null;
+            
+            return PartialView("_AboutStudioPartial", studio);
+        }
+
+        public PartialViewResult GetImagesForStudioPartial(int? studioId)
+        {
+            if (studioId == null)
+                return null;
+
+            ViewBag.Images = _reservationService.GetImagesForStudio((int)studioId);
+            return PartialView("_StudioImagesPartial");
+        }
+
+        public PartialViewResult GetStudioContactsPartial(int? studioId)
+        {
+            if (studioId == null)
+                return null;
+
+            var studio = _reservationService.GetStudio(studioId);
+
+            if (studio == null)
+                return null;
+
+            return PartialView("_StudioContactsPartial", studio);
+        }
+
+        public PartialViewResult GetRoomsOfStudioPartial(int? studioId)
+        {
+            if (studioId == null)
+                return null;
+
+            List<RehearsalRoom> rooms = new List<RehearsalRoom>();
+            if (User.IsInRole("administrator"))
+            {
+                rooms = _reservationService.Rooms.Where(l => l.StudioId == studioId).ToList();
+            }
+            else if (User.IsInRole("owner"))
+            {
+                rooms = _reservationService.Rooms
+                    .Where(l => l.StudioId == studioId)
+                    .Where(l => l.Studio.UserId == Int32.Parse(_userManager.GetUserId(User)))
+                    .ToList();
+            }
+            else
+            {
+                rooms = _reservationService.Rooms
+                    .Where(l => l.StudioId == studioId && l.Available).ToList();
+            }
+
+            return PartialView("_RoomsOfStudioPartial", rooms);
         }
     }
 }

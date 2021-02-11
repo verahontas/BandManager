@@ -1,43 +1,181 @@
-﻿@model MusicianRegistrationViewModel
+﻿@model List<UserViewModel>
 
-<h1 class="display-4">Adataim</h1>
+@{
+    ViewData["Title"] = "Felhasználók listája";
+}
+<div class="light-color-letters">
+<h1 class="display-4">Felhasználók</h1>
 
-<img src="@Url.Action("GetUserImage", "Home", new { userId = ViewBag.CurrentUserId })" class="img-thumbnail navbar-brand" height="70" width="70" alt="Profilkép" />
-
-<form asp-controller="Account" asp-action="ChangeProfilePicture">
-    <div class="form-group">
-        <label for="upload">Fájl feltöltése</label>
-        <input type="file" class="form-control-file" id="upload" />
-    </div>
-    <button type="submit" class="btn btn-outline-primary">Profilkép módosítása</button>
-</form>
+<p>
+    <a asp-action="Create" asp-route-role="owner" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus-fill" viewBox="0 0 16 16">
+            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+            <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
+        </svg>
+        Tulajdonos hozzáadása
+    </a>
+</p>
 
 <div class="table-responsive">
-    <table class="table table-striped w-auto table-bordered">
-        <tr>
-            <th>Név:</th>
-            <td>@Model.UserOwnName</td>
-        </tr>
-        <tr>
-            <th>Felhasználónév:</th>
-            <td>@Model.UserName</td>
-        </tr>
-        <tr>
-            <th>Email cím:</th>
-            <td>@Model.UserEmail</td>
-        </tr>
-        <tr>
-            <th>Telefonszám:</th>
-            <td>@Model.UserPhoneNumber</td>
-        </tr>
-        <tr>
-            @if (ViewBag.CurrentUserRole == "musician")
+    <table class="table light-color-letters">
+        <thead>
+            <tr>
+                <th>
+                    Felhasználó neve
+                </th>
+                <th>
+                    Szerepkör
+                </th>
+                <th>
+                    Felhasználónév
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Telefonszám
+                </th>
+                <th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
             {
-                <th>Alapértelmezett zenekarnév:</th>
-                <td>@Model.BandName</td>
+                if (item.UserRole == "tulajdonos")
+                {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserOwnName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserRole)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserEmail)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserPhoneNumber)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-userId="@item.UserId" class="btn btn-primary align-baseline mb-2">
+                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square hide-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                            </svg>
+                            Szerkesztés
+                        </a>
+                        <a asp-action="Delete" asp-route-userId="@item.UserId" class="btn btn-danger align-baseline mb-2">
+                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash hide-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                            </svg>
+                            Törlés
+                        </a>
+                        <a asp-action="Details" asp-route-userId="@item.UserId" class="btn btn-primary align-baseline mt-0">
+                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-three-dots hide-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+                            </svg>
+                            Részletek
+                        </a>
+                    </td>
+                </tr>
+                }
             }
-        </tr>
+        </tbody>
     </table>
 </div>
 
-<a asp-controller="Account" asp-action="UpdateProfile" class="btn btn-primary">Adatok módosítása</a>
+<p>
+    <a asp-action="Create" asp-route-role="musician" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus-fill" viewBox="0 0 16 16">
+            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+            <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
+        </svg>
+        Zenész hozzáadása
+    </a>
+</p>
+
+<div class="table-responsive">
+    <table class="table light-color-letters">
+        <thead>
+            <tr>
+                <th>
+                    Felhasználó neve
+                </th>
+                <th>
+                    Szerepkör
+                </th>
+                <th>
+                    Felhasználónév
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Telefonszám
+                </th>
+                <th>
+                    Zenekarnév
+                </th>
+                <th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                if (item.UserRole == "zenész")
+                {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserOwnName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserRole)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserEmail)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserPhoneNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BandName)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-userId="@item.UserId" class="btn btn-primary align-baseline mb-2">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square hide-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                        </svg>
+                        Szerkesztés
+                    </a>
+                    <a asp-action="Delete" asp-route-userId="@item.UserId" class="btn btn-danger align-baseline mb-2">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash hide-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                        </svg>
+                        Törlés
+                    </a>
+                    <a asp-action="Details" asp-route-userId="@item.UserId" class="btn btn-primary align-baseline mt-0">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-three-dots hide-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+                        </svg>
+                        Részletek
+                    </a>
+                </td>
+            </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+</div>

@@ -1,38 +1,29 @@
 ﻿@model ReservationViewModel
-
+<div class="light-color-letters">
 <h1 class="display-4">Foglalás módosítása</h1>
 
-<table class="table table-borderless w-auto">
-    <tbody>
-        <tr>
-            <th scope="row">Foglaló neve:</th>
-            <td>@Model.UserOwnName</td>
-        </tr>
-        <tr>
-            <th scope="row">Próbahely neve:</th>
-            <td>@Model.Room.Studio.Name</td>
-        </tr>
-        <tr>
-            <th scope="row">Terem száma:</th>
-            <td>@Model.Room.Number</td>
-        </tr>
-    </tbody>
-</table>
-
-<form asp-controller="Reservations" asp-action="Edit" asp-route-reservationId="@Model.Id">
-    <input type="hidden" asp-for="UserOwnName" />
-    <input type="hidden" asp-for="UserEmail" />
-    <input type="hidden" asp-for="UserPhoneNumber" />
+<form asp-controller="Reservations" asp-action="Edit">
+    <h2>Foglaló adatai</h2>
+    <input type="hidden" asp-for="UserId" />
+    <div class="form-group">
+        <label for="name">Név</label>
+        <input class="form-control" asp-for="UserOwnName" id="name" readonly />
+    </div>
+    <h2>Foglalás adatai</h2>
+    <input type="hidden" asp-for="ReservationId" />
+    <input type="hidden" asp-for="RoomId" />
+    <input type="hidden" asp-for="RoomNumber" />
+    <input type="hidden" asp-for="StudioName" />
     <div class="form-group failureNotification">
         <label for="band">Zenekar neve</label>
-        <input class="form-control" asp-for="BandName" id="band" style="max-width: 300px;" />
+        <input class="form-control" asp-for="BandName" id="band" />
         <span asp-validation-for="BandName"></span>
     </div>
 
 
     <div class="form-group failureNotification">
         <label for="date">Dátum</label> <br />
-        <input asp-for="Day" type="date" asp-format="{0:yyyy-MM-dd}" id="date" style="max-width: 300px;" class="form-control" />
+        <input asp-for="Day" type="date" asp-format="{0:yyyy-MM-dd}" id="date" class="form-control" />
         <span asp-validation-for="Day"></span>
     </div>
     <div class="form-group failureNotification">
@@ -48,10 +39,17 @@
     <div class="form-inline failureNotification">
         @foreach (var key in Model.Equipments.Keys)
         {
-            <input asp-for="@Model.Equipments[key]" />
-            <div class="mx-2">@key</div>
+            <div class="row">
+                <div class="col-auto">
+                    <input asp-for="@Model.Equipments[key]" />
+                </div>
+                <div class="col-auto">
+                    <div class="mx-2">@key</div>
+                </div>
+            </div>
         }
     </div>
-    <input type="submit" value="Mentés" class="btn btn-primary align-baseline" />
-    <a class="btn btn-outline-danger align-baseline" asp-action="Index">Mégsem</a>
+    <input type="submit" value="Mentés" class="btn btn-primary align-baseline mt-4" />
+    <a class="btn btn-outline-danger align-baseline mt-4" asp-action="Index">Mégsem</a>
 </form>
+</div>

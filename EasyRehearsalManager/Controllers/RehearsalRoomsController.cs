@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using EasyRehearsalManager.Model;
@@ -91,6 +92,21 @@ namespace EasyRehearsalManager.Web.Controllers
             }
         }
 
+        [Authorize(Roles = "administrator, owner")]
+        public PartialViewResult GetUnavailableRooms()
+        {
+            if (User.IsInRole("owner"))
+            {
+                int userId = Int32.Parse(_userManager.GetUserId(User));
+                var roomsOfOwner = _reservationService.Rooms.Where(l => l.Studio.UserId == userId && !l.Available).ToList();
+
+                return PartialView("_UnavailableRooms", roomsOfOwner);
+            }
+
+            var rooms = _reservationService.Rooms.Where(l => !l.Available).ToList();
+            return PartialView("_UnavailableRooms", rooms);
+        }
+
         // GET: RehearsalRooms/Details/5
         public IActionResult Details(int? roomId)
         {
@@ -106,14 +122,21 @@ namespace EasyRehearsalManager.Web.Controllers
                 return NotFound();
             }
 
+            ViewBag.Images = _reservationService.GetImagesForRoom((int)roomId);
+
             return View(rehearsalRoom);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="studioId">If not null: we clicked the "Terem hozzáadása" button on the 'Details' page of a studio.</param>
+        /// <returns></returns>
         [Authorize(Roles = "owner, administrator")]
         // GET: RehearsalRooms/Create
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int? studioId)
         {
-            if (User.IsInRole("owner")) //owner csak a saját stúdiójába hozhat létre termet
+            if (User.IsInRole("owner")) //owner can add a room only to a studio that belongs to him
             {
                 string userId = _userManager.GetUserId(User);
                 User user = await _userManager.FindByIdAsync(userId);
@@ -122,24 +145,38 @@ namespace EasyRehearsalManager.Web.Controllers
                     TempData["DangerAlert"] = "Hiba!";
                     return View();
                 }
-                else
+
+                if (studioId == null)
                 {
-                    int userIdInt = Int32.Parse(userId);
-                    var studios = _reservationService.GetStudiosByOwner(userIdInt).ToList();
+                    var studios = _reservationService.GetStudiosByOwner(Int32.Parse(userId)).ToList();
                     ViewData["Studios"] = new SelectList(studios, "Id", "Name");
                     return View();
                 }
+                else
+                {
+                    RehearsalRoom room = new RehearsalRoom
+                    {
+                        StudioId = (int)studioId
+                    };
+                    return View(room);
+                }
+                
             }
-            else if (User.IsInRole("administrator")) //admin bármelyik stúdióba hozhat létre termet
+
+            //if the current user is the admin
+            if (studioId == null)
             {
                 var studios = _reservationService.Studios;
                 ViewData["Studios"] = new SelectList(studios, "Id", "Name");
                 return View();
             }
-            else //ha zenész vagy nem authentikált, akkor nem hozhat létre
+            else
             {
-                TempData["DangerAlert"] = "Hibás hitelesítés!";
-                return RedirectToAction("Index", "Home");
+                RehearsalRoom room = new RehearsalRoom
+                {
+                    StudioId = (int)studioId
+                };
+                return View(room);
             }
         }
 
@@ -155,8 +192,8 @@ namespace EasyRehearsalManager.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                if (_reservationService.AddRoom(@rehearsalRoom) 
-                    && _reservationService.NewRoomAdded(rehearsalRoom.StudioId))
+                if (_reservationService.AddRoom(@rehearsalRoom) )
+                    //&& _reservationService.NewRoomAdded(rehearsalRoom.StudioId))
                 {
                     TempData["SuccessAlert"] = "Terem sikeresen létrehozva!";
                     return RedirectToAction(nameof(Index));
@@ -164,8 +201,18 @@ namespace EasyRehearsalManager.Web.Controllers
             }
 
             IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
-
-            ViewData["StudioId"] = new SelectList(_reservationService.Studios, "Id", "Address", rehearsalRoom.StudioId);
+            
+            //since we already have the studioId in the parameter, there's no need to make a selectList
+            /*
+            if (User.IsInRole("owner"))
+            {
+                string userId = _userManager.GetUserId(User);
+                var studios = _reservationService.GetStudiosByOwner(Int32.Parse(userId)).ToList();
+                ViewData["Studios"] = new SelectList(studios, "Id", "Name");
+            }
+            else
+                ViewData["StudioId"] = new SelectList(_reservationService.Studios, "Id", "Address", rehearsalRoom.StudioId);
+            */
             TempData["DangerAlert"] = "Terem létrehozása sikertelen!";
             return View(rehearsalRoom);
         }
@@ -173,30 +220,28 @@ namespace EasyRehearsalManager.Web.Controllers
         [Authorize(Roles = "owner, administrator")]
         [HttpGet]
         // GET: RehearsalRooms/Edit/5
-        public IActionResult Edit(int? id)
+        public IActionResult Edit(int? roomId)
         {
-            if (id == null)
+            if (roomId == null)
             {
                 return NotFound();
             }
 
-            var rehearsalRoom =  _reservationService.GetRoom(id);
+            var rehearsalRoom =  _reservationService.GetRoom(roomId);
             if (rehearsalRoom == null)
             {
                 return NotFound();
             }
-            ViewData["StudioId"] = new SelectList(_reservationService.Studios, "Id", "Address", rehearsalRoom.StudioId);
+
             return View(rehearsalRoom);
         }
 
-        // POST: RehearsalRooms/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "administrator, owner")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Number,Description,Price,Size,Available,StudioId,Equipments")] RehearsalRoom rehearsalRoom)
+        public IActionResult Edit(int roomId, RehearsalRoom rehearsalRoom)
         {
-            if (id != rehearsalRoom.Id)
+            if (roomId != rehearsalRoom.Id)
             {
                 return NotFound();
             }
@@ -223,20 +268,19 @@ namespace EasyRehearsalManager.Web.Controllers
             }
 
             TempData["DangerAlert"] = "A próbaterem módosítása sikertelen!";
-            ViewData["StudioId"] = new SelectList(_reservationService.Studios, "Id", "Address", rehearsalRoom.StudioId);
             return View(rehearsalRoom);
         }
 
         [Authorize(Roles = "owner, administrator")]
         // GET: RehearsalRooms/Delete/5
-        public IActionResult Delete(int? id)
+        public IActionResult Delete(int? roomId)
         {
-            if (id == null)
+            if (roomId == null)
             {
                 return NotFound();
             }
 
-            var rehearsalRoom = _reservationService.GetRoom(id);
+            var rehearsalRoom = _reservationService.GetRoom(roomId);
 
             if (rehearsalRoom != null)
                 return View(rehearsalRoom);
@@ -247,22 +291,227 @@ namespace EasyRehearsalManager.Web.Controllers
         // POST: RehearsalRooms/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int roomId)
         {
-            if (_reservationService.RemoveRoom(id))
+            if (_reservationService.RemoveRoom(roomId))
             {
                 TempData["SuccessAlert"] = "A termet sikeresen töröltük!";
                 return RedirectToAction(nameof(Index));
             }
 
             TempData["DangerAlert"] = "A terem törlése sikertelen!";
-            var rehearsalRoom = _reservationService.GetRoom(id);
+            var rehearsalRoom = _reservationService.GetRoom(roomId);
             return View(rehearsalRoom);
         }
 
         private bool RehearsalRoomExists(int id)
         {
             return _reservationService.Rooms.Any(e => e.Id == id);
+        }
+
+        public PartialViewResult AddPicturesToRoomPartial(int? roomId)
+        {
+            if (roomId == null)
+                return null;
+
+            ImageUploadViewModel viewModel = new ImageUploadViewModel
+            {
+                EntityId = (int)roomId
+            };
+
+
+            return PartialView("_AddPicturesToRoomPartial", viewModel);
+        }
+
+        public PartialViewResult GetAboutRoomPartial(int? roomId)
+        {
+            if (roomId == null)
+                return null;
+
+            var room = _reservationService.GetRoom(roomId);
+
+            if (room == null)
+                return null;
+            /*
+            RehearsalRoom viewModel = new RehearsalRoom
+            {
+                Number = room.Number,
+                Studio = room.Studio,
+                Equipments = room.Equipments,
+                Price = room.Price,
+                Size = room.Size,
+                Description = room.Description
+            };
+            */
+            return PartialView("_AboutRoomPartial", room);
+        }
+
+        public PartialViewResult GetEquipmentsListPartial(int? roomId)
+        {
+            if (roomId == null)
+                return null;
+
+            var room = _reservationService.GetRoom(roomId);
+
+            if (room == null)
+                return null;
+            /*
+            RehearsalRoom viewModel = new RehearsalRoom
+            {
+                Number = room.Number,
+                Studio = room.Studio
+            };
+            */
+            return PartialView("_EquipmentsListPartial", room);
+        }
+
+        public PartialViewResult GetImagesForRoomPartial(int? roomId)
+        {
+            if (roomId == null)
+                return null;
+
+            ViewBag.Images = _reservationService.GetImagesForRoom((int)roomId);
+            return PartialView("_RoomImagesPartial");
+        }
+
+        public PartialViewResult GetReservationsTableForRoomPartial(int? roomId)
+        {
+            if (roomId == null)
+                return null;
+
+            var room = _reservationService.GetRoom(roomId);
+
+            if (room == null)
+                return null;
+            /*
+            RehearsalRoom viewModel = new RehearsalRoom
+            {
+                Number = room.Number,
+                Studio = room.Studio
+            };
+            */
+            return PartialView("_ReservationsTableRoomPartial", room);
+        }
+
+        [HttpPost]
+        public IActionResult AddImages(ImageUploadViewModel viewModel)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return RedirectToAction("Details", "RehearsalRooms", new { roomId = viewModel.EntityId });
+
+                if (viewModel.Images == null || viewModel.Images.Count == 0)
+                {
+                    TempData["DangerAlert"] = "Válasszon ki képeket!";
+                    return RedirectToAction("Details", "RehearsalRooms", new { roomId = viewModel.EntityId });
+                }
+
+                //the input field allows us to upload multiple files, so we have to handle all of them
+
+                foreach (var image in viewModel.Images)
+                {
+                    string ext = Path.GetExtension(image.FileName);
+                    if (ext != ".jpg" && ext != ".JPG" && ext != ".png" && ext != ".PNG")
+                    {
+                        TempData["DangerAlert"] = "A feltölteni kívánt fájlok formátuma csak PNG vagy JPG lehet.";
+                        ModelState.AddModelError("", "A feltölteni kívánt fájlok formátuma csak PNG vagy JPG lehet.");
+                        return RedirectToAction("Details", "RehearsalRooms", new { roomId = viewModel.EntityId });
+                    }
+                }
+                
+                if (!_reservationService.UploadImagesForRoom(viewModel.EntityId, viewModel.Images))
+                {
+                    TempData["DangerAlert"] = "Valami hiba történt, próbálja újra!";
+                    ModelState.AddModelError("", "Valami hiba történt, próbálja újra!");
+                    return RedirectToAction("Details", "RehearsalRooms", new { roomId = viewModel.EntityId });
+                }
+            }
+            catch
+            {
+                TempData["DangerAlert"] = "Valami hiba történt, próbálja újra!";
+                ModelState.AddModelError("", "Valami hiba történt, próbálja újra!");
+                return RedirectToAction("Details", "RehearsalRooms", new { roomId = viewModel.EntityId });
+            }
+
+            TempData["SuccessAlert"] = "Képek feltöltése sikeres!";
+            return RedirectToAction("Details", "RehearsalRooms", new { roomId = viewModel.EntityId });
+        }
+
+        public FileResult GetImage(int? imageId)
+        {
+            if (imageId == null)
+                return File("~/images/noimage.png", "image/jpeg");
+
+            byte[] image = _reservationService.GetRoomImage(imageId);
+
+            if (image == null)
+                return File("~/images/noimage.png", "image/jpeg");
+
+            return File(image, "image/png"); //return the image correctly even it is jpg
+        }
+
+        public FileResult GetDefaultImage(int? roomId)
+        {
+            if (roomId == null)
+                return File("~/images/noimage.png", "image/jpeg");
+
+            byte[] image = _reservationService.GetDefaultRoomImage(roomId);
+
+            if (image == null)
+                return File("~/images/noimage.png", "image/jpeg");
+
+            return File(image, "image/png"); //return the image correctly even it is jpg
+        }
+
+        [HttpGet]
+        public IActionResult DeleteRoomImages(int? roomId)
+        {
+            if (roomId == null)
+                return NotFound();
+
+            DeleteRoomImagesViewModel viewModel = new DeleteRoomImagesViewModel
+            {
+                RoomId = (int)roomId
+            };
+
+            List<int> imageIds = _reservationService.GetImagesForRoom((int)roomId);
+            viewModel.Images = new Dictionary<int, bool>();
+
+            foreach (var id in imageIds)
+            {
+                viewModel.Images.Add(id, true);
+            }
+
+            return View("DeleteRoomImages", viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteRoomImages(DeleteRoomImagesViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["DangerAlert"] = "Hiba történt, kérem próbálja újra!";
+                return View(viewModel);
+            }
+
+            List<int> imagesToDelete = new List<int>();
+            foreach (var image in viewModel.Images)
+            {
+                if (image.Value == false) //then we have to delete it
+                {
+                    imagesToDelete.Add(image.Key);
+                }
+            }
+
+            if (!_reservationService.DeleteImagesForRoom(viewModel.RoomId, imagesToDelete))
+            {
+                TempData["DangerAlert"] = "Képek törlése sikertelen, kérem próbálja újra!";
+                return View(viewModel);
+            }
+
+            TempData["SuccessAlert"] = "Képek törlése sikeres!";
+            return RedirectToAction("Details", new { roomId = viewModel.RoomId });
         }
     }
 }
