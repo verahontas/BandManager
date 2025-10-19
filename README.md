@@ -1,3 +1,9 @@
+Update October 2025
+
+I finished this project on time and I got my degree in Computer Science. However, I didn't touch this repo since its creation.
+
+---------------------------------------------------
+
 # BandManager
 This is my degree work which I am currently working on.
 
