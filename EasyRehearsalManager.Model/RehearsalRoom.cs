@@ -12,7 +12,6 @@ namespace EasyRehearsalManager.Model
 {
     public class RehearsalRoom
     {
-
         public RehearsalRoom()
         {
             Reservations = new HashSet<Reservation>();
@@ -31,15 +30,18 @@ namespace EasyRehearsalManager.Model
         [Range(0, int.MaxValue, ErrorMessage = "Pozitív számot adjon meg!")]
         public int Price { get; set; }
 
-        //size of the room in m2
+        /// <summary>
+        /// Size of the room in m2.
+        /// </summary>
         [Range(0, int.MaxValue, ErrorMessage = "Pozitív számot adjon meg!")]
         public int Size { get; set; }
 
-        //can you make a reservation or not (eg. not available because of renovation)
+        /// <summary>
+        /// Indicates whether a reservation is enabled to make in this room or not.
+        /// E. g. a room can be unavailable because of its renovation.
+        /// </summary>
         public bool Available { get; set; }
 
-        //[Required]
-        //[DisplayName("Studio")]
         [ForeignKey("RehearsalStudio")]
         public int StudioId { get; set; }
 
@@ -47,7 +49,10 @@ namespace EasyRehearsalManager.Model
 
         public ICollection<Reservation> Reservations { get; set; }
 
-        //description about stuff in the room
+        /// <summary>
+        /// Description of stuff in the room.
+        /// Note: equipments written here cannot be booked. These are fixed parts of the room.
+        /// </summary>
         [DataType(DataType.MultilineText)]
         public string Equipments { get; set; }
 

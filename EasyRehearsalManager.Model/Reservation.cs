@@ -9,10 +9,7 @@ namespace EasyRehearsalManager.Model
 {
     public class Reservation
     {
-        public Reservation()
-        {
-            //Equipments = new List<Equipment>();
-        }
+        public Reservation() { }
 
         public int Id { get; set; }
 
@@ -22,20 +19,15 @@ namespace EasyRehearsalManager.Model
         [Required]
         public DateTime End { get; set; }
 
-        //[ForeignKey("User")]
         public int? UserId { get; set; }
 
         public User User { get; set; }
 
         public string BandName { get; set; }
 
-        //[ForeignKey("RehearsalRoom")]
         public int RehearsalRoomId { get; set; }
 
         public RehearsalRoom RehearsalRoom { get; set; }
-
-        //bookable equipments which are not in the room by default
-        //public List<Equipment> Equipments { get; set; } //ezt majd kitörölni
 
         public bool IsConflicting(DateTime start, DateTime end)
         {

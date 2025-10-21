@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -22,10 +23,16 @@ namespace EasyRehearsalManager.Model
 
         public string DefaultBandName { get; set; }
 
-        //only for musicians, not required
+        public byte[] ProfilePicture { get; set; }
+
+        /// <summary>
+        /// This property is only used for the musicians.
+        /// </summary>
         public ICollection<Reservation> Reservations { get; set; }
 
-        //only for owners, can be empty
+        /// <summary>
+        /// This property is only used for the owners.
+        /// </summary>
         public ICollection<RehearsalStudio> RehearsalStudios { get; set; } 
     }
 }
