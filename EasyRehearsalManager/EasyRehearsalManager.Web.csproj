@@ -2,7 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>d4fa150e-8e70-482a-8967-849536171888</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20210114212450_AddProfilePicture.cs" />
+    <Compile Remove="Migrations\20210114212450_AddProfilePicture.Designer.cs" />
+    <Compile Remove="Migrations\20210209153828_UserIdNotNull.cs" />
+    <Compile Remove="Migrations\20210209153828_UserIdNotNull.Designer.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BeginCollectionItemCore" Version="1.0.8" />
@@ -30,10 +38,6 @@
 
   <ItemGroup>
     <None Include="wwwroot\images\noprofilepicture.jpg" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\Partials\" />
   </ItemGroup>
 
 </Project>

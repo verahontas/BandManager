@@ -66,7 +66,6 @@ namespace EasyRehearsalManager
                 options.User.RequireUniqueEmail = true;
             });
 
-            // A teendõk kezelésére szolgáló service regisztrálása az IoC tárolóba
             services.AddTransient<IReservationService, ReservationService>();
 
             services.AddSingleton<ApplicationState>();
@@ -74,8 +73,6 @@ namespace EasyRehearsalManager
             services.AddHttpContextAccessor();
 
             services.AddControllersWithViews();
-
-            //services.AddMvc();
 
             services.AddSession(options =>
             {
@@ -86,8 +83,6 @@ namespace EasyRehearsalManager
                 .AddRazorRuntimeCompilation();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        //public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider, ILoggerFactory loggerFactory)
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())

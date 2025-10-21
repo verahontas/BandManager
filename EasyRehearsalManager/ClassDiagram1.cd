@@ -1,0 +1,414 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="EasyRehearsalManager.Web.Controllers.ReservationsController">
+    <Position X="7" Y="24.25" Width="8.25" />
+    <AssociationLine Name="_userManager" Type="Microsoft.AspNetCore.Identity.UserManager&lt;TUser&gt;" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="11.125" Y="27.406" />
+        <Point X="11.125" Y="31.688" />
+        <Point X="22.182" Y="31.688" Type="JumpStart" />
+        <Point X="22.349" Y="31.688" Type="JumpEnd" />
+        <Point X="29.25" Y="31.688" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAABAECAAAAAAAAAAAEAAEACIAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\ReservationsController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_userManager" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Microsoft.AspNetCore.Identity.UserManager&lt;TUser&gt;" Collapsed="true">
+    <Position X="29.25" Y="31.25" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Controllers.BaseController">
+    <Position X="22.75" Y="20.5" Width="5.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAABAAAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\BaseController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_applicationState" />
+      <Field Name="_reservationService" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Controllers.AccountController">
+    <Position X="15.75" Y="24.25" Width="10.25" />
+    <AssociationLine Name="_userManager" Type="Microsoft.AspNetCore.Identity.UserManager&lt;TUser&gt;" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="18.406" Y="29.137" />
+        <Point X="18.406" Y="31.375" />
+        <Point X="22.182" Y="31.375" Type="JumpStart" />
+        <Point X="22.349" Y="31.375" Type="JumpEnd" />
+        <Point X="29.25" Y="31.375" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAACBAAAAAABgACAQAFgAAIAAAUAAEACAAEQAAgEAAA=</HashCode>
+      <FileName>Controllers\AccountController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_signInManager" />
+      <Field Name="_userManager" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Controllers.EquipmentsController">
+    <Position X="26.5" Y="24.25" Width="8" />
+    <AssociationLine Name="_userManager" Type="Microsoft.AspNetCore.Identity.UserManager&lt;TUser&gt;" FixedToPoint="true">
+      <Path>
+        <Point X="30.125" Y="26.829" />
+        <Point X="30.125" Y="31.25" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAACAAAAAAAAAAAEAAEACAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\EquipmentsController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_userManager" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Controllers.RehearsalRoomsController">
+    <Position X="35" Y="24.25" Width="8.25" />
+    <AssociationLine Name="_userManager" Type="Microsoft.AspNetCore.Identity.UserManager&lt;TUser&gt;" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="39.125" Y="29.329" />
+        <Point X="39.125" Y="31.375" />
+        <Point X="31" Y="31.375" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AACCBAAAAAQBQgCAAAAAAAAQAAEAAEACAAEAgEACAAE=</HashCode>
+      <FileName>Controllers\RehearsalRoomsController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_userManager" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Controllers.RehearsalStudiosController">
+    <Position X="43.75" Y="24.25" Width="8.5" />
+    <AssociationLine Name="_userManager" Type="Microsoft.AspNetCore.Identity.UserManager&lt;TUser&gt;" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="48" Y="31.127" />
+        <Point X="48" Y="31.688" />
+        <Point X="31" Y="31.688" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>EBAABAAAAAADEQCIAwCQAAAQAEEIAECCAAEAAgAKAgA=</HashCode>
+      <FileName>Controllers\RehearsalStudiosController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_userManager" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="EasyRehearsalManager.ApplicationState">
+    <Position X="31" Y="20.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ApplicationState.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyRehearsalManager.Model.Equipment">
+    <Position X="7.5" Y="20" Width="2.5" />
+    <TypeIdentifier />
+    <ShowAsAssociation>
+      <Property Name="Studio" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="EasyRehearsalManager.Model.RehearsalStudio">
+    <Position X="12" Y="7.5" Width="3" />
+    <TypeIdentifier />
+    <ShowAsAssociation>
+      <Property Name="User" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="EasyRehearsalManager.Model.User">
+    <Position X="12" Y="4.25" Width="3" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="EasyRehearsalManager.Model.ReservationEquipmentPair">
+    <Position X="19.75" Y="2.75" Width="2.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="EasyRehearsalManager.Model.Reservation">
+    <Position X="10" Y="15.5" Width="3.5" />
+    <AssociationLine Name="RehearsalRoom" Type="EasyRehearsalManager.Model.RehearsalRoom" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="13.5" Y="16.064" />
+        <Point X="19.25" Y="16.064" />
+        <Point X="19.25" Y="8.5" />
+        <Point X="21.042" Y="8.5" Type="JumpStart" />
+        <Point X="21.208" Y="8.5" Type="JumpEnd" />
+        <Point X="24.12" Y="8.5" Type="JumpStart" />
+        <Point X="24.286" Y="8.5" Type="JumpEnd" />
+        <Point X="25.823" Y="8.5" Type="JumpStart" />
+        <Point X="25.99" Y="8.5" Type="JumpEnd" />
+        <Point X="37.375" Y="8.5" />
+        <Point X="37.375" Y="4.712" />
+        <Point X="37" Y="4.712" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="User" Type="EasyRehearsalManager.Model.User" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="10" Y="17.938" />
+        <Point X="9.625" Y="17.938" />
+        <Point X="9.625" Y="5.508" />
+        <Point X="11.042" Y="5.508" Type="JumpStart" />
+        <Point X="11.208" Y="5.508" Type="JumpEnd" />
+        <Point X="12" Y="5.508" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier />
+    <ShowAsAssociation>
+      <Property Name="RehearsalRoom" />
+      <Property Name="User" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="EasyRehearsalManager.Model.RehearsalRoom">
+    <Position X="32.75" Y="3.25" Width="4.25" />
+    <AssociationLine Name="Studio" Type="EasyRehearsalManager.Model.RehearsalStudio" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="33.724" Y="6.536" />
+        <Point X="33.724" Y="7.921" />
+        <Point X="25.99" Y="7.921" Type="JumpStart" />
+        <Point X="25.823" Y="7.921" Type="JumpEnd" />
+        <Point X="24.286" Y="7.921" Type="JumpStart" />
+        <Point X="24.12" Y="7.921" Type="JumpEnd" />
+        <Point X="21.208" Y="7.921" Type="JumpStart" />
+        <Point X="21.042" Y="7.921" Type="JumpEnd" />
+        <Point X="15.375" Y="7.921" />
+        <Point X="15.375" Y="9.258" />
+        <Point X="15" Y="9.258" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier />
+    <ShowAsAssociation>
+      <Property Name="Studio" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Microsoft.AspNetCore.Identity.SignInManager&lt;TUser&gt;">
+    <Position X="15.75" Y="33" Width="14" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Controllers.HomeController">
+    <Position X="52.75" Y="24.25" Width="5.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\HomeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyRehearsalManager.Model.EasyRehearsalManagerContext">
+    <Position X="35.25" Y="47.5" Width="4" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Models.ReservationDateValidator">
+    <Position X="22.75" Y="45" Width="8.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACABAAAAAAAAAABAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ReservationDateValidator.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_context" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Models.ChangePasswordViewModel">
+    <Position X="43.75" Y="12.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAFAAAAgAAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ChangePasswordViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Models.DeleteRoomImagesViewModel">
+    <Position X="43.75" Y="8.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\DeleteRoomImagesViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Models.DeleteStudioImagesViewModel">
+    <Position X="47" Y="8.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\DeleteStudioImagesViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Models.ImageUploadViewModel">
+    <Position X="50.25" Y="8.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ImageUploadViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Models.LoginViewModel">
+    <Position X="51" Y="10" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAIAAAA=</HashCode>
+      <FileName>Models\LoginViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Models.RegistrationViewModel">
+    <Position X="43.75" Y="10" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Models\RegistrationViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Models.RehearsalStudioViewModel">
+    <Position X="16.25" Y="9" Width="2.5" />
+    <InheritanceLine Type="EasyRehearsalManager.Model.RehearsalStudio" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="15" Y="11.625" />
+        <Point X="17.438" Y="11.625" />
+        <Point X="17.438" Y="10.233" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\RehearsalStudioViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Models.ReservationService">
+    <Position X="33" Y="32.75" Width="9.5" />
+    <AssociationLine Name="_userManager" Type="Microsoft.AspNetCore.Identity.UserManager&lt;TUser&gt;" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="36.062" Y="32.75" />
+        <Point X="36.062" Y="32.375" />
+        <Point X="30.562" Y="32.375" />
+        <Point X="30.562" Y="31.812" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>CBUkBmJBAABCFADGEAQggFIDAFBBoAkAAAgWEJAIIiA=</HashCode>
+      <FileName>Models\ReservationService.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_context" />
+      <Field Name="_reservationDateValidator" />
+      <Field Name="_userManager" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Models.ReservationTableViewModel">
+    <Position X="8.5" Y="2.25" Width="3" />
+    <AssociationLine Name="Studio" Type="EasyRehearsalManager.Model.RehearsalStudio" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="8.688" Y="3.93" />
+        <Point X="8.688" Y="9.444" />
+        <Point X="9.542" Y="9.444" Type="JumpStart" />
+        <Point X="9.708" Y="9.444" Type="JumpEnd" />
+        <Point X="11.042" Y="9.444" Type="JumpStart" />
+        <Point X="11.208" Y="9.444" Type="JumpEnd" />
+        <Point X="12" Y="9.444" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Rooms" Type="EasyRehearsalManager.Model.RehearsalRoom" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="11.5" Y="2.998" />
+        <Point X="19.5" Y="2.998" />
+        <Point X="19.5" Y="2.5" />
+        <Point X="36.115" Y="2.5" />
+        <Point X="36.115" Y="3.25" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEACQAAACAAAAAAAAAAUAAAAAAAA=</HashCode>
+      <FileName>Models\ReservationTableViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Studio" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Reservations" />
+      <Property Name="Rooms" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Models.ReservationViewModel">
+    <Position X="47" Y="12.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACIAABAAQAAAAAIAgAAAAAAAAIAAAAAAAAQgI=</HashCode>
+      <FileName>Models\ReservationViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyRehearsalManager.Web.Models.UserViewModel">
+    <Position X="48" Y="10" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAgAAAAAAAgIAQAACAAAAAI=</HashCode>
+      <FileName>Models\UserViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyRehearsalManager.Startup">
+    <Position X="43.75" Y="16.75" Width="6.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAABAAAAAAAAAAAAAgAAACAAAAAA=</HashCode>
+      <FileName>Startup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyRehearsalManager.Program">
+    <Position X="50.5" Y="16.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyRehearsalManager.Model.RoomImage">
+    <Position X="43.75" Y="6" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="EasyRehearsalManager.Model.StudioImage">
+    <Position X="46" Y="6" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="EasyRehearsalManager.Model.DbInitializer">
+    <Position X="43.75" Y="19.25" Width="4.5" />
+    <TypeIdentifier />
+  </Class>
+  <Interface Name="EasyRehearsalManager.Web.Models.IReservationService">
+    <Position X="19.75" Y="8.75" Width="9.5" />
+    <AssociationLine Name="Reservations" Type="EasyRehearsalManager.Model.Reservation" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="27.766" Y="18.507" />
+        <Point X="27.766" Y="19.007" />
+        <Point X="25.279" Y="19.007" Type="JumpStart" />
+        <Point X="25.112" Y="19.007" Type="JumpEnd" />
+        <Point X="21.302" Y="19.007" Type="JumpStart" />
+        <Point X="21.135" Y="19.007" Type="JumpEnd" />
+        <Point X="19.5" Y="19.007" />
+        <Point X="19.5" Y="17.76" />
+        <Point X="13.5" Y="17.76" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Studios" Type="EasyRehearsalManager.Model.RehearsalStudio" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="19.75" Y="13.625" />
+        <Point X="19.375" Y="13.625" />
+        <Point X="19.375" Y="13.654" />
+        <Point X="19.333" Y="13.654" Type="JumpStart" />
+        <Point X="19.167" Y="13.654" Type="JumpEnd" />
+        <Point X="15" Y="13.654" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>CBEkBmJBAABCEADGEAQggFIDAFBBoAkAAAgWEJAIAiA=</HashCode>
+      <FileName>Models\IReservationService.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Equipments" />
+      <Property Name="ReservationEquipmentPairs" />
+      <Property Name="Reservations" />
+      <Property Name="Rooms" />
+      <Property Name="Studios" />
+      <Property Name="Users" />
+    </ShowAsCollectionAssociation>
+  </Interface>
+  <Enum Name="EasyRehearsalManager.Web.Models.ReservationDateError">
+    <Position X="43.75" Y="14.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAFAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAgEAAAI=</HashCode>
+      <FileName>Models\ReservationDateError.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
