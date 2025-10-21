@@ -26,12 +26,8 @@ namespace EasyRehearsalManager.Web.Controllers
         {
             base.OnActionExecuted(context);
 
-            ViewBag.UserCount = _applicationState.UserCount;
             ViewBag.CurrentUserName = String.IsNullOrEmpty(User.Identity.Name) ? null : User.Identity.Name;
             ViewBag.CurrentUserId = String.IsNullOrEmpty(User.Identity.Name) ? null : User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-            ViewBag.Rooms = _reservationService.Rooms;
-            ViewBag.Reservations = _reservationService.Reservations;
 
             if (User.IsInRole("musician"))
                 ViewBag.CurrentUserRole = "musician";
