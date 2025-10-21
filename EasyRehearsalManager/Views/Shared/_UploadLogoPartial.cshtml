@@ -1,0 +1,17 @@
+﻿@model ImageUploadViewModel
+
+
+<form asp-controller="RehearsalStudios" asp-action="ChangeLogo" enctype="multipart/form-data">
+    <input type="hidden" asp-for="EntityId" />
+    <div class="row">
+        <div class="col-auto">
+            <label for="upload">Fájl feltöltése</label>
+            <input asp-for="Images" class="form-control-file" id="upload" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-sm btn-secondary mb-4">Logo módosítása</button>
+        </div>
+    </div>
+</form>
+
+

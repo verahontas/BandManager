@@ -11,9 +11,41 @@
 @{
     DateTime currentDay = new DateTime();
     currentDay = DateTime.Now.AddDays(Model.Index);
+    string year = currentDay.Year.ToString();
+    string month = currentDay.Month.ToString();
+    string day = currentDay.Day.ToString();
+    DayOfWeek dayName = currentDay.DayOfWeek;
+    string nap = "";
+    switch (dayName)
+    {
+        case DayOfWeek.Sunday:
+            nap = "vasárnap";
+            break;
+        case DayOfWeek.Monday:
+            nap = "hétfő";
+            break;
+        case DayOfWeek.Tuesday:
+            nap = "kedd";
+            break;
+        case DayOfWeek.Wednesday:
+            nap = "szerda";
+            break;
+        case DayOfWeek.Thursday:
+            nap = "csütörtök";
+            break;
+        case DayOfWeek.Friday:
+            nap = "péntek";
+            break;
+        case DayOfWeek.Saturday:
+            nap = "szombat";
+            break;
+        default:
+            break;
+    }
+    string date = year + ". " + month + ". " + day + ". " + nap;
 }
 
-<h4>@currentDay</h4>
+<h4>@date</h4>
 <div class="table table-responsive">
     <table class="table table-bordered table-dark">
         <tr>
@@ -28,103 +60,88 @@
         {
             <tr>
                 <td>
-                    @Model.Rooms[i].Number . Terem
+                    @Model.Rooms[i].Number. Terem
                 </td>
                 @for (int hour = Model.OpeningHour; hour < Model.ClosingHour; ++hour)
                 {
-                    <td>
-                        @{ bool oldCell = false; }
-                        @if (Model.Index == 0) //ha a mai napot nézzük akkor lehetnek már nem foglalható időpontok
-                        {
-                            @if (hour <= DateTime.Now.Hour)
-                            {
-                                <a class="disabled">Foglalás</a>
-                                oldCell = true;
-                            }
+            <td>
+                @{ bool oldCell = false; }
+                @if (Model.Index == 0) //if today, then there are some hours that we cannot book
+                {
+                    @if (hour <= DateTime.Now.Hour)
+                    {
+                        <div>Lejárt</div>
+                        oldCell = true;
+                    }
 
-                            @if (!oldCell && !Model.Reservations.Any())
+                    @if (!oldCell && !Model.Reservations.Any())
+                    {
+                        <a asp-controller="Reservations" asp-action="CreateFromTable" asp-route-roomId="@Model.Rooms[i].Id" asp-route-hour="@hour" asp-route-dayIndex="@Model.Index">Foglalás</a>
+                    }
+                    else
+                    {
+                        bool isConflict = false;
+                        @foreach (var reservation in Model.Reservations)
+                        {
+                            DateTime dateNow = DateTime.Now;
+                            DateTime dateToCompare = new DateTime(dateNow.Year, dateNow.Month, dateNow.Day, hour, 0, 0);
+                            if (!oldCell && reservation.RehearsalRoomId == Model.Rooms[i].Id && reservation.IsConflicting(dateToCompare.AddMinutes(1), dateToCompare.AddMinutes(59)))
                             {
-                                <a asp-controller="Reservations" asp-action="CreateFromTable" asp-route-roomId="@Model.Rooms[i].Id" asp-route-hour="@hour" asp-route-dayIndex="@Model.Index">Foglalás</a>
-                            }
-                            else
-                            {
-                                bool isConflict = false;
-                                @foreach (var reservation in Model.Reservations)
+                                if (reservation.BandName == null || reservation.BandName == "")
                                 {
-                                    DateTime dateNow = DateTime.Now;
-                                    DateTime dateToCompare = new DateTime(dateNow.Year, dateNow.Month, dateNow.Day, hour, 0, 0);
-                                    if (!oldCell && reservation.RehearsalRoomId == Model.Rooms[i].Id && reservation.IsConflicting(dateToCompare.AddMinutes(1), dateToCompare.AddMinutes(59)))
-                                    {
-                                        if (reservation.BandName == null)
-                                        {
-                                            <p>Foglalt</p>
-                                        }
-                                        else
-                                        {
-                                            <p>@reservation.BandName</p>
-                                        }
-                                        isConflict = true;
-                                        break;
-                                    }
+                                    <p>Foglalt</p>
                                 }
-                                @if (!oldCell && !isConflict)
+                                else
                                 {
-                                    <a asp-controller="Reservations" asp-action="CreateFromTable" asp-route-roomId="@Model.Rooms[i].Id" asp-route-hour="@hour" asp-route-dayIndex="@Model.Index">Foglalás</a>
+                                    <p>@reservation.BandName</p>
                                 }
+                                isConflict = true;
+                                break;
                             }
                         }
-                        else //ha nem máról van szó
+                        @if (!oldCell && !isConflict)
                         {
-                            @if (!Model.Reservations.Any())
+                            <a asp-controller="Reservations" asp-action="CreateFromTable" asp-route-roomId="@Model.Rooms[i].Id" asp-route-hour="@hour" asp-route-dayIndex="@Model.Index">Foglalás</a>
+                        }
+                    }
+                    }
+                    else //ha nem máról van szó
+                    {
+                        @if (!Model.Reservations.Any())
+                        {
+                            <a asp-controller="Reservations" asp-action="CreateFromTable" asp-route-roomId="@Model.Rooms[i].Id" asp-route-hour="@hour" asp-route-dayIndex="@Model.Index">Foglalás</a>
+                        }
+                        else
+                        {
+                            bool isConflict = false;
+                            @foreach (var reservation in Model.Reservations)
                             {
-                                <a asp-controller="Reservations" asp-action="CreateFromTable" asp-route-roomId="@Model.Rooms[i].Id" asp-route-hour="@hour" asp-route-dayIndex="@Model.Index">Foglalás</a>
-                            }
-                            else
-                            {
-                                bool isConflict = false;
-                                @foreach (var reservation in Model.Reservations)
+                                DateTime dateOfCurrentDay = DateTime.Now.AddDays(Model.Index);
+                                DateTime dateToCompare = new DateTime(dateOfCurrentDay.Year, dateOfCurrentDay.Month, dateOfCurrentDay.Day, hour, 0, 0);
+                                if (reservation.RehearsalRoomId == Model.Rooms[i].Id && reservation.IsConflicting(dateToCompare.AddMinutes(1), dateToCompare.AddMinutes(59)))
                                 {
-                                    DateTime dateOfCurrentDay = DateTime.Now.AddDays(Model.Index);
-                                    DateTime dateToCompare = new DateTime(dateOfCurrentDay.Year, dateOfCurrentDay.Month, dateOfCurrentDay.Day, hour, 0, 0);
-                                    if (reservation.RehearsalRoomId == Model.Rooms[i].Id && reservation.IsConflicting(dateToCompare.AddMinutes(1), dateToCompare.AddMinutes(59)))
+                                    @if (@reservation.BandName == null || reservation.BandName == "")
+                                    {
+                                        <p>Foglalt</p>
+                                    }
+                                    else
                                     {
                                         <p>@reservation.BandName</p>
-                                        isConflict = true;
-                                        break;
                                     }
-                                }
-                                @if (!isConflict)
-                                {
-                                    <a asp-controller="Reservations" asp-action="CreateFromTable" asp-route-roomId="@Model.Rooms[i].Id" asp-route-hour="@hour" asp-route-dayIndex="@Model.Index">Foglalás</a>
+
+                                    isConflict = true;
+                                    break;
                                 }
                             }
+                            @if (!isConflict)
+                            {
+                                <a asp-controller="Reservations" asp-action="CreateFromTable" asp-route-roomId="@Model.Rooms[i].Id" asp-route-hour="@hour" asp-route-dayIndex="@Model.Index">Foglalás</a>
+                            }
                         }
-                    </td>
+                    }
+            </td>
                 }
             </tr>
         }
     </table>
 </div>
-
-
-
-<!--
-    WHAT IS THIS perhaps i dont need it
-<td>
-        @if (Model.Index < 10) //csak a következő 10 napra előre lehet foglalni
-        {
-            ReservationTableViewModel vm = new ReservationTableViewModel()
-            {
-                ClosingHour = Model.ClosingHour,
-                OpeningHour = Model.OpeningHour,
-                Studio = Model.Studio,
-                NumberOfAvailableRooms = Model.NumberOfAvailableRooms,
-                Index = Model.Index,
-                Reservations = Model.Reservations,
-                Rooms = Model.Rooms
-            };
-            <a asp-controller="RehearsalStudios" asp-action="ReservationsTable" asp-route-studioId="@Model.Studio.Id" asp-route-isNext="@true">Következő nap</a>
-        }
-    </td>
-
--->

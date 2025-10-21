@@ -4,158 +4,118 @@
     ViewData["Title"] = "Próbatermek";
 }
 
-<div class="display-4">Próbatermek</div>
+<div class="display-4 color-light">Próbatermek</div>
 
 @if (ViewBag.CurrentUserRole == "owner" || ViewBag.CurrentUserRole == "administrator")
 {
-    <p>
-        <a asp-action="Create" class="btn btn-primary">Új próbaterem hozzáadása</a>
-    </p>
+    <div>
+        <a asp-action="Create" class="btn btn-primary mb-2">
+            <svg width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+            </svg>
+            Új próbaterem hozzáadása
+        </a>
+    </div>
 }
 
-<!--Keresni csak unauthorized vagy musician szerepkörű felhasználó tud, a többieknek fölösleges-->
+<!--Only musicians and unauthorized users can search as for the others it is unnecessary-->
 @if (ViewBag.CurrentUserRole == "musician" || ViewBag.CurrentUserRole == null)
 {
-    <p>Kereshet időpont alapján, így biztosan megtalálja az Önnek megfelelő időpontban szabad termet.</p>
+    <p class="color-light">Kereshet időpont alapján, így biztosan megtalálja az Önnek megfelelő időpontban szabad termet.</p>
 
     <form asp-action="Index" method="get" class="form-inline">
-        <label>Dátum:</label>
-        <input name="date" asp-format="{0:yyyy-MM-dd}" type="date" />
-        <label>Próba kezdete:</label>
-        <select class="form-control" asp-items="ViewBag.Hours" name="startTime"></select>
-        <label>Próba vége:</label>
-        <select class="form-control" asp-items="ViewBag.Hours" name="endTime"></select>
-        <input type="submit" value="Keresés" class="btn btn-outline-success my-2 my-sm-0" />
+        <div class="row mb-4">
+            <div class="col-auto">
+                <div class="row">
+                    <div class="col-auto important-pr-0">
+                        <label for="date" class="col-form-label mx-md-2 color-light">Dátum:</label>
+                    </div>
+                    <div class="col-auto important-pr-0">
+                        <input name="date" asp-format="{0:yyyy-MM-dd}" class="form-control" type="date" value="" id="date" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="row">
+                    <div class="col-auto important-pr-0">
+                        <label for="startTime" class="col-form-label mx-md-2 color-light">Próba kezdete:</label>
+                    </div>
+                    <div class="col-auto important-pr-0">
+                        <input class="form-control" type="time" name="startTime" id="startTime">
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="row">
+                    <div class="col-auto important-pr-0">
+                        <label for="endTime" class="col-form-label mx-md-2 color-light">Próba vége:</label>
+                    </div>
+                    <div class="col-auto important-pr-0">
+                        <input class="form-control" type="time" name="endTime" id="endTime">
+                    </div>
+                </div>
+            </div>
+            <div class="col">
 
+
+                <input type="submit" value="Keresés" class="btn btn-outline-success mx-0 mx-sm-3 my-2 my-lg-0" style="margin-left: 20px;" />
+            </div>
+        </div>
     </form>
+
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Rendezés
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" asp-action="Index" asp-route-sortOrder="@ViewData["StudioNameSortParam"]" 
+               asp-route-date="@ViewData["DateFilter"]" 
+               asp-route-startTime="@ViewData["StartTimeFilter"]"
+               asp-route-endTime="@ViewData["EndTimeFilter"]">Próbahely neve</a>
+            <a class="dropdown-item" asp-action="Index" asp-route-sortOrder="@ViewData["SizeSortParam"]" 
+               asp-route-date="@ViewData["DateFilter"]" 
+               asp-route-startTime="@ViewData["StartTimeFilter"]"
+               asp-route-endTime="@ViewData["EndTimeFilter"]">Alapterület</a>
+            <a class="dropdown-item" asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParam"]" 
+               asp-route-date="@ViewData["DateFilter"]" 
+               asp-route-startTime="@ViewData["StartTimeFilter"]"
+               asp-route-endTime="@ViewData["EndTimeFilter"]">Ár</a>
+        </div>
+    </div>
 }
 
-<div class="table-responsive">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>
-                    <a asp-action="Index" asp-route-sortOrder="@ViewData["StudioNameSortParam"]" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="btn btn-outline-primary">
-                        Próbahely neve
-                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-sort-alpha-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" d="M4 2a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-1 0v-11A.5.5 0 0 1 4 2z" />
-                            <path fill-rule="evenodd" d="M6.354 11.146a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L4 12.793l1.646-1.647a.5.5 0 0 1 .708 0z" />
-                            <path d="M9.664 7l.418-1.371h1.781L12.281 7h1.121l-1.78-5.332h-1.235L8.597 7h1.067zM11 2.687l.652 2.157h-1.351l.652-2.157H11zM9.027 14h3.934v-.867h-2.645v-.055l2.567-3.719v-.691H9.098v.867h2.507v.055l-2.578 3.719V14z" />
-                        </svg>
-                    </a>
-                </th>
-                <th>
-                    <a asp-action="Index" asp-route-sortOrder="@ViewData["NumberSortParam"]" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="btn btn-outline-primary">
-                        Nr.
-                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-sort-numeric-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" d="M4 2a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-1 0v-11A.5.5 0 0 1 4 2z" />
-                            <path fill-rule="evenodd" d="M6.354 11.146a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L4 12.793l1.646-1.647a.5.5 0 0 1 .708 0z" />
-                            <path d="M12.438 7V1.668H11.39l-1.262.906v.969l1.21-.86h.052V7h1.046zm-2.84 5.82c.054.621.625 1.278 1.761 1.278 1.422 0 2.145-.98 2.145-2.848 0-2.05-.973-2.688-2.063-2.688-1.125 0-1.972.688-1.972 1.836 0 1.145.808 1.758 1.719 1.758.69 0 1.113-.351 1.261-.742h.059c.031 1.027-.309 1.856-1.133 1.856-.43 0-.715-.227-.773-.45H9.598zm2.757-2.43c0 .637-.43.973-.933.973-.516 0-.934-.34-.934-.98 0-.625.407-1 .926-1 .543 0 .941.375.941 1.008z" />
-                        </svg>
-                    </a>
-                </th>
-                <th>
-                    <a asp-action="Index" asp-route-sortOrder="@ViewData["SizeSortParam"]" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="btn btn-outline-primary">
-                        Méret
-                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-sort-numeric-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" d="M4 2a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-1 0v-11A.5.5 0 0 1 4 2z" />
-                            <path fill-rule="evenodd" d="M6.354 11.146a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L4 12.793l1.646-1.647a.5.5 0 0 1 .708 0z" />
-                            <path d="M12.438 7V1.668H11.39l-1.262.906v.969l1.21-.86h.052V7h1.046zm-2.84 5.82c.054.621.625 1.278 1.761 1.278 1.422 0 2.145-.98 2.145-2.848 0-2.05-.973-2.688-2.063-2.688-1.125 0-1.972.688-1.972 1.836 0 1.145.808 1.758 1.719 1.758.69 0 1.113-.351 1.261-.742h.059c.031 1.027-.309 1.856-1.133 1.856-.43 0-.715-.227-.773-.45H9.598zm2.757-2.43c0 .637-.43.973-.933.973-.516 0-.934-.34-.934-.98 0-.625.407-1 .926-1 .543 0 .941.375.941 1.008z" />
-                        </svg>
-                    </a>
-                </th>
-                <th>
-                    <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParam"]" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="btn btn-outline-primary">
-                        Ár
-                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-sort-numeric-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" d="M4 2a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-1 0v-11A.5.5 0 0 1 4 2z" />
-                            <path fill-rule="evenodd" d="M6.354 11.146a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L4 12.793l1.646-1.647a.5.5 0 0 1 .708 0z" />
-                            <path d="M12.438 7V1.668H11.39l-1.262.906v.969l1.21-.86h.052V7h1.046zm-2.84 5.82c.054.621.625 1.278 1.761 1.278 1.422 0 2.145-.98 2.145-2.848 0-2.05-.973-2.688-2.063-2.688-1.125 0-1.972.688-1.972 1.836 0 1.145.808 1.758 1.719 1.758.69 0 1.113-.351 1.261-.742h.059c.031 1.027-.309 1.856-1.133 1.856-.43 0-.715-.227-.773-.45H9.598zm2.757-2.43c0 .637-.43.973-.933.973-.516 0-.934-.34-.934-.98 0-.625.407-1 .926-1 .543 0 .941.375.941 1.008z" />
-                        </svg>
-                    </a>
-                </th>
-                <th></th>
-                <th>
-                    Leírás
-                </th>
+@{
+    int count = Model.Count();
+}
 
-
-                <th>
-                    Cím
-                </th>
-
-
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
+@for (int i = 0; i < Math.Ceiling(count / 12.0); ++i)
+{
+    <div class="row">
+        @for (int j = 0; j < 12; ++j)
+        {
+            @if ((i * 12 + j) < count)
             {
-            <tr>
-                <td>
-                    <a asp-controller="RehearsalStudios" asp-action="Details" asp-route-studioId="@item.StudioId">@item.Studio.Name</a>
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-roomId="@item.Id">@item.Number</a>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Size) m<sup>2</sup>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Price) Ft/óra
-                </td>
-                @if (ViewBag.CurrentUserRole == "owner" || ViewBag.CurrentUserRole == "administrator")
-                {
-                    <td>
-                        <a asp-action="Edit" asp-route-roomId="@item.Id" class="btn btn-primary btn-lg">
-                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-                            </svg>
-                            Szerkesztés
-                        </a>
-                        <a asp-action="Delete" asp-route-roomId="@item.Id" class="btn btn-danger btn-lg">
-                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
-                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
-                            </svg>
-                            Törlés
-                        </a>
-                        <a asp-action="Details" asp-route-roomId="@item.Id" class="btn btn-primary btn-lg">
-                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-three-dots" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
-                            </svg>
-                            Részletek
-                        </a>
-                        <a asp-controller="Reservations" asp-action="Create" asp-route-roomId="@item.Id" class="btn btn-secondary btn-lg">Foglalás</a>
-                    </td>
-                }
-                else
-                {
-            <td>
-                <a asp-controller="Reservations" asp-action="Create" asp-route-roomId="@item.Id" class="btn btn-primary btn-lg">Foglalás</a>
-                <a asp-action="Details" asp-route-roomId="@item.Id" class="btn btn-outline-primary btn-lg">
-                    <!--
-        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-three-dots" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
-        </svg>
-        -->
-                    Részletek
-                </a>
+                <div class="col mt-4">
 
-            </td>
-                }
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
+                    @await Html.PartialAsync("_RoomCardPartial", Model.ToList()[i * 12 + j])
 
-
-                <td>
-                    @Html.DisplayFor(modelItem => item.Studio.Address)
-                </td>
-
-
-            </tr>
+                </div>
             }
-        </tbody>
-    </table>
-</div>
+        }
+    </div>
+}
+
+
+@if (ViewBag.CurrentUserRole == "administrator" || ViewBag.CurrentUserRole == "owner")
+{
+    <h1 class="display-4 color-light">Nem elérhető termek</h1>
+    <div id="UnavailableRooms"></div>
+}
+
+<script>
+    $(document).ready(function () {
+        var link = '@Html.Raw(@Url.Action("GetUnavailableRooms", "RehearsalRooms"))';
+        $("#UnavailableRooms").load(link);
+    });
+</script>

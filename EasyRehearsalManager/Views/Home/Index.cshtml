@@ -1,10 +1,53 @@
-﻿@{
-    ViewData["Title"] = "Próbaterem foglalás";
-}
+﻿
+<div class="light-color-letters">
+    <h1 class="display-4">Próbamenedzser - szakdolgozat</h1>
 
-<div class="text-center">
-    <div class="row no-gutters">
-        <div class="col-sm"><a asp-controller="RehearsalRooms" asp-action="Index" class="btn btn-light btn-home" role="button">PRÓBATERMEK</a></div>
-        <div class="col-sm"><a asp-controller="RehearsalStudios" asp-action="Index" class="btn btn-light btn-home" role="button">PRÓBAHELYEK</a></div>
-    </div>
+    <h2>Feladatleírás</h2>
+    <p style="text-align: justify;">
+        A próbahelyekkel és azok óradíjas próbatermeivel foglalkozó webapplikációm célja egy olyan felület megteremtése, 
+        melynek használata minden jellemző igényt kielégít, és a foglaláshoz szükséges időt jelentősen lerövidíti. <br />
+        A program alapkoncepciója, hogy több próbahely van rögzítve az adatbázisba, és ezek termei között a felhasználók különböző szempontok alapján kereshetnek. 
+        Az alkalmazást regisztráció nélkül használva a felhasználó megtekintheti a regisztrált próbahelyeket és eszközparkjaikat, próbatermeket és foglalási táblázatokat. <br />
+        A regisztrált felhasználókat három szerepkörbe soroljuk. A legtöbb felhasználót magába foglaló szerep a zenészek köre, 
+        akik bejelentkezés után egy zenekarnév megadásával próbatermet tudnak foglalni a kiválasztott időpontra. 
+        A próbához lehetőségük van a próbahely eszköztárából kiválasztani, hogy milyen eszközöket szeretnének bérelni a próbájukhoz. 
+        Ez akkor lehetséges, ha a kiválasztott eszközből még van szabad darab – azaz nem foglalták már le az adott időpontban az összes darabot az adott eszközből. 
+        A lefoglalt próbát más felhasználó közreműködése nélkül  tudják módosítani vagy törölni. Módosítani természetesen csak úgy lehetséges, 
+        hogy a módosított időpont és eszközigény nem ütközik más, korábban leadott foglalással. <br />
+        Próbaterem-tulajdonos (továbbiakban: tulajdonos) szerepkörű felhasználóból várhatóan kevesebb van. 
+        Miután az adminisztrátor hozzáadta profilukat az adatbázishoz, létrehozhatnak próbahelye(ke)t, hozzájuk tartozó termeket és megadhatnak bérelhető eszközöket. 
+        Ezután lehetőségük van módosítani és törölni az általuk létrehozott adatokat, továbbá menedzselhetik a saját próbatermeikbe leadott foglalásokat. 
+        Ez akkor hasznos funkció, ha például egy zenész nem tud belépni a felhasználói fiókjába, vagy nincs épp internet-elérése és telefonon szeretne módosítani a foglalásán. <br />
+        A harmadik szerepkör az adminisztrátor. Ehhez a felhasználótípushoz egy felhasználó tartozik. 
+        Az adminisztrátor gyakorlatilag minden adatbázisban tárolt adathoz hozzáfér (kivéve a jelszavakhoz), jogosultsága van létrehozni, törölni ill. módosítani adatokat. <br />
+        Az alkalmazás egy ASP.NET Core MVC webapplikáció, C#, JavaScript, HTML és CSS technológiákat alkalmazva.
+    </p>
+
+    <h2>Témaválasztás indoklása</h2>
+    <p style="text-align: justify;">
+        Gyerekkorom óta zongorázom. Az egy évtizednyi klasszikus zenei tanulmányaim után a könnyűzene irányába vittek útjaim,
+        melynek köszönhetően ma is két zenekarnak vagyok a billentyűse. <br />
+        Egy zenekarban a zenélés mellett azonban még számos feladatot kell ellátniuk a tagoknak.
+        Én jellemzően a szervezések élén állok, így gyakran intézem a próbákhoz szükséges próbatermek lefoglalását is.
+        Próbákra – ideális esetben – hetente sor kerül, olykor gyakrabban is, ha például egy közelgő előadásra készülünk.
+        A bevett gyakorlat nem az, hogy hónapokra előre lefoglaljuk a termeket, hanem hétről-hétre a mindenki számára legmegfelelőbb időpontot választjuk ki.
+        A nehézségek tulajdonképpen itt kezdődnek, ugyanis általában mind a hatunknak hatféle időbeosztása van,
+        de ettől tekintsünk el – miután konszenzusra jutottunk a próba időpontját illetően, keresnem kell egy olyan termet, 
+        ami a megbeszélt időpontban szabad, és rendelkezik azokkal az eszközökkel, amikre nekünk szükségünk van.  
+        Mivel billentyűs vagyok és autó nélkül kihívás bárhova is eljuttatnom a hangszeremet és tartozékait, 
+        nálunk a billentyűbérlés szokott lenni a kritikus pont.  Előfordult már, hogy bár a próbahely webes felületén béreltem hangszert, 
+        a helyszínre érve derült ki, hogy az adott időpontra már lefoglalták az összes billentyűt, csak épp a rendszerük nem volt erre a lehetőségre felkészítve. <br />
+        A próbaterem-bérlésnél egyéb szempontok is vannak, amiket érdemes figyelembe venni. 
+        Kevés központi helyen lévő próbahely van, ami mindannyiunk számára könnyen megközelíthető, illetve mivel relatív sokan vagyunk , 
+        figyelünk arra is, hogy nagyobb termet válasszunk, amiben kényelmesebben elférünk, és amiben távolabb tudunk állni a hangfalaktól és a doboktól.  
+        A próbaterem óradíja szintén egy szempont; mindig az aktuális próba jellegéhez igazítjuk a legjobb ár-érték aránnyal rendelkező termet. <br />
+        A legegyszerűbb tehát az lenne, ha lenne egy rendszer, ami ismeri az összes budapesti próbatermet, 
+        és lenne egy olyan keresője, amivel ki tudnám szűrni a számomra megfelelő próbatermeket. 
+        Az alkalmazásom kezdőlapján – ami a próbatermek listáját jeleníti meg – található egy ilyen kereső, 
+        amivel a fenti problémát célom megoldani. Habár mindenre azért nem lehet keresni, de megadhatom, hogy mikor szeretnék próbálni, 
+        és a keresés eredményeként kapott, a megadott időpontban szabad termeket rendezhetem méret és ár szerint. Bérelhető eszközökre ugyan itt sem tudok keresni,
+        de talán eléggé kicsi arra az esély, hogy a számomra megfelelő időpontban és próbahelyen az összes, nekem szükséges eszközök már mind ki vannak bérelve. 
+        Az is előrelépés a budapesti próbatermek honlapjához képest, hogy ha ez a helyzet mégis előfordulna, akkor nem engedné a rendszer lefoglalnom a próbát.
+
+    </p>
 </div>

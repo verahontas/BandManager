@@ -1,0 +1,21 @@
+﻿@model RehearsalRoom
+
+<h1>Terem Nr. @Model.Number</h1>
+
+<h4>Bérelhető eszközök</h4>
+@if (Model.Studio.Equipments == null || !Model.Studio.Equipments.Any())
+{
+    <p>Nincsenek bérelhető eszközök ehhez a próbahelyhez regisztrálva.</p>
+}
+else
+{
+    <table class="table table-borderless w-auto">
+        @foreach (Equipment eq in Model.Studio.Equipments)
+        {
+            <tr>
+                <th>@eq.Name:</th>
+                <td>@eq.QuantityAvailable Db</td>
+            </tr>
+        }
+    </table>
+}

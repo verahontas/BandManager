@@ -1,231 +1,77 @@
 ﻿@model RehearsalStudio
 
-<script>
-    $(document).ready(function () {
+<h1 class="display-4 color-light">@Model.Name</h1>
 
-        var index = 0; //0 means TODAY, 1 means TOMORROW etc. index is between 0 and 9, only the next 10 days' reservations are visible
-        var studioId = @Model.Id;
-
-        var link = '@Html.Raw(@Url.Action("GetTableOfReservations", "RehearsalStudios", new { studioId = 100, dayIndex = 0 } )) ';
-        link = link.replace("100", studioId);
-        $("#ReservationsTableContent").load(link);
-
-        $("#previousDayButton").hide();
-
-        $("#previousDayButton").click(function () {
-            index = index - 1;
-            var link = '@Html.Raw(@Url.Action("GetTableOfReservations", "RehearsalStudios", new { studioId = 100, dayIndex = 12 } )) ';
-
-            //with this replacement, there will be: dayIndex = [0..9] as dayIndex has to be in this range
-                //note: dayIndex = 1 wouldn't be good bc "1" appears also in "100"
-            link = link.replace("12", index);
-
-            //after 12 is replaced to [0..9] we can replace 100 beacuse there won't be other "100" in the string, bc dayIndex is in [0..9]
-            link = link.replace("100", studioId);
-
-            if (index > 0) {
-                $("#previousDayButton").show();
-            }
-            else {
-                $("#previousDayButton").hide();
-            }
-
-            if (index < 8) {
-                $("#nextDayButton").show();
-            }
-            else {
-                $("#nextDayButton").hide();
-            }
-
-            $("#ReservationsTableContent").load(link);
-        });
-
-        $("#nextDayButton").click(function () {
-            index = index + 1;
-            var link = '@Html.Raw(@Url.Action("GetTableOfReservations", "RehearsalStudios", new { studioId = 100, dayIndex = 12 } )) ';
-            link = link.replace("12", index);
-            link = link.replace("100", studioId);
-
-            if (index > 0) {
-                $("#previousDayButton").show();
-            }
-            else {
-                $("#previousDayButton").hide();
-            }
-
-            if (index < 8) {
-                $("#nextDayButton").show();
-            }
-            else {
-                $("#nextDayButton").hide();
-            }
-
-            //note: never change the order of these lines! if studioId would be 12, then the 12 -> index replacement would result wrong 'link' string
-            $("#ReservationsTableContent").load(link);
-        });
-    });
-</script>
-
-<h1>@Model.Name</h1>
-
-<h2>Elérhetőségek</h2>
-<table class="table table-striped">
-    <tr>
-        <th>Cím:</th>
-        <td>@Model.Address</td>
-    </tr>
-    <tr>
-        <th>Kerület:</th>
-        <td>@Model.District</td>
-    </tr>
-    <tr>
-        <th>Telefon:</th>
-        <td>@Model.Phone</td>
-    </tr>
-    <tr>
-        <th>Email cím:</th>
-        <td>@Model.Email</td>
-    </tr>
-    <tr>
-        <th>Weboldal:</th>
-        <td><a href="@Model.Web">@Model.Web</a></td>
-    </tr>
-    <tr>
-        <th>X koordináta:</th>
-        <td>@Model.LocationX</td>
-    </tr>
-    <tr>
-        <th>Y koordináta:</th>
-        <td>@Model.LocationY</td>
-    </tr>
-</table>
-
-<h2>Adatok:</h2>
-<table class="table table-striped">
-    <tr>
-        <th>Termek száma:</th>
-        <td>@Model.Rooms.Count</td>
-    </tr>
-    <tr>
-        <th colspan="2">Nyitvatartás:</th>
-    </tr>
-    <tr>
-        <th>Hétfő</th>
-        <td>@Model.OpeningHourMonday - @Model.ClosingHourMonday</td>
-    </tr>
-    <tr>
-        <th>Kedd</th>
-        <td>@Model.OpeningHourTuesday - @Model.ClosingHourTuesday</td>
-    </tr>
-    <tr>
-        <th>Szerda</th>
-        <td>@Model.OpeningHourWednesday - @Model.ClosingHourWednesday</td>
-    </tr>
-    <tr>
-        <th>Csütörtök</th>
-        <td>@Model.OpeningHourThursday - @Model.ClosingHourThursday</td>
-    </tr>
-    <tr>
-        <th>Péntek</th>
-        <td>@Model.OpeningHourSaturday - @Model.ClosingHourSaturday</td>
-    </tr>
-    <tr>
-        <th>Szombat</th>
-        <td>@Model.OpeningHourMonday - @Model.ClosingHourMonday</td>
-    </tr>
-    <tr>
-        <th>Vasárnap</th>
-        <td>@Model.OpeningHourSunday - @Model.ClosingHourSunday</td>
-    </tr>
-</table>
-
-@if (ViewBag.CurrentUserRole == "owner" || ViewBag.CurrentUserRole == "admin")
-{
-    <div>
-        <a asp-action="Edit" asp-route-studioId="@Model.Id" class="btn btn-primary">Szerkesztés</a> |
-        <a asp-action="Delete" asp-route-studioId="@Model.Id" class="btn btn-danger">Törlés</a> |
+<div class="row">
+    <div class="col-auto">
+        <div class="row my-sidebar" id="aboutStudio" role="button">
+            <h3>Áttekintés</h3>
+        </div>
+        <div class="row my-sidebar" id="studioContacts" role="button">
+            <h3>Elérhetőség</h3>
+        </div>
+        <div class="row my-sidebar" id="roomsOfStudio" role="button">
+            <h3>Termek</h3>
+        </div>
+        <div class="row my-sidebar" id="pictureSlideStudio" role="button">
+            <h3>Képek</h3>
+        </div>
+        <div class="row my-sidebar" id="onlineReservationStudio" role="button">
+            <h3>Online foglalás</h3>
+        </div>
     </div>
-}
-<a asp-action="Index" class="btn btn-secondary">Vissza a próbahelyek listájához</a>
-
-<div class="display-4 text-center">Elérhető termek listája:</div>
-
-@{
-    var availableRooms = @Model.Rooms.ToList();
-    foreach (var room in Model.Rooms)
-    {
-        if (!room.Available)
-        {
-            availableRooms.Remove(room);
-        }
-    }
-}
-
-<div>
-    <table class="table table-bordered">
-        @for (int i = 0; i < (availableRooms.Count + 2) / 3; ++i)
-        {
-            <tr>
-                @for (int j = 0; j < 3 && availableRooms.Count >= 3 || j < availableRooms.Count && availableRooms.Count < 3; ++j)
-                {
-                    <td>
-                        <table class="table table-borderless">
-                            <tr>
-                                <td>
-                                    <a asp-controller="RehearsalRooms" asp-action="Details" asp-route-roomId="@Model.Rooms.ToList()[i * 3 + j].Id">
-                                        @availableRooms[i * 3 + j].Number . Terem
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    @availableRooms[i * 3 + j].Size m2
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    @availableRooms[i * 3 + j].Price Ft/óra
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <a class="btn btn-primary" role="button" asp-controller="Reservations" asp-action="Create" asp-route-roomId="@Model.Rooms.ToList()[i * 3 + j].Id">Foglalás</a>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                }
-            </tr>
-        }
-    </table>
+    <div class="col-auto" id="contentCard"></div>
 </div>
 
-<h4 class="display-4 text-center">Bérelhető eszközök:</h4>
+<script>
+    $(document).ready(function () {
+        var link = '@Html.Raw(@Url.Action("GetAboutStudioPartial", "RehearsalStudios", new { studioId = 100 } )) ';
+        var studioId = @Model.Id;
+        link = link.replace("100", studioId);
+        $("#contentCard").load(link);
 
-@if (ViewBag.CurrentUserRole == "owner" || ViewBag.CurrentUserRole == "admin")
-{
-    <a asp-controller="Equipments" asp-action="Create" asp-route-studioId="@Model.Id" class="btn btn-outline-primary">Új bérelhető eszköz hozzáadása</a>
-    if (Model.Equipments.Any())
-    {
-        <a asp-controller="Equipments" asp-action="Index" asp-route-studioId="@Model.Id" class="btn btn-outline-primary">Módosítás</a>
-    }
-}
+        $("#aboutStudio").click(function () {
+            var link = '@Html.Raw(@Url.Action("GetAboutStudioPartial", "RehearsalStudios", new { studioId = 100 } )) ';
+            var studioId = @Model.Id;
+            link = link.replace("100", studioId);
+            $("#contentCard").load(link);
+        });
+
+        $("#studioContacts").click(function () {
+            var link = '@Html.Raw(@Url.Action("GetStudioContactsPartial", "RehearsalStudios", new { studioId = 100 } )) ';
+            var studioId = @Model.Id;
+            link = link.replace("100", studioId);
+            $("#contentCard").load(link);
+        });
+
+        $("#roomsOfStudio").click(function () {
+            var link = '@Html.Raw(@Url.Action("GetRoomsOfStudioPartial", "RehearsalStudios", new { studioId = 100 } )) ';
+            var studioId = @Model.Id;
+            link = link.replace("100", studioId);
+            $("#contentCard").load(link);
+        });
+
+        $("#pictureSlideStudio").click(function () {
+            var link = '@Html.Raw(@Url.Action("GetImagesForStudioPartial", "RehearsalStudios", new { studioId = 100 } )) ';
+            var studioId = @Model.Id;
+            link = link.replace("100", studioId);
+            $("#contentCard").load(link);
+        });
+
+        $("#onlineReservationStudio").click(function () {
+            var link = '@Html.Raw(@Url.Action("GetStudioReservationsTablePartial", "RehearsalStudios", new { studioId = 100 } )) ';
+            var studioId = @Model.Id;
+            link = link.replace("100", studioId);
+            $("#contentCard").load(link);
+        });
 
 
-<ul class="list-group">
-    @foreach (Equipment eq in @Model.Equipments)
-    {
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            @eq.Name
-            <span class="badge badge-primary badge-pill">@eq.QuantityAvailable Db</span>
-        </li>
-    }
-</ul>
+        link = '@Html.Raw(@Url.Action("AddPicturesToStudioPartial", "RehearsalStudios", new { studioId = 0 } )) ';
+        link = link.replace("0", @Model.Id);
+        $("#AddPictures").load(link);
 
-<div class="display-4 text-center">Foglalások</div>
-
-<button class="btn btn-outline-dark" id="previousDayButton">Előző nap</button>
-<button class="btn btn-outline-dark" id="nextDayButton">Következő nap</button>
-
-<div id="ReservationsTableContent"></div>
-
+        link = '@Html.Raw(@Url.Action("ChangeLogoPartial", "RehearsalStudios", new { studioId = 0 } )) ';
+        link = link.replace("0", @Model.Id);
+        $("#ChangeLogo").load(link);
+    });
+</script>

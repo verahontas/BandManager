@@ -8,105 +8,153 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
 
+    <!-- Added from MDB -->
+   
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
+    <link rel="stylesheet" href="~/MDB/css/mdb.min.css" />
+    
+    <!-- Personalized CSS -->
     <link href="~/AdditionalStyle.css" rel="stylesheet" />
+    <!--<link href="~/CardStyle.css" rel="stylesheet" />-->
+
+    <!--scripts by default bootstrap-->
+    <!--
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-
+    -->
     <script src="~/lib/jquery/dist/jquery.js"></script>
 
     <title>Próbák egyszerűen</title>
 </head>
-<body class="background-image">
+<body>
     @if (ViewBag.CurrentUserName == null)
     {
-        <nav class="navbar navbar-light bg-light">
-            <a asp-controller="Home" asp-action="Index" class="navbar-brand">Főoldal</a>
-            <a asp-controller="Account" asp-action="Login" class="navbar-brand">Bejelentkezés</a>
-            <a asp-controller="Account" asp-action="RegisterAsMusician" class="navbar-brand">Regisztráció zenészként</a>
-            <a asp-controller="Account" asp-action="RegisterAsOwner" class="navbar-brand">Regisztráció tulajdonosként</a>
-            <!--<div class="dropdown">
-                <button class="btn navbar-brand dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Regisztráció
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" asp-controller="Account" asp-action="RegisterAsMusician">Zenészként</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" asp-controller="Account" asp-action="RegisterAsOwner">Tulajdonosként</a>
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light px-2">
+            <a class="navbar-brand mb-0 h1 px-1" asp-controller="Home" asp-action="Index">Próbamenedzser</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="navbar-brand" asp-controller="RehearsalStudios" asp-action="Index">Próbahelyek</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="navbar-brand" asp-controller="RehearsalRooms" asp-action="Index">Próbatermek</a>
+                    </li>
+                </ul>
+                @{
+                    LoginViewModel viewModel = new LoginViewModel();
+                }
+                <div class="justify-content-end" style="width: inherit;">
+                    @await Html.PartialAsync("_LoginMenu", viewModel)
                 </div>
             </div>
-            -->
         </nav>
     }
     else
     {
-        <nav class="navbar navbar-light bg-light">
-            <div class="navbar-brand"> Üdvözöljük, <strong>@ViewBag.CurrentUserName</strong>! </div>
-            <a asp-controller="Home" asp-action="Index" class="navbar-brand">Főoldal</a>
-            <img src="@Url.Action("GetUserImage", "Home", new { userId = ViewBag.CurrentUserId })" class="img-thumbnail navbar-brand" height="30" width="30" alt="Profilkép" />
-            <a class="navbar-brand" asp-controller="Account" asp-action="GetProfileDetails">Profilom</a>
-        </nav>
-        <nav class="navbar navbar-light bg-light">
-            @if (ViewBag.CurrentUserRole == "musician")
-            {
-                <a class="navbar-brand" asp-controller="RehearsalStudios" asp-action="Index">Próbahelyek</a>
-                <a class="navbar-brand" asp-controller="RehearsalRooms" asp-action="Index">Próbatermek</a>
-                <a class="navbar-brand" asp-controller="Reservations" asp-action="Index" asp-route-userId="@ViewBag.CurrentUserId">Foglalásaim</a>
-            }
-            else if (ViewBag.CurrentUserRole == "owner")
-            {
-                <a class="navbar-brand" asp-controller="RehearsalStudios" asp-action="Index" asp-route-ownerId="@ViewBag.CurrentUserId">Próbahelyeim</a>
-                <a class="navbar-brand" asp-controller="RehearsalRooms" asp-action="Index" asp-route-ownerId="@ViewBag.CurrentUserId">Próbatermeim</a>
-            }
-            else if (ViewBag.CurrentUserRole == "administrator")
-            {
-                <a class="navbar-brand" asp-controller="RehearsalStudios" asp-action="Index">Próbahelyek</a>
-                <a class="navbar-brand" asp-controller="RehearsalRooms" asp-action="Index">Próbatermek</a>
-                <a class="navbar-brand" asp-controller="Users" asp-action="Index">Felhasználók</a>
-                <a class="navbar-brand" asp-controller="Reservations" asp-action="Index">Foglalások</a>
-            }
-            <a class="navbar-brand" asp-controller="Account" asp-action="Logout">Kijelentkezés</a>
-            <!-- <div class="dropdown">
-                <button class="btn navbar-brand dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img src="@Url.Action("GetUserImage", new { useId = ViewBag.CurrentUserId })" class="img-thumbnail" height="30" alt="Profilkép" /> Profil
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" asp-controller="Account" asp-action="GetProfileDetails">Profilom</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" asp-controller="Reservations" asp-action="Index" asp-route-userId="@ViewBag.CurrentUserId">Foglalásaim</a>
-                </div>
-            </div> -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light px-2">
+            <img src="@Url.Action("GetUserImage", "Account", new { userId = ViewBag.CurrentUserId })" class="img-thumbnail navbar-brand px-1" height="30" width="30" alt="Profilkép" />
+            <div class="navbar-brand" href="#">Üdvözöljük,&nbsp; <strong> @ViewBag.CurrentUserName</strong>!</div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="navbar-brand" asp-controller="Account" asp-action="Details" asp-route-userId="@ViewBag.CurrentUserId">Profilom</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="navbar-brand dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Menü
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            @if (ViewBag.CurrentUserRole == "musician")
+                            {
+                                <a class="dropdown-item" asp-controller="RehearsalStudios" asp-action="Index">Próbahelyek</a>
+                                <a class="dropdown-item" asp-controller="RehearsalRooms" asp-action="Index">Próbatermek</a>
+                                <a class="dropdown-item" asp-controller="Reservations" asp-action="Index" asp-route-userId="@ViewBag.CurrentUserId">Foglalásaim</a>
+                            }
+                            else if (ViewBag.CurrentUserRole == "owner")
+                            {
+                                <a class="dropdown-item" asp-controller="RehearsalStudios" asp-action="Index" asp-route-ownerId="@ViewBag.CurrentUserId">Próbahelyeim</a>
+                                <a class="dropdown-item" asp-controller="RehearsalRooms" asp-action="Index" asp-route-ownerId="@ViewBag.CurrentUserId">Próbatermeim</a>
+                                <a class="dropdown-item" asp-controller="Reservations" asp-action="Index">Foglalások</a>
+                            }
+                            else if (ViewBag.CurrentUserRole == "administrator")
+                            {
+                                <a class="dropdown-item" asp-controller="RehearsalStudios" asp-action="Index">Próbahelyek</a>
+                                <a class="dropdown-item" asp-controller="RehearsalRooms" asp-action="Index">Próbatermek</a>
+                                <a class="dropdown-item" asp-controller="Account" asp-action="Index">Felhasználók</a>
+                                <a class="dropdown-item" asp-controller="Reservations" asp-action="Index">Foglalások</a>
+                            }
+                        </div>
+                    </li>
+                </ul>
+                <ul class="navbar-nav justify-content-end" style="width: inherit;">
+                    <li class="nav-item">
+                        <a class="navbar-brand" asp-controller="Account" asp-action="Logout">Kijelentkezés</a>
+                    </li>
+                </ul>
+            </div>
         </nav>
     }
 
-
     @if (TempData["SuccessAlert"] != null)
     {
-        <div class="alert alert-success" role="alert">@TempData["SuccessAlert"]</div>
+        <div class="row">
+            <div class="col-sm-2 col-md-3"></div>
+            <div class="alert alert-success col-12 col-sm-8 col-md-6 mt-2" role="alert">@TempData["SuccessAlert"]</div>
+            <div class="col-sm-2 col-md-3"></div>
+        </div>
     }
 
     @if (TempData["DangerAlert"] != null)
     {
-        <div class="alert alert-danger" role="alert">@TempData["DangerAlert"]</div>
+        <div class="row">
+            <div class="col-sm-2 col-md-3"></div>
+            <div class="alert alert-danger col-12 col-sm-8 col-md-6 mt-2" role="alert">@TempData["DangerAlert"]</div>
+            <div class="col-sm-2 col-md-3"></div>
+        </div>
     }
 
-    <div class="container">
-        @RenderBody()
+    <div id="wrap">
+        <div class="container" id="main">
+            @RenderBody()
+        </div>
     </div>
+
+
+    <footer class="footer bg-light text-center text-lg-start">
+        
+        <div class="text-center p-3" style="background-color: rgba(206, 208, 187, 0.2)">
+            2021.
+        </div>
+
+    </footer>
 
     @if (IsSectionDefined("Scripts"))
     {
         @RenderSection("Scripts", required: true)
     }
+
 </body>
 </html>
 
-<footer class="mt-auto">
-    <div class="container">
-        <p>Készítette: <br /><strong>Herczegfalvy Veronika </strong><br />hallgató, Eötvös Loránd Tudományegyetem <br /> 2020. </p>
-    </div>
-</footer>
+<!-- Added from MDB -->
+<!--
+<script type="text/javascript" src="~/MDB/js/mdb.min.js"></script>
+-->
+
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>

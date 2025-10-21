@@ -1,0 +1,26 @@
+﻿@model RehearsalStudio
+
+<h1>Elérhetőség</h1>
+
+<table class="table table-sm table-responsive table-borderless">
+    <tr>
+        <th>Cím:</th>
+        <td>@Model.Address</td>
+    </tr>
+    <tr>
+        <th>Kerület:</th>
+        <td>@Model.District. kerület</td>
+    </tr>
+    <tr>
+        <th>Telefon:</th>
+        <td>@Model.Phone</td>
+    </tr>
+    <tr>
+        <th>Email cím:</th>
+        <td>@Model.Email</td>
+    </tr>
+    <tr>
+        <th>Weboldal:</th>
+        <td><a href="@Model.Web">@Model.Web</a></td>
+    </tr>
+</table>

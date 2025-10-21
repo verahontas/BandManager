@@ -4,138 +4,167 @@
     ViewData["Title"] = "Szerkesztés";
 }
 
-<h4>@Model.Name szerkesztése </h4>
+<div class="light-color-letters">
+
+<h1 class="display-4">@Model.Name</h1>
+<h2>Szerkesztés</h2>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+
+<form asp-action="Edit">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="UserId" />
+    <div class="row">
+        <div class="col">
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
+                <label asp-for="Name" class="control-label">Próbahely neve</label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Address" class="control-label"></label>
+                <label asp-for="Description" class="control-label">Leírás</label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col">
+            <h4>Elérhetőségek</h4>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label">Cím</label>
                 <input asp-for="Address" class="form-control" />
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="LocationX" class="control-label"></label>
+                <label asp-for="LocationX" class="control-label">X koordináta</label>
                 <input asp-for="LocationX" class="form-control" />
                 <span asp-validation-for="LocationX" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="LocationY" class="control-label"></label>
+                <label asp-for="LocationY" class="control-label">Y koordináta</label>
                 <input asp-for="LocationY" class="form-control" />
                 <span asp-validation-for="LocationY" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="District" class="control-label"></label>
+                <label asp-for="District" class="control-label">Kerület</label>
                 <input asp-for="District" class="form-control" />
                 <span asp-validation-for="District" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Phone" class="control-label"></label>
+                <label asp-for="Phone" class="control-label">Telefonszám</label>
                 <input asp-for="Phone" class="form-control" />
                 <span asp-validation-for="Phone" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
+                <label asp-for="Email" class="control-label">Email cím</label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Web" class="control-label"></label>
+                <label asp-for="Web" class="control-label">Web</label>
                 <input asp-for="Web" class="form-control" />
                 <span asp-validation-for="Web" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" class="form-control"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OpeningHourMonday" class="control-label"></label>
-                <input asp-for="OpeningHourMonday" class="form-control" />
-                <span asp-validation-for="OpeningHourMonday" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ClosingHourMonday" class="control-label"></label>
-                <input asp-for="ClosingHourMonday" class="form-control" />
-                <span asp-validation-for="ClosingHourMonday" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OpeningHourTuesday" class="control-label"></label>
-                <input asp-for="OpeningHourTuesday" class="form-control" />
-                <span asp-validation-for="OpeningHourTuesday" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ClosingHourTuesday" class="control-label"></label>
-                <input asp-for="ClosingHourTuesday" class="form-control" />
-                <span asp-validation-for="ClosingHourTuesday" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OpeningHourWednesday" class="control-label"></label>
-                <input asp-for="OpeningHourWednesday" class="form-control" />
-                <span asp-validation-for="OpeningHourWednesday" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ClosingHourWednesday" class="control-label"></label>
-                <input asp-for="ClosingHourWednesday" class="form-control" />
-                <span asp-validation-for="ClosingHourWednesday" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OpeningHourThursday" class="control-label"></label>
-                <input asp-for="OpeningHourThursday" class="form-control" />
-                <span asp-validation-for="OpeningHourThursday" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ClosingHourThursday" class="control-label"></label>
-                <input asp-for="ClosingHourThursday" class="form-control" />
-                <span asp-validation-for="ClosingHourThursday" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OpeningHourFriday" class="control-label"></label>
-                <input asp-for="OpeningHourFriday" class="form-control" />
-                <span asp-validation-for="OpeningHourFriday" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ClosingHourFriday" class="control-label"></label>
-                <input asp-for="ClosingHourFriday" class="form-control" />
-                <span asp-validation-for="ClosingHourFriday" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OpeningHourSaturday" class="control-label"></label>
-                <input asp-for="OpeningHourSaturday" class="form-control" />
-                <span asp-validation-for="OpeningHourSaturday" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ClosingHourSaturday" class="control-label"></label>
-                <input asp-for="ClosingHourSaturday" class="form-control" />
-                <span asp-validation-for="ClosingHourSaturday" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OpeningHourSunday" class="control-label"></label>
-                <input asp-for="OpeningHourSunday" class="form-control" />
-                <span asp-validation-for="OpeningHourSunday" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ClosingHourSunday" class="control-label"></label>
-                <input asp-for="ClosingHourSunday" class="form-control" />
-                <span asp-validation-for="ClosingHourSunday" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Mentés" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-outline-danger" >Mégsem</a>
-            </div>
-        </form>
-    </div>
-</div>
+        </div>
+        <div class="col">
+            <h2>Nyitvatartás</h2>
+            <div class="row">
+                <div class="col">
+                    <h3>Nyitási időpontok</h3>
+                    <div class="form-group">
+                        <label asp-for="OpeningHourMonday" class="control-label">Hétfő</label>
+                        <input asp-for="OpeningHourMonday" class="form-control input-small" />
+                        <span asp-validation-for="OpeningHourMonday" class="text-danger"></span>
+                    </div>
 
-<div>
-    <a asp-action="Index" class="btn btn-primary">Vissza a próbahelyek listájához</a>
+                    <div class="form-group">
+                        <label asp-for="OpeningHourTuesday" class="control-label">Kedd</label>
+                        <input asp-for="OpeningHourTuesday" class="form-control input-small" />
+                        <span asp-validation-for="OpeningHourTuesday" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="OpeningHourWednesday" class="control-label">Szerda</label>
+                        <input asp-for="OpeningHourWednesday" class="form-control input-small" />
+                        <span asp-validation-for="OpeningHourWednesday" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="OpeningHourThursday" class="control-label">Csütörtök</label>
+                        <input asp-for="OpeningHourThursday" class="form-control input-small" />
+                        <span asp-validation-for="OpeningHourThursday" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="OpeningHourFriday" class="control-label">Péntek</label>
+                        <input asp-for="OpeningHourFriday" class="form-control input-small" />
+                        <span asp-validation-for="OpeningHourFriday" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="OpeningHourSaturday" class="control-label">Szombat</label>
+                        <input asp-for="OpeningHourSaturday" class="form-control input-small" />
+                        <span asp-validation-for="OpeningHourSaturday" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="OpeningHourSunday" class="control-label">Vasárnap</label>
+                        <input asp-for="OpeningHourSunday" class="form-control input-small" />
+                        <span asp-validation-for="OpeningHourSunday" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <h3>Zárási időpontok</h3>
+                    <div class="form-group">
+                        <label asp-for="ClosingHourMonday" class="control-label">Hétfő</label>
+                        <input asp-for="ClosingHourMonday" class="form-control input-small" />
+                        <span asp-validation-for="ClosingHourMonday" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ClosingHourTuesday" class="control-label">Kedd</label>
+                        <input asp-for="ClosingHourTuesday" class="form-control input-small" />
+                        <span asp-validation-for="ClosingHourTuesday" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ClosingHourWednesday" class="control-label">Szerda</label>
+                        <input asp-for="ClosingHourWednesday" class="form-control input-small" />
+                        <span asp-validation-for="ClosingHourWednesday" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ClosingHourThursday" class="control-label">Csütörtök</label>
+                        <input asp-for="ClosingHourThursday" class="form-control input-small" />
+                        <span asp-validation-for="ClosingHourThursday" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ClosingHourFriday" class="control-label">Péntek</label>
+                        <input asp-for="ClosingHourFriday" class="form-control input-small" />
+                        <span asp-validation-for="ClosingHourFriday" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ClosingHourSaturday" class="control-label">Szombat</label>
+                        <input asp-for="ClosingHourSaturday" class="form-control input-small" />
+                        <span asp-validation-for="ClosingHourSaturday" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ClosingHourSunday" class="control-label">Vasárnap</label>
+                        <input asp-for="ClosingHourSunday" class="form-control input-small" />
+                        <span asp-validation-for="ClosingHourSunday" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Mentés" class="btn btn-primary align-baseline mt-2" />
+                <a asp-action="Index" class="btn btn-outline-danger align-baseline mt-2">Mégsem</a>
+            </div>
+        </div>
+    </div>
+</form>
+
 </div>
 
 @section Scripts {

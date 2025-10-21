@@ -1,35 +1,35 @@
 ﻿@model ReservationViewModel
 
-<table class="table table-striped">
-    @if (ViewBag.CurrentUserRole == "musician")
-    {
+<div class="display-4 color-light">Foglalás részletei</div>
+
+<div class="my-light-background">
+
+    <table class="table table-borderless w-auto">
         <tr>
             <th scope="row">Zenekar neve:</th>
             <td>@Model.BandName</td>
         </tr>
-    }
-    <tr>
-        <th>Telefonszám:</th>
-        <td>@Model.UserPhoneNumber</td>
-    </tr>
-    <tr>
-        <th>Foglalás időpontja:</th>
-        <td>@Model.Day.Date napon @Model.StartHour órától @Model.EndHour óráig</td>
-    </tr>
-    <tr>
-        <th>Terem száma:</th>
-        <td>@Model.Room.Number</td>
-    </tr>
-    <tr>
-        <th>Próbahely neve:</th>
-        <td>@Model.Room.Studio.Name</td>
-    </tr>
-    <tr>
-        <th>Foglaló neve:</th>
-        <td>@Model.UserOwnName</td>
-    </tr>
-</table>
 
-<div>
-    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Vissza a főoldalra</a>
+        <tr>
+            <th>Foglalás időpontja:</th>
+            <td>@Model.Day.Date napon @Model.StartHour:00 - @Model.EndHour:00</td>
+        </tr>
+        <tr>
+            <th>Terem száma:</th>
+            <td>@Model.RoomNumber</td>
+        </tr>
+        <tr>
+            <th>Próbahely neve:</th>
+            <td>@Model.StudioName</td>
+        </tr>
+        <tr>
+            <th>Foglaló neve:</th>
+            <td>@Model.UserOwnName</td>
+        </tr>
+    </table>
+
+    <div>
+        <a asp-action="Index" asp-controller="RehearsalRooms" class="btn btn-primary mb-4">Vissza a termekhez</a>
+    </div>
+
 </div>

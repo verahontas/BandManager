@@ -4,6 +4,8 @@
     ViewData["Title"] = "Edit";
 }
 
+<div class="light-color-letters">
+
 <h1 class="display-4">Módosítás</h1>
 
 <div class="row">
@@ -15,17 +17,19 @@
             
             <div class="form-group">
                 <label asp-for="Name" class="control-label">Megnevezés</label>
-                <input asp-for="Name" class="form-control" />
+                <input asp-for="Name" class="form-control w-auto" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="QuantityAvailable" class="control-label">Darabszám</label>
-                <input asp-for="QuantityAvailable" class="form-control" />
+                <input asp-for="QuantityAvailable" class="form-control w-auto" />
                 <span asp-validation-for="QuantityAvailable" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Mentés" class="btn btn-primary" />
+                <input type="submit" value="Mentés" class="btn btn-primary mt-2" />
             </div>
         </form>
     </div>
+</div>
+
 </div>

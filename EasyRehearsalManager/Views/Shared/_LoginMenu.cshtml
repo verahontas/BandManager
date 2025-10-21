@@ -1,0 +1,35 @@
+﻿@model LoginViewModel
+
+<form class="input-group" asp-controller="Account" asp-action="Login" style="width: fit-content; float: right;">
+    <div class="row">
+        <div class="col-auto">
+            <input class="form-control" placeholder="Felhasználónév" id="userNameInNavbar" asp-for="UserName" />
+            <span asp-validation-for="UserName"></span>
+        </div>
+        
+        <div class="col-auto">
+            <input type="password" placeholder="Jelszó" class="form-control" id="pwdInNavbar" asp-for="UserPassword" />
+            <span asp-validation-for="UserPassword"></span>
+
+        </div>
+        
+        <div class="col-auto">
+            <div class="row">
+
+
+                <div class="col-auto">
+                    <input type="submit" value="Bejelentkezés" class="btn btn-primary mt-2 mt-xl-0 align-baseline" id="loginButton" />
+                </div>
+                <div class="col-auto">
+                    <a asp-controller="Account" asp-action="RegisterAsMusician" class="btn btn-outline-dark mt-2 mt-xl-0 align-baseline" id="registrationButton">Regisztráció</a>
+                </div>
+            </div>
+        </div>
+        
+        
+
+        <div asp-validation-summary="ModelOnly" class="failureNotification"></div>
+        <div class="failureNotification">@ViewBag.Information</div>
+    </div>
+    
+</form>

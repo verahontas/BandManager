@@ -1,0 +1,85 @@
+﻿@model UserViewModel
+
+<div class="light-color-letters">
+    @if (ViewBag.CurrentUserRole == "administrator" && Model.UserRole != "administrator")
+    {
+        <!--if the admin watches someone else's profile-->
+        <h1 class="display-4">Felhasználó adatai</h1>
+    }
+    else
+    {
+        <!--if the admin is watching his own profile OR someone is watching his own profile-->
+        <h1 class="display-4">Adataim</h1>
+    }
+
+    <img src="@Url.Action("GetUserImage", "Account", new { userId = Model.UserId })" class="img-thumbnail navbar-brand mb-4" height="100" width="100" alt="Profilkép" />
+
+    @if (ViewBag.CurrentUserRole != "administrator" || (ViewBag.CurrentUserRole == "administrator" && Model.UserRole == "administrator"))
+    {
+        <!--admin cannot change others' profile picture-->
+        <div id="ChangeProfilePicture"></div>
+    }
+
+    <table class="table w-auto table-borderless light-color-letters">
+        <tr>
+            <th>Név:</th>
+            <td>@Model.UserOwnName</td>
+        </tr>
+        <tr>
+            <th>Felhasználónév:</th>
+            <td>@Model.UserName</td>
+        </tr>
+        <tr>
+            <th>Email cím:</th>
+            <td>@Model.UserEmail</td>
+        </tr>
+        <tr>
+            <th>Telefonszám:</th>
+            <td>@Model.UserPhoneNumber</td>
+        </tr>
+        @if (Model.UserRole == "musician")
+        {
+            <tr>
+                <th>Zenekarnév:</th>
+                <td>@Model.BandName</td>
+            </tr>
+        }
+        @if (ViewBag.CurrentUserRole == "administrator" && Model.UserRole != "administrator")
+        {
+            <tr>
+                <th>Szerepkör:</th>
+                @if (Model.UserRole == "musician")
+                {
+                    <td>zenész</td>
+                }
+                else
+                {
+                    <!--role cannot be 'administrator' because we are in an 'if' that doesn't allowes it-->
+                    <td>tulajdonos</td>
+                }
+            </tr>
+        }
+    </table>
+
+    <a asp-controller="Account" asp-action="Edit" asp-route-userId="@Model.UserId" class="btn btn-primary align-baseline">Adatok módosítása</a>
+
+    @if (ViewBag.CurrentUserRole != "administrator" || (ViewBag.CurrentUserRole == "administrator" && Model.UserRole == "administrator"))
+    {
+        <!--admin cannot change the user's password-->
+        <a asp-action="ChangePassword" class="btn btn-secondary align-baseline">Jelszómódosítás</a>
+    }
+
+    @if (ViewBag.CurrentUserRole == "administrator" && Model.UserRole != "administrator")
+    {
+        <a asp-action="Index" class="btn btn-secondary align-baseline">Vissza a felhasználókhoz</a>
+    }
+</div>
+
+
+<script>
+$(document).ready(function () {
+    var link = '@Html.Raw(@Url.Action("ChangeProfilePicturePartial", "Account", new { userId = 0 } )) ';
+    link = link.replace("0", @Model.UserId);
+    $("#ChangeProfilePicture").load(link);
+});
+</script>
