@@ -1,10 +1,15 @@
+#BandManager
+This is my degree project.
+
+---------------------------------------------------
+
 Update October 2025
 
 I finished this project on time and I got my degree in Computer Science. Now I uploaded the finished code, without any refactoring.
 
 ---------------------------------------------------
 
-# BandManager
+BandManager
 This is my degree work which I am currently working on.
 
 So there are functions that don't work yet and there will be other functionalities too,
